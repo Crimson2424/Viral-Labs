@@ -67,16 +67,16 @@ export default function HeroSection() {
           <div className="flex flex-col items-center gap-2">
             <a
               href="#results"
-              className="flex items-center justify-center gap-4 w-[160px] h-[40px] border border-white px-[6px] py-[8px] hover:bg-white/10 transition-colors duration-300"
+              className="flex items-center justify-center gap-3 w-[160px] h-[40px] border border-white px-[6px] py-[8px] hover:bg-white/10 transition-colors duration-300"
             >
               <span className="font-host font-medium text-[16px] text-white text-center tracking-[-0.32px] leading-normal whitespace-nowrap">
                 Viral Results
               </span>
-              <ArrowIcon size={8} />
+              <ArrowIcon size={11} />
             </a>
 
             {/* ── CTA sub-text + glow line ── */}
-            <div className="flex flex-col items-center gap-2">
+            <div className="flex flex-col items-center">
               <span className="font-host text-[12px] text-[#a1a1aa] text-center tracking-[-0.24px] leading-normal">
                 Real missions. Real outcomes.
               </span>
