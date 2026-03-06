@@ -27,10 +27,10 @@ export default function HeroSection() {
         <div className="relative z-40 flex flex-col items-center justify-center h-full pt-[53px]">
           {/* ── Badge / Label ── */}
           <div className="mb-6">
-            <div className="rounded-[52px] border border-white/20 p-[6px]">
-              <div className="rounded-[46px] border border-white/40 p-[6px]">
+            <div className="rounded-[52px] border border-white/20 p-[4px]">
+              <div className="rounded-[46px] border border-white/40 p-[4px]">
                 <div className="rounded-[40px] border border-white/80 px-[10px] py-[4px] flex items-center justify-center">
-                  <span className="font-alliance font-medium text-[12px] text-[#c5c5c5] tracking-[-0.24px] leading-normal whitespace-nowrap">
+                  <span className="font-host font-medium text-[12px] text-[#c5c5c5] tracking-[-0.24px] leading-normal whitespace-nowrap">
                     Engineered Virality
                   </span>
                 </div>
@@ -77,7 +77,7 @@ export default function HeroSection() {
 
             {/* ── CTA sub-text + glow line ── */}
             <div className="flex flex-col items-center">
-              <span className="font-host text-[12px] text-[#a1a1aa] text-center tracking-[-0.24px] leading-normal">
+              <span className="font-host text-[12px] text-[#a1a1aa] text-center tracking-[-0.24px] leading-normal -mb-1">
                 Real missions. Real outcomes.
               </span>
               <CtaGlowLine className="pointer-events-none" />
