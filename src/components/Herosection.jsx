@@ -13,7 +13,7 @@ export default function HeroSection() {
   return (
     <section
       id="home"
-      className="relative w-full h-screen min-h-[945px] bg-black overflow-hidden"
+      className="relative w-full h-screen min-h-[945px] overflow-hidden"
     >
       {/* ── Layer 1: R3F Background Plane ── */}
       <HeroBackground />
