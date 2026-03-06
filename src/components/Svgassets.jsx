@@ -138,16 +138,17 @@ export const ScreenGrid = forwardRef(({ className = "" }, ref) => (
   </svg>
 ));
 
-// ── Navbar Glow Line (88×13) — small orange glow accent ──
+// ── Navbar Glow Line — width controlled by CSS ──
 export const NavGlowLine = forwardRef(({ className = "" }, ref) => (
   <svg
     ref={ref}
-    width="88"
+    width="100%"
     height="13"
     viewBox="0 0 88 13"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     className={className}
+    preserveAspectRatio="none"
   >
     <g filter="url(#navGlow0)" style={{ mixBlendMode: "plus-lighter" }}>
       <line x1="11" y1="11.5" x2="77" y2="11.5" stroke="#FF6F21" />
