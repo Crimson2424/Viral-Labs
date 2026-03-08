@@ -42,18 +42,7 @@ export default function GridOverlay({ children, showTexture = true }) {
         aria-hidden="true"
       />
 
-      {/* ── z-20: Grain texture overlay (global, full page) ── */}
-      {showTexture && (
-        <div
-          className="pointer-events-none fixed inset-0 mix-blend-lighten z-20 opacity-50"
-          style={{
-            backgroundImage: "url('/images/textures.png')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-          aria-hidden="true"
-        />
-      )}
+     
     </div>
   );
 }
