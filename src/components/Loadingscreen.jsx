@@ -1,0 +1,462 @@
+/**
+ * LoadingScreen — fullscreen loader with video loop + progress bar.
+ *
+ * DESIGN:
+ *   - Video fills entire viewport, loops
+ *   - Bottom bar overlays video (transparent background)
+ *   - "0%" left, "100%" right, with corner bracket marks
+ *   - Orange glowing SVG progress line grows from 0 to 100
+ *   - Gray static line sits underneath as track
+ *
+ * EXIT:
+ *   When loading completes (progress counter ≥ 99):
+ *   1. loadingState.onReady() fires IMMEDIATELY → entrance timeline starts
+ *   2. Bottom bar fades out (0.3s)
+ *   3. Video fades to black via overlay (0.5s)
+ *   4. Wrapper fades to opacity 0 (0.6s, starts at 0.3s)
+ *   5. The shader radial-noise reveal (entranceState.warpProgress)
+ *      runs in parallel underneath — it IS the visual transition.
+ *   No slide-up. The shader dissolve replaces the loader.
+ */
+
+import { useRef, useEffect, useState, useCallback } from "react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import * as THREE from "three";
+import { loadingState } from "./loadingState";
+
+/* ── Inline SVG components ── */
+const WhiteLine = () => (
+  <svg
+    className="absolute inset-0 w-full h-full"
+    preserveAspectRatio="none"
+    viewBox="0 0 901 1"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <line y1="0.5" x2="901" y2="0.5" stroke="#747271" />
+  </svg>
+);
+
+const OrangeLine = () => (
+  <svg
+    className="w-full h-full"
+    preserveAspectRatio="none"
+    viewBox="0 0 107 12"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <g filter="url(#glow1)">
+      <line x1="0" y1="6.5" x2="107" y2="6.5" stroke="#FF1E1A" />
+    </g>
+    <g filter="url(#glow2)">
+      <line x1="0" y1="6" x2="107" y2="6" stroke="#FF1E1A" strokeWidth="2" />
+    </g>
+    <line x1="0" y1="6.5" x2="107" y2="6.5" stroke="#FF4311" />
+    <g filter="url(#glow3)" style={{ mixBlendMode: "plus-lighter" }}>
+      <line x1="0" y1="6" x2="107" y2="6" stroke="#EA3100" strokeWidth="2" />
+    </g>
+    <defs>
+      <filter id="glow1" x="-1" y="4" width="109" height="5" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+        <feFlood floodOpacity="0" result="bg" />
+        <feBlend mode="normal" in="SourceGraphic" in2="bg" result="shape" />
+        <feGaussianBlur stdDeviation="0.5" result="blur" />
+      </filter>
+      <filter id="glow2" x="-5" y="0" width="117" height="12" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+        <feFlood floodOpacity="0" result="bg" />
+        <feBlend mode="normal" in="SourceGraphic" in2="bg" result="shape" />
+        <feGaussianBlur stdDeviation="2.5" result="blur" />
+      </filter>
+      <filter id="glow3" x="-5" y="0" width="117" height="12" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+        <feFlood floodOpacity="0" result="bg" />
+        <feBlend mode="normal" in="SourceGraphic" in2="bg" result="shape" />
+        <feGaussianBlur stdDeviation="2.5" result="blur" />
+      </filter>
+    </defs>
+  </svg>
+);
+
+/* ── Corner bracket components ── */
+const bracketBase = {
+  position: "absolute",
+  pointerEvents: "none",
+  width: "0.6vw",
+  height: "0.6vw",
+};
+const bColor = "#F05A1F";
+
+/* 0% side — only LEFT brackets (top-left + bottom-left) */
+const LeftBrackets = () => (
+  <>
+    <span style={{ ...bracketBase, top: "-0.5vw", left: "-0.6vw", borderTop: `1px solid ${bColor}`, borderLeft: `1px solid ${bColor}` }} />
+    <span style={{ ...bracketBase, bottom: "-0.5vw", left: "-0.6vw", borderBottom: `1px solid ${bColor}`, borderLeft: `1px solid ${bColor}` }} />
+  </>
+);
+
+/* 100% side — only RIGHT brackets (top-right + bottom-right) */
+const RightBrackets = () => (
+  <>
+    <span style={{ ...bracketBase, top: "-0.5vw", right: "-0.6vw", borderTop: `1px solid ${bColor}`, borderRight: `1px solid ${bColor}` }} />
+    <span style={{ ...bracketBase, bottom: "-0.5vw", right: "-0.6vw", borderBottom: `1px solid ${bColor}`, borderRight: `1px solid ${bColor}` }} />
+  </>
+);
+
+export default function LoadingScreen({ videoSrc = "/videos/loader.webm" }) {
+  const wrapperRef = useRef(null);
+  const videoRef = useRef(null);
+  const videoOverlayRef = useRef(null);
+  const orangeClipRef = useRef(null);
+  const hasExited = useRef(false);
+
+  const [videoReady, setVideoReady] = useState(false);
+  const [removed, setRemoved] = useState(false);
+
+  const progressSources = useRef({ three: 0, fonts: 0, video: 0 });
+  const displayProgress = useRef({ value: 0 });
+
+  const updateProgress = useCallback(() => {
+    const { three, fonts, video } = progressSources.current;
+    const real = three * 0.7 + fonts * 0.15 + video * 0.15;
+    const clamped = Math.max(loadingState.progress, Math.min(real, 1));
+    loadingState.progress = clamped;
+  }, []);
+
+  // ══════════════════════════════════════════
+  // EXIT — shader reveal replaces slide-up
+  // ══════════════════════════════════════════
+  // onReady fires FIRST so the entrance shader starts in parallel.
+  // Then the loader fades video → black → transparent, revealing
+  // the dark page bg + shader reveal underneath.
+  const runExitAnimation = useCallback(() => {
+    if (hasExited.current) return;
+    hasExited.current = true;
+
+    // Trigger entrance timeline IMMEDIATELY — shader reveal starts now
+    if (loadingState.onReady) loadingState.onReady();
+
+    const tl = gsap.timeline({
+      onComplete: () => setRemoved(true),
+    });
+
+    // Kill pointer events instantly so canvas is interactive
+    tl.set(wrapperRef.current, { pointerEvents: "none" }, 0);
+
+    // Fade out bottom bar
+    tl.to(".loader-bottom-bar", {
+      opacity: 0,
+      duration: 0.3,
+      ease: "power2.in",
+    }, 0);
+
+    // Fade video to black (overlay goes opaque)
+    tl.to(videoOverlayRef.current, {
+      opacity: 1,
+      duration: 0.5,
+      ease: "power2.in",
+    }, 0);
+
+    // Fade entire wrapper out — reveals dark page bg + shader underneath
+    tl.to(wrapperRef.current, {
+      opacity: 0,
+      duration: 0.6,
+      ease: "power2.inOut",
+    }, 0.3);
+  }, []);
+
+  // ── Try complete ──
+  const tryComplete = useCallback(() => {
+    const { three, fonts, video } = progressSources.current;
+    if (three >= 1 && fonts >= 1 && video >= 1 && !loadingState.isComplete) {
+      loadingState.isComplete = true;
+      loadingState.progress = 1;
+
+      const waitForCounter = setInterval(() => {
+        if (displayProgress.current.value >= 99) {
+          clearInterval(waitForCounter);
+          runExitAnimation();
+        }
+      }, 50);
+    }
+  }, [runExitAnimation]);
+
+  // ══════════════════════════════════════════
+  // GSAP ANIMATIONS — useGSAP
+  // ══════════════════════════════════════════
+
+  // ── Progress bar tick (gsap.ticker) ──
+  useGSAP(
+    () => {
+      const tick = () => {
+        const target = loadingState.progress * 100;
+        const current = displayProgress.current.value;
+        displayProgress.current.value += (target - current) * 0.12;
+
+        if (orangeClipRef.current) {
+          orangeClipRef.current.style.width = `${displayProgress.current.value}%`;
+        }
+      };
+
+      gsap.ticker.add(tick);
+      return () => gsap.ticker.remove(tick);
+    },
+    { scope: wrapperRef }
+  );
+
+  // ── Fade video in when buffered ──
+  useGSAP(
+    () => {
+      if (videoReady && videoOverlayRef.current) {
+        gsap.to(videoOverlayRef.current, {
+          opacity: 0,
+          duration: 0.5,
+          ease: "power2.out",
+        });
+      }
+    },
+    { scope: wrapperRef, dependencies: [videoReady] }
+  );
+
+  // ══════════════════════════════════════════
+  // EVENT LISTENERS — useEffect (not GSAP)
+  // ══════════════════════════════════════════
+
+  // ── THREE.DefaultLoadingManager ──
+  useEffect(() => {
+    const mgr = THREE.DefaultLoadingManager;
+    let threeStarted = false;
+    const origOnStart = mgr.onStart;
+
+    mgr.onStart = (url, loaded, total) => {
+      threeStarted = true;
+      if (origOnStart) origOnStart(url, loaded, total);
+    };
+
+    mgr.onProgress = (url, loaded, total) => {
+      threeStarted = true;
+      progressSources.current.three = total > 0 ? loaded / total : 0;
+      updateProgress();
+      tryComplete();
+    };
+
+    mgr.onLoad = () => {
+      progressSources.current.three = 1;
+      updateProgress();
+      tryComplete();
+    };
+
+    const fallback = setTimeout(() => {
+      if (!threeStarted) {
+        progressSources.current.three = 1;
+        updateProgress();
+        tryComplete();
+      }
+    }, 2000);
+
+    return () => {
+      clearTimeout(fallback);
+      mgr.onStart = origOnStart || null;
+      mgr.onProgress = null;
+      mgr.onLoad = null;
+    };
+  }, [updateProgress, tryComplete]);
+
+  // ── Fonts ──
+  useEffect(() => {
+    if (document.fonts.status === "loaded") {
+      progressSources.current.fonts = 1;
+      updateProgress();
+      tryComplete();
+    }
+
+    document.fonts.ready.then(() => {
+      progressSources.current.fonts = 1;
+      updateProgress();
+      tryComplete();
+    });
+
+    const interval = setInterval(() => {
+      const entries = [...document.fonts.values()];
+      const total = entries.length || 1;
+      const loaded = entries.filter((f) => f.status === "loaded").length;
+      progressSources.current.fonts = loaded / total;
+      updateProgress();
+    }, 200);
+
+    return () => clearInterval(interval);
+  }, [updateProgress, tryComplete]);
+
+  // ── Video ──
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const onCanPlay = () => {
+      progressSources.current.video = 1;
+      updateProgress();
+      setVideoReady(true);
+      tryComplete();
+    };
+
+    if (video.readyState >= 4) {
+      onCanPlay();
+      return;
+    }
+
+    const onProgress = () => {
+      if (video.buffered.length > 0 && video.duration) {
+        const buffered = video.buffered.end(video.buffered.length - 1);
+        progressSources.current.video = Math.min(buffered / video.duration, 0.95);
+        updateProgress();
+      }
+    };
+
+    const onError = () => {
+      console.warn("Loader video failed — skipping.");
+      progressSources.current.video = 1;
+      updateProgress();
+      tryComplete();
+    };
+
+    video.addEventListener("canplaythrough", onCanPlay);
+    video.addEventListener("progress", onProgress);
+    video.addEventListener("error", onError);
+
+    return () => {
+      video.removeEventListener("canplaythrough", onCanPlay);
+      video.removeEventListener("progress", onProgress);
+      video.removeEventListener("error", onError);
+    };
+  }, [updateProgress, tryComplete]);
+
+  // ── Safety timeout ──
+  useEffect(() => {
+    const maxWait = setTimeout(() => {
+      if (!loadingState.isComplete) {
+        console.warn("Loading timeout — forcing completion.");
+        progressSources.current.three = 1;
+        progressSources.current.fonts = 1;
+        progressSources.current.video = 1;
+        loadingState.progress = 1;
+        loadingState.isComplete = true;
+
+        const waitForCounter = setInterval(() => {
+          if (displayProgress.current.value >= 99) {
+            clearInterval(waitForCounter);
+            runExitAnimation();
+          }
+        }, 50);
+      }
+    }, 10000);
+
+    return () => clearTimeout(maxWait);
+  }, [runExitAnimation]);
+
+  if (removed) return null;
+
+  return (
+    <div
+      ref={wrapperRef}
+      className="fixed inset-0 z-[9999]"
+      style={{ background: "#0a0a0a" }}
+    >
+      {/* ── Video (fills entire viewport) ── */}
+      <video
+        ref={videoRef}
+        className="absolute inset-0 w-full h-full object-cover"
+        src={videoSrc}
+        muted
+        loop
+        playsInline
+        autoPlay
+        preload="auto"
+      />
+      <div
+        ref={videoOverlayRef}
+        className="absolute inset-0"
+        style={{ background: "#0a0a0a" }}
+      />
+
+      {/* ═══ Bottom bar — transparent, overlays video ═══ */}
+      <div
+        className="loader-bottom-bar absolute left-0 right-0 bottom-0 z-10"
+        style={{ padding: "0 6.5vw 4.5vh" }}
+      >
+        <div
+          className="flex items-center"
+          style={{ gap: "1.5vw" }}
+        >
+          {/* ── 0% label — LEFT brackets only ── */}
+          <div className="relative flex-shrink-0" style={{ padding: "0.3vw 0.5vw" }}>
+            <LeftBrackets />
+            <span
+              className="font-host block"
+              style={{
+                fontSize: "clamp(24px, 3.2vw, 50px)",
+                fontWeight: 400,
+                lineHeight: "100%",
+                letterSpacing: "0",
+                color: "#FFFFFF",
+                textAlign: "center",
+                fontVariantNumeric: "tabular-nums",
+              }}
+            >
+              0%
+            </span>
+          </div>
+
+          {/* ── Progress track ── */}
+          <div className="relative flex-1" style={{ height: "0.8vw" }}>
+            {/* Gray static line (track) */}
+            <div
+              className="absolute left-0 right-0"
+              style={{
+                top: "50%",
+                height: "1px",
+                transform: "translateY(-50%)",
+              }}
+            >
+              <WhiteLine />
+            </div>
+
+            {/* Orange glow line (grows via width clip) */}
+            <div
+              ref={orangeClipRef}
+              className="absolute left-0 top-0 h-full overflow-hidden"
+              style={{ width: "0%" }}
+            >
+              <div
+                className="h-full"
+                style={{
+                  width: "100vw",
+                  maxWidth: "calc(100vw - 28vw)",
+                }}
+              >
+                <OrangeLine />
+              </div>
+            </div>
+
+          </div>
+
+          {/* ── 100% label — RIGHT brackets only ── */}
+          <div className="relative flex-shrink-0" style={{ padding: "0.3vw 0.5vw" }}>
+            <RightBrackets />
+            <span
+              className="font-host block"
+              style={{
+                fontSize: "clamp(24px, 3.2vw, 50px)",
+                fontWeight: 400,
+                lineHeight: "100%",
+                letterSpacing: "0",
+                color: "#FFFFFF",
+                textAlign: "center",
+                fontVariantNumeric: "tabular-nums",
+              }}
+            >
+              100%
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -2,6 +2,7 @@
  * Navbar — Glassmorphic nav with layered animations.
  *
  * ENTRANCE (page load):
+ *   Controlled via `entranceDelay` prop (default 0.3s) for sync with parent timeline.
  *   Phase 1 — Nav bar slides down from yPercent: -120 → 0
  *   Phase 2 — Text mask reveals (inner wrappers slide up)
  *             Logo icon fades in
@@ -31,6 +32,7 @@ import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
 import { useGSAP } from "@gsap/react";
 import { ViralLabsLogo, ArrowIcon, NavGlowLine } from "./SvgAssets";
 import { useState } from "react";
+import { entranceState } from "./entranceState";
 
 gsap.registerPlugin(SplitText, DrawSVGPlugin);
 
@@ -68,7 +70,7 @@ function CharSpans({ text }) {
   ));
 }
 
-export default function Navbar() {
+export default function Navbar({ entranceDelay = 0.3 }) {
   const [activeNav, setActiveNav] = useState("Home");
 
   const headerRef = useRef();
@@ -145,7 +147,7 @@ export default function Navbar() {
       // ENTRANCE TIMELINE
       // ═══════════════════════════════════════
 
-      const tl = gsap.timeline({ delay: 0.3 });
+      const tl = gsap.timeline({ paused: true });
 
       // Phase 1 — Navbar slides down
       tl.to(navRef.current, {
@@ -186,6 +188,8 @@ export default function Navbar() {
         navRef.current.classList.add("hover-ready");
       });
 
+      entranceState.playNavbar = () => tl.play();
+
       // ── Cleanup listeners ──
       return () => {
         logoArea.removeEventListener("mouseenter", onLogoEnter);
@@ -211,6 +215,9 @@ export default function Navbar() {
   const fontStyle = {
     fontVariationSettings: "'opsz' 14, 'wdth' 100",
   };
+
+  /* Height of text line — controls the overflow clip */
+  const textClipHeight = "1em";
 
   return (
     <>
@@ -273,6 +280,17 @@ export default function Navbar() {
         .hover-ready .nav-cta-item:hover .cta-arrow-inner {
           transform: translateX(0%) rotate(0deg);
         }
+
+        /* ═══════════════════════════════════
+           TEXT CLIP WRAPPER — constrains height
+           ═══════════════════════════════════ */
+        .text-clip {
+          display: inline-block;
+          position: relative;
+          overflow: hidden;
+          height: ${textClipHeight};
+          line-height: ${textClipHeight};
+        }
       `}</style>
 
       <header
@@ -281,7 +299,7 @@ export default function Navbar() {
       >
         <nav
           ref={navRef}
-          className="relative inline-flex items-center justify-center gap-9 px-5 py-0 overflow-hidden"
+          className="relative inline-flex items-center justify-center gap-9 px-5 py-1 overflow-hidden"
           style={navStyle}
         >
           {/* ── Logo ── */}
@@ -320,10 +338,7 @@ export default function Navbar() {
                 style={fontStyle}
                 aria-current={activeNav === item.label ? "page" : undefined}
               >
-                <span
-                  className="inline-block relative overflow-hidden"
-                  style={{ lineHeight: 1.3 }}
-                >
+                <span className="text-clip">
                   <span className="nav-link-inner inline-block">
                     <CharSpans text={item.label} />
                   </span>
@@ -333,7 +348,7 @@ export default function Navbar() {
           </div>
 
           {/* ── CTA Button with Glow ── */}
-          <div className="relative inline-flex items-center justify-center px-2.5 py-2">
+          <div className="relative inline-flex items-center justify-center px-2.5 py-0">
             <a
               ref={ctaItemRef}
               href="#go-viral"
@@ -341,10 +356,7 @@ export default function Navbar() {
             >
               {/* CTA text — shifted right by default, slides left on hover */}
               <span className="cta-text-shift">
-                <span
-                  className="inline-block relative overflow-hidden"
-                  style={{ lineHeight: 1.3 }}
-                >
+                <span className="text-clip">
                   <span className="nav-cta-inner inline-block">
                     <span
                       className="font-bricolage font-normal text-white text-sm text-center tracking-[-0.56px] leading-none"

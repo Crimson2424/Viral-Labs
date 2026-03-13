@@ -2,6 +2,7 @@ import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { transitionState } from "./transitionState";
+import { entranceState } from "./entranceState";
 
 const GOLD_COUNT = 1200;
 const WHITE_COUNT = 3000;
@@ -52,6 +53,8 @@ uniform vec3  uMouse;
 uniform float uMouseRadius;
 uniform float uMouseForce;
 uniform float uRevealProgress;
+uniform float uEntranceOpacity;
+uniform float uZoomProgress;
 
 attribute float aSize;
 attribute float aOffset;
@@ -83,6 +86,15 @@ void main() {
     : vec2(0.0);
   pos.xy += push;
 
+  // ── Zoom push: particles drift outward as plane zooms ──
+  float zoomT = smoothstep(0.0, 1.0, uZoomProgress);
+  vec2 zoomDir = pos.xy;
+  float zoomDist = length(zoomDir);
+  vec2 zoomPush = (zoomDist > 0.001)
+    ? normalize(zoomDir) * (0.8 + zoomDist * 0.6) * zoomT
+    : vec2(0.0);
+  pos.xy += zoomPush;
+
   // ── Transition: burst outward from center + fade ──
   float p = uRevealProgress;
 
@@ -103,7 +115,12 @@ void main() {
 
   // Opacity: fade out 0→100% over 0→30% progress
   float fadeFactor = 1.0 - smoothstep(0.0, 0.3, p);
-  vOpacity = aOpacity * fadeFactor;
+
+  // Fade as particles drift outward during zoom
+  float zoomFade = 1.0 - zoomT * 0.6;
+
+  // Entrance opacity — particles invisible until entrance tween runs
+  vOpacity = aOpacity * fadeFactor * uEntranceOpacity * zoomFade;
 
   vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
   gl_PointSize = aSize * (1.0 / -mvPosition.z);
@@ -128,7 +145,6 @@ void main() {
 export default function HeroParticles({ mouseWorld }) {
   const materialRef = useRef();
 
-  // ✅ React-safe geometry init via useMemo
   const geometry = useMemo(() => {
     const geo = new THREE.BufferGeometry();
 
@@ -153,7 +169,7 @@ export default function HeroParticles({ mouseWorld }) {
       positions[i * 3 + 2] = z;
 
       const speed = Math.random() * 3 + 0.08;
-      sizes[i] = Math.random() * 16 + 12;
+      sizes[i] = Math.random() * 8 + 12;
       offsets[i] = Math.random() * Math.PI * 2;
       opacities[i] = Math.random() * 0.2 + 0.05;
       driftSpeed[i] = speed * 0.6;
@@ -184,35 +200,19 @@ export default function HeroParticles({ mouseWorld }) {
       colors[i * 3 + 2] = whiteColor.b;
     }
 
-    geo.setAttribute(
-      "position",
-      new THREE.Float32BufferAttribute(positions, 3)
-    );
+    geo.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
     geo.setAttribute("aSize", new THREE.Float32BufferAttribute(sizes, 1));
     geo.setAttribute("aOffset", new THREE.Float32BufferAttribute(offsets, 1));
-    geo.setAttribute(
-      "aOpacity",
-      new THREE.Float32BufferAttribute(opacities, 1)
-    );
+    geo.setAttribute("aOpacity", new THREE.Float32BufferAttribute(opacities, 1));
     geo.setAttribute("aColor", new THREE.Float32BufferAttribute(colors, 3));
-    geo.setAttribute(
-      "aDriftSpeed",
-      new THREE.Float32BufferAttribute(driftSpeed, 1)
-    );
-    geo.setAttribute(
-      "aFloatSpeed",
-      new THREE.Float32BufferAttribute(floatSpeed, 1)
-    );
-    geo.setAttribute(
-      "aBobSpeed",
-      new THREE.Float32BufferAttribute(bobSpeed, 1)
-    );
+    geo.setAttribute("aDriftSpeed", new THREE.Float32BufferAttribute(driftSpeed, 1));
+    geo.setAttribute("aFloatSpeed", new THREE.Float32BufferAttribute(floatSpeed, 1));
+    geo.setAttribute("aBobSpeed", new THREE.Float32BufferAttribute(bobSpeed, 1));
 
     geo.computeBoundingSphere();
     return geo;
   }, []);
 
-  // ✅ React-safe uniforms init via useMemo
   const uniforms = useMemo(
     () => ({
       uTime: { value: 0 },
@@ -220,6 +220,8 @@ export default function HeroParticles({ mouseWorld }) {
       uMouseRadius: { value: 0.7 },
       uMouseForce: { value: 0.06 },
       uRevealProgress: { value: 0 },
+      uEntranceOpacity: { value: 0 },
+      uZoomProgress: { value: 0 },
     }),
     []
   );
@@ -230,6 +232,8 @@ export default function HeroParticles({ mouseWorld }) {
     const u = materialRef.current.uniforms;
     u.uTime.value = state.clock.elapsedTime;
     u.uRevealProgress.value = transitionState.revealProgress;
+    u.uEntranceOpacity.value = entranceState.particleOpacity;
+    u.uZoomProgress.value = transitionState.zoomProgress;
 
     if (mouseWorld?.current) {
       u.uMouse.value.copy(mouseWorld.current);

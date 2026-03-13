@@ -36,6 +36,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+}
+
 /* ── Scrollbar utility ── */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
