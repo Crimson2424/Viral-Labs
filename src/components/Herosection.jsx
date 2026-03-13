@@ -1,31 +1,16 @@
 /**
  * HeroSection — One pinned timeline with two acts + entrance animation.
  *
+ * GlobalGrid is rendered INSIDE this section (not in App.jsx) so that
+ * it's absolute-positioned within the pinned container. During the pin
+ * it appears fixed; when the pin releases it scrolls away naturally.
+ *
  * ENTRANCE — on page load:
  *   PHASE 0 — BG PLANE NOISE DISSOLVE (0.0s → 2.8s)
  *   PHASE 1 — GRID + OVERLAY REVEAL (2.2s → 3.2s)
- *
  *   PHASE 2 — ★ BIG TEXT + HEADING (3.0s → ~7.0s)
- *     The ACTUAL .hw-eng and .hw-vir spans from the h1 ARE the middle row.
- *     Scaled up + translated to match big text row 2 position.
- *     All ancestors have overflow:visible during this phase (dynamically found).
- *     heroContent z-index raised above bigTextWrap so heading spans render on top.
  *
- *     Decorative rows 1 & 3 slide in and compress toward the middle.
- *     Rows 1 & 3 use clip-path (not backgrounds) for the masking effect —
- *     they get clipped from the edge that overlaps with row 2.
- *
- *     3.0–3.8s  : Rows slide in (R / L / R)
- *     3.9–4.3s  : Compression + clip-path masking (rows 1&3 slide behind row 2)
- *     4.3s      : Decorative rows hidden
- *     4.3–4.7s  : SCALE TOGETHER from pair center
- *     4.7–5.2s  : SPLIT + FLY to scale:1, x:0, y:0 (natural heading position)
- *     5.25s     : Overflow restored, gradient applied, cleanup
- *     5.3–6.1s  : Remaining heading chars mask reveal
- *     6.1–6.9s  : Subheading, CTA, CTA subtitle
- *     7.0s      : Navbar (via entranceDelay prop)
- *
- *   SCROLL — unchanged (+=400%, pinned, scrub)
+ *   SCROLL — (+=400%, pinned, scrub)
  *   ACT 1 — ZOOM TRANSITION (0.00 → 0.40)
  *   ACT 2 — MISSION STATS (0.55 → 0.95)
  *   HOLD (0.95 → 1.00)
@@ -38,6 +23,7 @@ import { SplitText } from "gsap/SplitText";
 import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
 import { useGSAP } from "@gsap/react";
 import GridOverlay from "./GridOverlay";
+import GlobalGrid from "./Globalgrid";
 import Navbar from "./Navbar";
 import { CtaGlowLine } from "./SvgAssets";
 import { transitionState } from "./transitionState";
@@ -56,13 +42,13 @@ export default function HeroSection() {
   const subheadingRef = useRef();
   const ctaRef = useRef();
 
-  // Decorative big text
+  const gridOverlayRef = useRef();
+
   const bigTextWrapRef = useRef();
   const bigRow1Ref = useRef();
   const bigRow2SpacerRef = useRef();
   const bigRow3Ref = useRef();
 
-  // Store CTA scramble data for hover interaction
   const ctaScrambleRef = useRef(null);
 
   useGSAP(
@@ -75,7 +61,6 @@ export default function HeroSection() {
       const virSpan = headingRef.current.querySelector(".hw-vir");
       gsap.set([engSpan, virSpan], { display: "inline-block" });
 
-      // Run SplitText so DOM structure is final before measuring
       const heroHeadingSplit = SplitText.create(".hero-heading", {
         type: "chars, lines",
         mask: "lines",
@@ -83,7 +68,6 @@ export default function HeroSection() {
         charsClass: "hero-char",
       });
 
-      // ── Measure heading span natural positions ──
       const engNatRect = engSpan.getBoundingClientRect();
       const virNatRect = virSpan.getBoundingClientRect();
       const engNatCX = engNatRect.left + engNatRect.width / 2;
@@ -91,52 +75,31 @@ export default function HeroSection() {
       const virNatCX = virNatRect.left + virNatRect.width / 2;
       const virNatCY = virNatRect.top + virNatRect.height / 2;
 
-      // ── Measure row layout ──
       const row1Rect = bigRow1Ref.current.getBoundingClientRect();
       const spacerRect = bigRow2SpacerRef.current.getBoundingClientRect();
       const rowHeight = row1Rect.height;
 
-      // Scale: decorative row font-size / heading font-size
-      // (using font-size not element height, so lineHeight doesn't affect it)
       const row1FontSize = parseFloat(window.getComputedStyle(bigRow1Ref.current.querySelector("p")).fontSize);
       const headingFontSize = parseFloat(window.getComputedStyle(headingRef.current).fontSize);
       const bigScale = row1FontSize / headingFontSize;
 
-      // ── Calculate big text positions MATHEMATICALLY ──
-      // Scaled widths of each heading span when at bigScale
       const engScaledW = engNatRect.width * bigScale;
       const virScaledW = virNatRect.width * bigScale;
-
-      // Gap between the two words (proportional to row height)
       const wordGap = rowHeight * 0.3;
-
-      // Total width of both words + gap
       const totalW = engScaledW + wordGap + virScaledW;
-
-      // Center the pair horizontally on screen
       const screenCX = window.innerWidth / 2;
-      // Vertical center = middle of the spacer row
       const bigCY = spacerRect.top + spacerRect.height / 2;
-
-      // Absolute center positions for each word at big size
       const engBigAbsCX = screenCX - totalW / 2 + engScaledW / 2;
       const virBigAbsCX = screenCX + totalW / 2 - virScaledW / 2;
-
-      // GSAP offsets from natural heading position → big position
       const engBigX = engBigAbsCX - engNatCX;
       const engBigY = bigCY - engNatCY;
       const virBigX = virBigAbsCX - virNatCX;
       const virBigY = bigCY - virNatCY;
-
-      // Offscreen shift (slide from left)
       const offscreenX = -(window.innerWidth + 500);
 
       // ═══════════════════════════════════════
       // STEP 1 — FIND ALL CLIPPING ANCESTORS
       // ═══════════════════════════════════════
-      // Walk from each heading span up to sectionRef, collect every
-      // ancestor with non-visible overflow. This catches .hero-line
-      // masks, GridOverlay, heroContent, flex wrappers, etc.
       const clippingAncestors = [];
       const collectClippers = (startEl) => {
         let node = startEl.parentElement;
@@ -160,13 +123,9 @@ export default function HeroSection() {
       // STEP 2 — INITIAL STATES
       // ═══════════════════════════════════════
 
-      // Open all overflow during big text phase
       gsap.set(clippingAncestors, { overflow: "visible" });
-
-      // Raise heroContent above bigTextWrap so heading spans render on top
       gsap.set(heroContentRef.current, { opacity: 0, zIndex: 25 });
 
-      // Gradient on ALL chars (including keyword chars)
       heroHeadingSplit.lines.forEach((line) => {
         const lineWidth = line.offsetWidth;
         line.querySelectorAll(".hero-char").forEach((char) => {
@@ -183,19 +142,15 @@ export default function HeroSection() {
         });
       });
 
-      // Char groups
       const engChars = [...headingRef.current.querySelectorAll(".hw-eng .hero-char")];
       const virChars = [...headingRef.current.querySelectorAll(".hw-vir .hero-char")];
       const keywordChars = [...engChars, ...virChars];
       const allChars = heroHeadingSplit.chars;
       const otherChars = allChars.filter((c) => !keywordChars.includes(c));
 
-      // Keyword chars: visible (inside scaled-up span = the big text)
       gsap.set(keywordChars, { yPercent: 0, opacity: 1, filter: "blur(0px)" });
-      // Other chars: hidden below mask
       gsap.set(otherChars, { yPercent: 110, opacity: 0, filter: "blur(14px)" });
 
-      // Position heading spans at big size, offscreen left
       gsap.set(engSpan, {
         scale: bigScale,
         x: engBigX + offscreenX,
@@ -209,7 +164,6 @@ export default function HeroSection() {
         transformOrigin: "center center",
       });
 
-      // Decorative rows
       gsap.set(bigTextWrapRef.current, { opacity: 1 });
       gsap.set(bigRow1Ref.current, {
         xPercent: 100, y: 0, opacity: 1, clipPath: "inset(0 0 0 0)",
@@ -219,8 +173,6 @@ export default function HeroSection() {
         xPercent: 100, y: 0, opacity: 1, clipPath: "inset(0 0 0 0)",
       });
 
-      // Subheading — ASCII scramble effect
-      // Split into chars so we can scramble each one individually
       const heroSubSplit = SplitText.create(".hero-subheading", {
         type: "chars, words, lines",
         mask: "lines",
@@ -230,12 +182,8 @@ export default function HeroSection() {
 
       const asciiChars = "!@#$%^&*()_+-=[]{}|;:,.<>?/~`01";
       const subChars = heroSubSplit.chars;
-
-      // Store original text for each char
       const originalTexts = subChars.map((c) => c.textContent);
 
-      // Lock each char's natural width BEFORE scrambling
-      // This prevents layout shifts when chars change
       subChars.forEach((char) => {
         const w = char.offsetWidth;
         char.style.display = "inline-block";
@@ -243,47 +191,36 @@ export default function HeroSection() {
         char.style.textAlign = "center";
       });
 
-      // Set initial state: lines visible (no mask slide), chars show random ASCII
       gsap.set(heroSubSplit.lines, { yPercent: 0 });
       gsap.set(subheadingRef.current, { opacity: 0 });
       subChars.forEach((char) => {
         char.textContent = asciiChars[Math.floor(Math.random() * asciiChars.length)];
       });
 
-      // CTA — multi-step animation setup
-      // Hide the entire CTA wrapper initially
       gsap.set(ctaRef.current, { opacity: 0 });
 
-      // 1. Border: SVG stroke draws in
-      const ctaBorderRect = document.querySelector(".cta-border rect");
-      // Measure actual perimeter from the rendered rect
       const ctaBorderPath = document.querySelector(".cta-border-path");
-gsap.set(ctaBorderPath, { drawSVG: "0%" });
+      gsap.set(ctaBorderPath, { drawSVG: "0%" });
 
-      // 2. Text: ASCII scramble (like subheading)
       const ctaTextSplit = SplitText.create(".cta-text", {
         type: "chars",
         charsClass: "cta-char",
       });
       const ctaChars = ctaTextSplit.chars;
       const ctaOriginals = ctaChars.map((c) => c.textContent);
-      // Lock widths to prevent layout shift during scramble
       ctaChars.forEach((char) => {
         const w = char.offsetWidth;
         char.style.display = "inline-block";
         char.style.width = `${w}px`;
         char.style.textAlign = "center";
       });
-      // Scramble initial text + hide
       ctaChars.forEach((char) => {
         char.textContent = asciiChars[Math.floor(Math.random() * asciiChars.length)];
       });
       gsap.set(".cta-text", { opacity: 0 });
 
-      // Store scramble data for hover interaction
       ctaScrambleRef.current = { chars: ctaChars, originals: ctaOriginals, asciiChars };
 
-      // 3. Arrow: stroke-draw setup
       const arrowPath = document.querySelector(".arrow-path");
       const arrowLen = arrowPath.getTotalLength();
       gsap.set(arrowPath, {
@@ -291,22 +228,18 @@ gsap.set(ctaBorderPath, { drawSVG: "0%" });
         strokeDashoffset: arrowLen,
       });
 
-      // 4. CTA subtitle: still uses mask slide
       gsap.set(".cta-sub", { yPercent: 110 });
 
-      // 5. CTA glow line: draw from center
       const ctaGlowLines = document.querySelectorAll(".cta-glow-svg line");
       gsap.set(ctaGlowLines, { drawSVG: "50% 50%" });
 
-      // Scroll elements — headingRef transform set AFTER entrance (step F)
       gsap.set(missionTextRef.current, { opacity: 0, scale: 0.8, filter: "blur(0px)" });
 
       // ═══════════════════════════════════════
       // ENTRANCE TIMELINE
       // ═══════════════════════════════════════
-      const entrance = gsap.timeline({ paused: true, });
+      const entrance = gsap.timeline({ paused: true });
 
-      // Phase 0: BG Plane dissolve
       entrance.to(entranceState, {
         warpProgress: 1, duration: 2.8, ease: "power2.inOut",
       }, 0);
@@ -314,16 +247,22 @@ gsap.set(ctaBorderPath, { drawSVG: "0%" });
         particleOpacity: 1, duration: 1.2, ease: "power2.out",
       }, 1.8);
 
-      // Phase 1: Hero content fades in
       entrance.to(heroContentRef.current, {
         opacity: 1, duration: 1.0, ease: "power2.inOut",
       }, 2.2);
+
+      entrance.call(() => {
+        if (entranceState.playGlobalGrid) entranceState.playGlobalGrid();
+      }, null, 2.2);
+
+      entrance.call(() => {
+        gridOverlayRef.current?.play();
+      }, null, 2.8);
 
       // ═══════════════════════════════════════
       // ★ PHASE 2: BIG TEXT ANIMATION
       // ═══════════════════════════════════════
 
-      // A: Slide in (3.0s → 4.0s) — longer duration, staggered, cinematic ease
       entrance.to(bigRow1Ref.current,
         { xPercent: 0, duration: 1.0, ease: "power4.out" }, 3.0);
       entrance.to(engSpan,
@@ -333,7 +272,6 @@ gsap.set(ctaBorderPath, { drawSVG: "0%" });
       entrance.to(bigRow3Ref.current,
         { xPercent: 0, duration: 1.0, ease: "power4.out" }, 3.3);
 
-      // B: Compression + clip-path masking (4.2s → 4.8s) — slower, more dramatic
       entrance.to(bigRow1Ref.current, {
         y: rowHeight,
         clipPath: "inset(0 0 100% 0)",
@@ -347,13 +285,8 @@ gsap.set(ctaBorderPath, { drawSVG: "0%" });
         ease: "power3.inOut",
       }, 4.2);
 
-      // C: Hide decorative elements (at end of compression)
       entrance.set(bigTextWrapRef.current, { visibility: "hidden" }, 4.8);
 
-      // D+E: SCALE DOWN + SPLIT + FLY as ONE continuous motion
-      // Engineering starts first (moves UP to line 1) and is mostly
-      // clear before Virality starts (moves to line 2).
-      // 0.4s stagger gives Engineering time to move away.
       entrance.to(engSpan, {
         scale: 1, x: 0, y: 0,
         duration: 1.0, ease: "power2.inOut",
@@ -363,7 +296,6 @@ gsap.set(ctaBorderPath, { drawSVG: "0%" });
         duration: 1.0, ease: "power2.inOut",
       }, 5.2);
 
-      // F: Restore overflow + cleanup (6.25s)
       entrance.set(clippingAncestors, { overflow: "hidden" }, 6.25);
       entrance.set(heroContentRef.current, {
         overflow: "hidden", zIndex: 10,
@@ -372,23 +304,17 @@ gsap.set(ctaBorderPath, { drawSVG: "0%" });
         scale: 1, filter: "blur(0px)",
       }, 6.25);
 
-      // G: Remaining heading chars mask reveal (6.1s → 6.9s)
       entrance.to(otherChars, {
         yPercent: 0, filter: "blur(0px)", opacity: 1,
         stagger: 0.03, duration: 0.8, ease: "expo.out",
       }, 6.1);
 
-      // H: Subheading — ASCII scramble decode (6.9s)
-      // First fade in the element
       entrance.to(subheadingRef.current, {
         opacity: 1, duration: 0.3, ease: "power2.out",
       }, 6.9);
 
-      // Then decode each character: cycles through random ASCII symbols
-      // before settling on the real character, staggered left to right
       subChars.forEach((char, i) => {
         const original = originalTexts[i];
-        // Skip spaces
         if (original.trim() === "") return;
 
         const delay = 6.9 + i * 0.025;
@@ -400,18 +326,15 @@ gsap.set(ctaBorderPath, { drawSVG: "0%" });
           ease: "none",
           onUpdate: () => {
             if (proxy.progress < 0.7) {
-              // Cycling through random chars
               char.textContent =
                 asciiChars[Math.floor(Math.random() * asciiChars.length)];
             } else {
-              // Settled — show real character
               char.textContent = original;
             }
           },
         }, delay);
       });
 
-      // I: CTA — Step 1: Show wrapper + border draws in (7.3s → 8.0s)
       entrance.set(ctaRef.current, { opacity: 1 }, 7.3);
       entrance.to(ctaBorderPath, {
         drawSVG: "100%",
@@ -419,12 +342,9 @@ gsap.set(ctaBorderPath, { drawSVG: "0%" });
         ease: "power2.inOut",
       }, 7.3);
 
-      // I: CTA — Step 2: Text scramble decode (7.8s)
-      // Fade text container in
       entrance.to(".cta-text", {
         opacity: 1, duration: 0.1, ease: "power1.out",
       }, 7.8);
-      // Scramble each char
       ctaChars.forEach((char, i) => {
         const original = ctaOriginals[i];
         if (original.trim() === "") return;
@@ -446,25 +366,21 @@ gsap.set(ctaBorderPath, { drawSVG: "0%" });
         }, delay);
       });
 
-      // I: CTA — Step 3: Arrow draws in (8.2s)
       entrance.to(arrowPath, {
         strokeDashoffset: 0,
         duration: 0.4,
         ease: "power2.inOut",
       }, 8.2);
 
-      // J: CTA subtitle (8.5s)
       entrance.to(".cta-sub",
         { yPercent: 0, duration: 0.7, ease: "expo.out" }, 8.5);
 
-      // K: CTA glow line draws from center outward (8.7s)
       entrance.to(ctaGlowLines, {
         drawSVG: "0% 100%",
         duration: 0.6,
         ease: "power2.inOut",
       }, 8.7);
 
-      // L: Navbar — via entranceDelay prop (7.0s)
       entrance.call(() => {
         if (entranceState.playNavbar) entranceState.playNavbar();
       }, null, 9.1);
@@ -506,7 +422,6 @@ gsap.set(ctaBorderPath, { drawSVG: "0%" });
 
       // ACT 1 — ZOOM TRANSITION (0.00 → 0.40)
 
-      // ── Fade out elements ──
       tl.to(subheadingRef.current,
         { opacity: 0, y: -40, duration: 0.03, ease: "power2.in" }, 0)
         .to(ctaRef.current,
@@ -532,6 +447,8 @@ gsap.set(ctaBorderPath, { drawSVG: "0%" });
           { filter: "blur(14px)", duration: 0.03, ease: "power2.in" }, 0.24)
 
         .to(missionRef.current, { opacity: 1, duration: 0.02 }, 0.28)
+        .set(missionRef.current, { pointerEvents: "auto" }, 0.28)
+        .set(heroContentRef.current, { pointerEvents: "none" }, 0.40)
 
         .to(transitionState,
           { revealProgress: 1, duration: 0.25, ease: "power2.inOut" }, 0.28);
@@ -556,6 +473,16 @@ gsap.set(ctaBorderPath, { drawSVG: "0%" });
           stagger: 0.02, duration: 0.1, ease: "power3.out",
         }, 0.68)
 
+        .to(".marquee-fade", {
+          opacity: 1,
+          duration: 0.1, ease: "power2.out",
+        }, 0.70)
+
+        .to(".frame-corner", {
+          opacity: 1,
+          stagger: 0.05, duration: 0.08, ease: "power2.out",
+        }, 0.72)
+
         .to(quoteSplit.words,
           { yPercent: 0, stagger: 0.01, duration: 0.1, ease: "expo.out" }, 0.76)
 
@@ -572,22 +499,17 @@ gsap.set(ctaBorderPath, { drawSVG: "0%" });
           { opacity: 1, scale: 1, stagger: 0.015, duration: 0.04, ease: "back.out(2)" }, 0.93);
 
       // ── After entrance finishes, force scroll timeline to re-capture ──
-      // 1. invalidate() clears all cached start/end values
-      // 2. progress(tl.progress()) forces immediate re-render at current
-      //    scroll position, recording the now-visible element states
       entrance.eventCallback("onComplete", () => {
         tl.invalidate();
         tl.progress(tl.progress());
         entranceState.isComplete = true;
       });
 
-      // Let LoadingScreen trigger the entrance after its exit animation
       loadingState.onReady = () => entrance.play();
     },
     { scope: sectionRef }
   );
 
-  // ── CTA hover: replay ASCII scramble ──
   const handleCtaHover = () => {
     const data = ctaScrambleRef.current;
     if (!data) return;
@@ -620,14 +542,17 @@ gsap.set(ctaBorderPath, { drawSVG: "0%" });
     <section
       ref={sectionRef}
       id="home"
-      className="relative z-[10] w-full min-h-screen"
+      className="relative z-20 w-full min-h-screen"
     >
+      {/* ═══ GlobalGrid — inside the section so it scrolls with the pin ═══ */}
+      <GlobalGrid animated navOffset />
+
       {/* ═══ Hero Content ═══ */}
       <div
         ref={heroContentRef}
         className="absolute inset-x-0 top-0 z-[10] h-screen min-h-[945px] overflow-hidden"
       >
-        <GridOverlay showTexture={true} entranceDelay={2.8}>
+        <GridOverlay ref={gridOverlayRef} showTexture={true}>
           <Navbar entranceDelay={9.1} />
           <div className="relative z-40 flex flex-col items-center justify-center h-full pt-14">
             <div className="mb-6 h-[30px]" />
@@ -681,7 +606,6 @@ gsap.set(ctaBorderPath, { drawSVG: "0%" });
                   onMouseEnter={handleCtaHover}
                   className="relative flex items-center justify-center gap-3 w-40 h-10 px-1.5 py-2 overflow-visible hover:bg-white/10 transition-colors duration-300"
                 >
-                  {/* SVG border — draws in via strokeDashoffset animation */}
                   <svg
                     className="cta-border absolute"
                     style={{ top: "-1px", left: "-1px", width: "calc(100% + 2px)", height: "calc(100% + 2px)" }}
@@ -691,11 +615,11 @@ gsap.set(ctaBorderPath, { drawSVG: "0%" });
                     overflow="visible"
                   >
                     <path
-  className="cta-border-path"
-  d="M1,1 L161,1 L161,41 L1,41 Z"
-  stroke="white" strokeWidth="1"
-  vectorEffect="non-scaling-stroke"
-/>
+                      className="cta-border-path"
+                      d="M1,1 L161,1 L161,41 L1,41 Z"
+                      stroke="white" strokeWidth="1"
+                      vectorEffect="non-scaling-stroke"
+                    />
                   </svg>
                   <span className="cta-text font-host font-medium text-base text-white text-center tracking-[-0.32px] leading-normal whitespace-nowrap">
                     Viral Results
@@ -734,74 +658,33 @@ gsap.set(ctaBorderPath, { drawSVG: "0%" });
         </GridOverlay>
       </div>
 
-      {/* ═══════════════════════════════════════════════════════
-          DECORATIVE BIG TEXT ROWS
-          Rows 1 & 3 slide in + compress with clip-path masking.
-          Row 2 is invisible spacer (measurement only).
-          The ACTUAL .hw-eng + .hw-vir heading spans are the
-          visible middle row — same element start to finish.
-      ═══════════════════════════════════════════════════════ */}
+      {/* ═══ DECORATIVE BIG TEXT ROWS ═══ */}
       <div
         ref={bigTextWrapRef}
         className="absolute inset-x-0 top-0 z-[20] h-screen min-h-[945px] flex flex-col items-center justify-center pointer-events-none"
       >
-        {/* Row 1 — decorative (slides from right) */}
-        <div
-          ref={bigRow1Ref}
-          className="relative w-full flex-shrink-0"
-          style={{ zIndex: 1 }}
-        >
-          <p
-            className="font-bricolage font-medium text-white text-center w-full whitespace-nowrap select-none"
-            style={{
-              fontSize: "clamp(60px, 7vw, 120px)",
-              lineHeight: 0.85,
-              letterSpacing: "-3px",
-            }}
-          >
+        <div ref={bigRow1Ref} className="relative w-full flex-shrink-0" style={{ zIndex: 1 }}>
+          <p className="font-bricolage font-medium text-white text-center w-full whitespace-nowrap select-none"
+            style={{ fontSize: "clamp(60px, 7vw, 120px)", lineHeight: 0.85, letterSpacing: "-3px" }}>
             Engineering Virality
           </p>
         </div>
-
-        {/* Row 2 — INVISIBLE SPACER (holds vertical layout space only) */}
-        <div
-          ref={bigRow2SpacerRef}
-          className="relative w-full flex-shrink-0"
-          style={{ zIndex: 2, visibility: "hidden" }}
-        >
-          <p
-            className="font-bricolage font-medium text-white text-center w-full whitespace-nowrap select-none"
-            style={{
-              fontSize: "clamp(60px, 7vw, 120px)",
-              lineHeight: 0.85,
-              letterSpacing: "-3px",
-            }}
-          >
+        <div ref={bigRow2SpacerRef} className="relative w-full flex-shrink-0" style={{ zIndex: 2, visibility: "hidden" }}>
+          <p className="font-bricolage font-medium text-white text-center w-full whitespace-nowrap select-none"
+            style={{ fontSize: "clamp(60px, 7vw, 120px)", lineHeight: 0.85, letterSpacing: "-3px" }}>
             Engineering Virality
           </p>
         </div>
-
-        {/* Row 3 — decorative (slides from right) */}
-        <div
-          ref={bigRow3Ref}
-          className="relative w-full flex-shrink-0"
-          style={{ zIndex: 1 }}
-        >
-          <p
-            className="font-bricolage font-medium text-white text-center w-full whitespace-nowrap select-none"
-            style={{
-              fontSize: "clamp(60px, 7vw, 120px)",
-              lineHeight: 0.85,
-              letterSpacing: "-3px",
-            }}
-          >
+        <div ref={bigRow3Ref} className="relative w-full flex-shrink-0" style={{ zIndex: 1 }}>
+          <p className="font-bricolage font-medium text-white text-center w-full whitespace-nowrap select-none"
+            style={{ fontSize: "clamp(60px, 7vw, 120px)", lineHeight: 0.85, letterSpacing: "-3px" }}>
             Engineering Virality
           </p>
         </div>
       </div>
 
       {/* ═══ MissionStats ═══ */}
-      <div ref={missionRef} className="relative z-[1] opacity-0">
+      <div ref={missionRef} className="relative z-20 opacity-0 pointer-events-none">
         <MissionStats />
       </div>
     </section>

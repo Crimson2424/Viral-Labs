@@ -13,10 +13,10 @@
  *   Vertical lines grow from top (scaleY 0→1).
  *   Horizontal line grows from center (scaleX 0→1).
  *   Crosshairs fade in after lines.
- *   Controlled via `entranceDelay` prop.
+ *   Timeline is PAUSED — HeroSection triggers via ref.play().
  */
 
-import { useRef } from "react";
+import { useRef, useImperativeHandle, forwardRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import {
@@ -25,8 +25,14 @@ import {
   GridCrosshair,
 } from "./SvgAssets";
 
-export default function GridOverlay({ children, showTexture = true, entranceDelay = 0 }) {
+const GridOverlay = forwardRef(function GridOverlay({ children, showTexture = true }, ref) {
   const overlayRef = useRef();
+  const tlRef = useRef();
+
+  // Expose a .play() method so HeroSection can trigger it
+  useImperativeHandle(ref, () => ({
+    play: () => tlRef.current?.play(),
+  }));
 
   useGSAP(() => {
     const el = overlayRef.current;
@@ -42,7 +48,8 @@ export default function GridOverlay({ children, showTexture = true, entranceDela
     gsap.set(topLine, { scaleX: 0, transformOrigin: "center center" });
     gsap.set(crosshairs, { opacity: 0, scale: 0 });
 
-    const tl = gsap.timeline({ delay: entranceDelay });
+    // Create PAUSED — HeroSection entrance will trigger via ref
+    const tl = gsap.timeline({ paused: true });
 
     // Vertical lines grow from top
     tl.to([leftLine, rightLine], {
@@ -66,6 +73,8 @@ export default function GridOverlay({ children, showTexture = true, entranceDela
       duration: 0.4,
       ease: "back.out(2)",
     }, 0.6);
+
+    tlRef.current = tl;
   });
 
   return (
@@ -95,4 +104,6 @@ export default function GridOverlay({ children, showTexture = true, entranceDela
       />
     </div>
   );
-}
+});
+
+export default GridOverlay;

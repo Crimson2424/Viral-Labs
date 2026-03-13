@@ -16,6 +16,9 @@ gsap.registerPlugin(ScrollTrigger);
 function DummySection() {
   return (
     <section className="dummy-section relative z-[1] w-full py-40 px-38 overflow-hidden">
+      {/* Each section gets its own grid instance — scrolls naturally */}
+      <GlobalGrid />
+
       <div className="pointer-events-none absolute top-0 left-[105px] w-px h-full bg-white/20 z-30" aria-hidden="true" />
       <div className="pointer-events-none absolute top-0 right-[105px] w-px h-full bg-white/20 z-30" aria-hidden="true" />
       <div className="pointer-events-none absolute top-0 left-[105px] right-[105px] h-px bg-white/20 z-30" aria-hidden="true" />
@@ -57,10 +60,8 @@ const App = () => {
     const lenis = new Lenis();
     lenisRef.current = lenis;
 
-    // Lock scroll while loading screen is active
     lenis.stop();
 
-    // Poll for loading completion → re-enable scroll
     const checkReady = setInterval(() => {
       if (entranceState.isComplete) {
         clearInterval(checkReady);
@@ -69,7 +70,6 @@ const App = () => {
       }
     }, 100);
 
-    // Sync Lenis with GSAP ScrollTrigger
     lenis.on("scroll", ScrollTrigger.update);
 
     gsap.ticker.add((time) => {
@@ -91,7 +91,6 @@ const App = () => {
       <GlobalCanvas />
       <HeroSection />
       <DummySection />
-      <GlobalGrid entranceDelay={2.2} />
       <GlobalTexture />
     </main>
   );
