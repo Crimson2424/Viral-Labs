@@ -4,6 +4,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
 import HeroSection from "./components/Herosection";
+import PlaybookSection from "./components/PlaybookSection";
 import GlobalGrid from "./components/Globalgrid";
 import GlobalCanvas from "./components/GlobalCanvas";
 import GlobalTexture from "./components/Globaltexture";
@@ -90,6 +91,7 @@ const App = () => {
       <LoadingScreen videoSrc="/videos/loader.webm" />
       <GlobalCanvas />
       <HeroSection />
+      <PlaybookSection />
       <DummySection />
       <GlobalTexture />
     </main>
