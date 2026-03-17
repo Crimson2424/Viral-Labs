@@ -607,6 +607,56 @@ export const EllipseBlueprintSvg = forwardRef(({ className = "" }, ref) => (
   </svg>
 ));
 
+// ══════════════════════════════════════════════════
+// Viral Engine Section SVGs
+// ══════════════════════════════════════════════════
+
+// ── Rocket Frame parts (img-based, too complex to inline) ──
+
+export const RocketFrame2Svg = forwardRef(({ className = "" }, ref) => (
+  <img ref={ref} src="/svgs/Rocket frame 2.svg" alt="" className={className} />
+));
+
+export const RocketFrame3Svg = forwardRef(({ className = "" }, ref) => (
+  <img ref={ref} src="/svgs/Rocket frame 3.svg" alt="" className={className} />
+));
+
+export const RocketFrame4Svg = forwardRef(({ className = "" }, ref) => (
+  <img ref={ref} src="/svgs/Rocket frame 4.svg" alt="" className={className} />
+));
+
+export const RocketFrame5Svg = forwardRef(({ className = "" }, ref) => (
+  <img ref={ref} src="/svgs/Rocket Frame 5.svg" alt="" className={className} />
+));
+
+export const RocketFrame6Svg = forwardRef(({ className = "" }, ref) => (
+  <img ref={ref} src="/svgs/Rocket frame 6.svg" alt="" className={className} />
+));
+
+export const RocketFrame7Svg = forwardRef(({ className = "" }, ref) => (
+  <img ref={ref} src="/svgs/Rocket Frame 7.svg" alt="" className={className} />
+));
+
+// ── Connector line (diagonal + horizontal, bridges rocket to labels) ──
+export const LinesVectorRocketSvg = forwardRef(({ className = "" }, ref) => (
+  <img ref={ref} src="/svgs/lines vector rocket.svg" alt="" className={className} />
+));
+
+// ── Glow Line (193×23) — orange glow scan line ──
+export const GlowLineSvg = forwardRef(({ className = "" }, ref) => (
+  <img ref={ref} src="/svgs/Glow-line.svg" alt="" className={className} />
+));
+
+// ── Line 744 (134×1) — gray stat divider line ──
+export const Line744Svg = forwardRef(({ className = "" }, ref) => (
+  <img ref={ref} src="/svgs/Line 744.svg" alt="" className={className} />
+));
+
+// ── Corner bracket (10×10) — orange L-shaped corner marker ──
+export const CornerVectorRocketSvg = forwardRef(({ className = "", style = {} }, ref) => (
+  <img ref={ref} src="/svgs/corner Vector rocket.svg" alt="" className={className} style={style} />
+));
+
 // ── Grid Lines Recon (445×300) — background grid mesh for recon card ──
 export const GridLinesReconSvg = forwardRef(({ className = "" }, ref) => (
   <svg ref={ref} className={className} width="445" height="300" viewBox="0 0 445 300" fill="none" xmlns="http://www.w3.org/2000/svg">

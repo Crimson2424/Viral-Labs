@@ -5,6 +5,7 @@ import Lenis from "lenis";
 import "lenis/dist/lenis.css";
 import HeroSection from "./components/Herosection";
 import PlaybookSection from "./components/PlaybookSection";
+import ViralEngineSection from "./components/ViralEngineSection";
 import GlobalGrid from "./components/Globalgrid";
 import GlobalCanvas from "./components/GlobalCanvas";
 import GlobalTexture from "./components/Globaltexture";
@@ -92,6 +93,7 @@ const App = () => {
       <GlobalCanvas />
       <HeroSection />
       <PlaybookSection />
+      <ViralEngineSection />
       <DummySection />
       <GlobalTexture />
     </main>
