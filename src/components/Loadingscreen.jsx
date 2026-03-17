@@ -20,8 +20,7 @@
  */
 
 import { useRef, useEffect, useState, useCallback } from "react";
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
+import { gsap, useGSAP } from "./Gsapconfig";
 import * as THREE from "three";
 import { loadingState } from "./loadingState";
 
@@ -42,35 +41,48 @@ const OrangeLine = () => (
   <svg
     className="w-full h-full"
     preserveAspectRatio="none"
-    viewBox="0 0 107 12"
+    viewBox="0 0 107 20"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <g filter="url(#glow1)">
-      <line x1="0" y1="6.5" x2="107" y2="6.5" stroke="#FF1E1A" />
+    {/* Widest ambient glow */}
+    <g filter="url(#glow-ambient)">
+      <line x1="0" y1="10" x2="107" y2="10" stroke="#FF3D00" strokeWidth="1" />
     </g>
-    <g filter="url(#glow2)">
-      <line x1="0" y1="6" x2="107" y2="6" stroke="#FF1E1A" strokeWidth="2" />
+    {/* Mid glow */}
+    <g filter="url(#glow-mid)">
+      <line x1="0" y1="10" x2="107" y2="10" stroke="#FF5522" strokeWidth="2" />
     </g>
-    <line x1="0" y1="6.5" x2="107" y2="6.5" stroke="#FF4311" />
-    <g filter="url(#glow3)" style={{ mixBlendMode: "plus-lighter" }}>
-      <line x1="0" y1="6" x2="107" y2="6" stroke="#EA3100" strokeWidth="2" />
+    {/* Inner glow */}
+    <g filter="url(#glow-inner)">
+      <line x1="0" y1="10" x2="107" y2="10" stroke="#FF6B35" strokeWidth="1.5" />
+    </g>
+    {/* Core line — bright orange */}
+    <line x1="0" y1="10" x2="107" y2="10" stroke="#FF6A2A" strokeWidth="1" />
+    {/* Hot white center */}
+    <g filter="url(#glow-core)" style={{ mixBlendMode: "plus-lighter" }}>
+      <line x1="0" y1="10" x2="107" y2="10" stroke="#FFCFAA" strokeWidth="0.5" />
     </g>
     <defs>
-      <filter id="glow1" x="-1" y="4" width="109" height="5" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+      <filter id="glow-ambient" x="-8" y="-2" width="123" height="24" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
         <feFlood floodOpacity="0" result="bg" />
         <feBlend mode="normal" in="SourceGraphic" in2="bg" result="shape" />
-        <feGaussianBlur stdDeviation="0.5" result="blur" />
+        <feGaussianBlur stdDeviation="4" result="blur" />
       </filter>
-      <filter id="glow2" x="-5" y="0" width="117" height="12" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+      <filter id="glow-mid" x="-5" y="2" width="117" height="16" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
         <feFlood floodOpacity="0" result="bg" />
         <feBlend mode="normal" in="SourceGraphic" in2="bg" result="shape" />
         <feGaussianBlur stdDeviation="2.5" result="blur" />
       </filter>
-      <filter id="glow3" x="-5" y="0" width="117" height="12" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+      <filter id="glow-inner" x="-3" y="4" width="113" height="12" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
         <feFlood floodOpacity="0" result="bg" />
         <feBlend mode="normal" in="SourceGraphic" in2="bg" result="shape" />
-        <feGaussianBlur stdDeviation="2.5" result="blur" />
+        <feGaussianBlur stdDeviation="1.2" result="blur" />
+      </filter>
+      <filter id="glow-core" x="-2" y="5" width="111" height="10" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+        <feFlood floodOpacity="0" result="bg" />
+        <feBlend mode="normal" in="SourceGraphic" in2="bg" result="shape" />
+        <feGaussianBlur stdDeviation="0.6" result="blur" />
       </filter>
     </defs>
   </svg>
@@ -106,6 +118,8 @@ export default function LoadingScreen({ videoSrc = "/videos/loader.webm" }) {
   const videoRef = useRef(null);
   const videoOverlayRef = useRef(null);
   const orangeClipRef = useRef(null);
+  const percentTextRef = useRef(null);
+  const dotRef = useRef(null);
   const hasExited = useRef(false);
 
   const [videoReady, setVideoReady] = useState(false);
@@ -124,38 +138,30 @@ export default function LoadingScreen({ videoSrc = "/videos/loader.webm" }) {
   // ══════════════════════════════════════════
   // EXIT — shader reveal replaces slide-up
   // ══════════════════════════════════════════
-  // onReady fires FIRST so the entrance shader starts in parallel.
-  // Then the loader fades video → black → transparent, revealing
-  // the dark page bg + shader reveal underneath.
   const runExitAnimation = useCallback(() => {
     if (hasExited.current) return;
     hasExited.current = true;
 
-    // Trigger entrance timeline IMMEDIATELY — shader reveal starts now
     if (loadingState.onReady) loadingState.onReady();
 
     const tl = gsap.timeline({
       onComplete: () => setRemoved(true),
     });
 
-    // Kill pointer events instantly so canvas is interactive
     tl.set(wrapperRef.current, { pointerEvents: "none" }, 0);
 
-    // Fade out bottom bar
     tl.to(".loader-bottom-bar", {
       opacity: 0,
       duration: 0.3,
       ease: "power2.in",
     }, 0);
 
-    // Fade video to black (overlay goes opaque)
     tl.to(videoOverlayRef.current, {
       opacity: 1,
       duration: 0.5,
       ease: "power2.in",
     }, 0);
 
-    // Fade entire wrapper out — reveals dark page bg + shader underneath
     tl.to(wrapperRef.current, {
       opacity: 0,
       duration: 0.6,
@@ -183,7 +189,7 @@ export default function LoadingScreen({ videoSrc = "/videos/loader.webm" }) {
   // GSAP ANIMATIONS — useGSAP
   // ══════════════════════════════════════════
 
-  // ── Progress bar tick (gsap.ticker) ──
+  // ── Progress bar tick + percentage counter (gsap.ticker) ──
   useGSAP(
     () => {
       const tick = () => {
@@ -193,6 +199,14 @@ export default function LoadingScreen({ videoSrc = "/videos/loader.webm" }) {
 
         if (orangeClipRef.current) {
           orangeClipRef.current.style.width = `${displayProgress.current.value}%`;
+        }
+
+        if (dotRef.current) {
+          dotRef.current.style.left = `${displayProgress.current.value}%`;
+        }
+
+        if (percentTextRef.current) {
+          percentTextRef.current.textContent = `${Math.round(displayProgress.current.value)}%`;
         }
       };
 
@@ -405,7 +419,7 @@ export default function LoadingScreen({ videoSrc = "/videos/loader.webm" }) {
           </div>
 
           {/* ── Progress track ── */}
-          <div className="relative flex-1" style={{ height: "0.8vw" }}>
+          <div className="relative flex-1" style={{ height: "1.2vw" }}>
             {/* Gray static line (track) */}
             <div
               className="absolute left-0 right-0"
@@ -422,7 +436,11 @@ export default function LoadingScreen({ videoSrc = "/videos/loader.webm" }) {
             <div
               ref={orangeClipRef}
               className="absolute left-0 top-0 h-full overflow-hidden"
-              style={{ width: "0%" }}
+              style={{
+                width: "0%",
+                maskImage: "linear-gradient(to right, black 70%, transparent 100%)",
+                WebkitMaskImage: "linear-gradient(to right, black 70%, transparent 100%)",
+              }}
             >
               <div
                 className="h-full"
@@ -435,12 +453,38 @@ export default function LoadingScreen({ videoSrc = "/videos/loader.webm" }) {
               </div>
             </div>
 
+            {/* Soft glow at progress tip */}
+            <div
+              ref={dotRef}
+              className="absolute"
+              style={{
+                top: "50%",
+                left: "0%",
+                transform: "translate(-50%, -50%)",
+                pointerEvents: "none",
+                width: "1.4vw",
+                height: "1.4vw",
+                background: "radial-gradient(circle, rgba(255,120,50,0.5) 0%, rgba(255,70,20,0.15) 35%, transparent 70%)",
+                animation: "orbPulse 1.8s ease-in-out infinite",
+                mixBlendMode: "plus-lighter",
+              }}
+            />
+
+            {/* Pulse animation */}
+            <style>{`
+              @keyframes orbPulse {
+                0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+                50% { opacity: 1; transform: translate(-50%, -50%) scale(1.3); }
+              }
+            `}</style>
+
           </div>
 
-          {/* ── 100% label — RIGHT brackets only ── */}
+          {/* ── 100% label — RIGHT brackets only, animated counter ── */}
           <div className="relative flex-shrink-0" style={{ padding: "0.3vw 0.5vw" }}>
             <RightBrackets />
             <span
+              ref={percentTextRef}
               className="font-host block"
               style={{
                 fontSize: "clamp(24px, 3.2vw, 50px)",
@@ -450,9 +494,10 @@ export default function LoadingScreen({ videoSrc = "/videos/loader.webm" }) {
                 color: "#FFFFFF",
                 textAlign: "center",
                 fontVariantNumeric: "tabular-nums",
+                minWidth: "3.5ch",
               }}
             >
-              100%
+              0%
             </span>
           </div>
         </div>

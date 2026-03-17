@@ -17,10 +17,10 @@ function gaussRandom() {
 }
 
 const ARCH = {
-  bottomX: 2.8,
-  topX: 1.2,
-  yMin: -2.0,
-  yMax: 1.4,
+  bottomX: 3.0,
+  topX: 1.5,
+  yMin: -2.8,
+  yMax: 1.8,
   curve: 0.7,
 };
 
@@ -40,10 +40,10 @@ function edgePosition(spreadX) {
   const side = Math.random() < 0.5 ? 1 : -1;
   const y =
     THREE.MathUtils.lerp(ARCH.yMin, ARCH.yMax, Math.random()) +
-    gaussRandom() * 0.2;
+    gaussRandom() * 0.15;
   const edgeX = archEdgeX(y);
   const x = (edgeX + gaussRandom() * spreadX) * side;
-  const z = (Math.random() - 0.5) * 0.8;
+  const z = (Math.random() - 0.5) * 0.6;
   return [x, y, z];
 }
 
@@ -163,7 +163,7 @@ export default function HeroParticles({ mouseWorld }) {
     let i = 0;
 
     for (let g = 0; g < GOLD_COUNT; g++, i++) {
-      const [x, y, z] = edgePosition(0.2);
+      const [x, y, z] = edgePosition(0.05);
       positions[i * 3] = x;
       positions[i * 3 + 1] = y;
       positions[i * 3 + 2] = z;
@@ -182,7 +182,7 @@ export default function HeroParticles({ mouseWorld }) {
     }
 
     for (let w = 0; w < WHITE_COUNT; w++, i++) {
-      const [x, y, z] = edgePosition(0.4);
+      const [x, y, z] = edgePosition(0.08);
       positions[i * 3] = x;
       positions[i * 3 + 1] = y;
       positions[i * 3 + 2] = z;

@@ -1,22 +1,20 @@
 import React, { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { gsap, ScrollTrigger } from "./components/Gsapconfig";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
 import HeroSection from "./components/Herosection";
-import GlobalGrid from "./components/Globalgrid";
 import GlobalCanvas from "./components/GlobalCanvas";
 import GlobalTexture from "./components/Globaltexture";
 import LoadingScreen from "./components/LoadingScreen";
+import ViralitySection from "./components/Viralitysection";
+import GlobalGrid from "./components/Globalgrid";
 import { loadingState } from "./components/loadingState";
 import { entranceState } from "./components/entranceState";
 
-gsap.registerPlugin(ScrollTrigger);
 
 function DummySection() {
   return (
     <section className="dummy-section relative z-[1] w-full py-40 px-38 overflow-hidden">
-      {/* Each section gets its own grid instance — scrolls naturally */}
       <GlobalGrid />
 
       <div className="pointer-events-none absolute top-0 left-[105px] w-px h-full bg-white/20 z-30" aria-hidden="true" />
@@ -56,40 +54,48 @@ function DummySection() {
 const App = () => {
   const lenisRef = useRef(null);
 
-  useEffect(() => {
-    const lenis = new Lenis();
-    lenisRef.current = lenis;
+useEffect(() => {
+  const lenis = new Lenis({
+    lerp: 0.08,          // lower = smoother & more "floaty" (default 0.1)
+    duration: 1.4,        // overall scroll duration feel
+    smoothWheel: true,
+    wheelMultiplier: 0.9,  // slightly slower wheel = more controlled
+    touchMultiplier: 1.5,  // keep touch responsive on mobile
+  });
+  lenisRef.current = lenis;
 
-    lenis.stop();
+  lenis.stop();
 
-    const checkReady = setInterval(() => {
-      if (entranceState.isComplete) {
-        clearInterval(checkReady);
-        lenis.start();
-        ScrollTrigger.refresh();
-      }
-    }, 100);
-
-    lenis.on("scroll", ScrollTrigger.update);
-
-    gsap.ticker.add((time) => {
-      lenis.raf(time * 1000);
-    });
-
-    gsap.ticker.lagSmoothing(0);
-
-    return () => {
+  const checkReady = setInterval(() => {
+    if (entranceState.isComplete) {
       clearInterval(checkReady);
-      lenis.destroy();
-      gsap.ticker.remove(lenis.raf);
-    };
-  }, []);
+      lenis.start();
+      ScrollTrigger.refresh();
+    }
+  }, 100);
+
+  lenis.on("scroll", ScrollTrigger.update);
+
+  const rafCallback = (time) => {
+    lenis.raf(time * 1000);
+  };
+
+  gsap.ticker.add(rafCallback);
+  gsap.ticker.lagSmoothing(0);
+
+  return () => {
+    clearInterval(checkReady);
+    gsap.ticker.remove(rafCallback);  // now actually removes the right function
+    lenis.destroy();
+  };
+}, []);
 
   return (
     <main className="relative bg-[#121212]">
       <LoadingScreen videoSrc="/videos/loader.webm" />
       <GlobalCanvas />
       <HeroSection />
+      <ViralitySection />
       <DummySection />
       <GlobalTexture />
     </main>

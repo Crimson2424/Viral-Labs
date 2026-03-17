@@ -26,15 +26,10 @@
  */
 
 import { useRef } from "react";
-import gsap from "gsap";
-import { SplitText } from "gsap/SplitText";
-import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
-import { useGSAP } from "@gsap/react";
+import { gsap, SplitText, DrawSVGPlugin, useGSAP } from "./Gsapconfig";
 import { ViralLabsLogo, ArrowIcon, NavGlowLine } from "./SvgAssets";
 import { useState } from "react";
 import { entranceState } from "./entranceState";
-
-gsap.registerPlugin(SplitText, DrawSVGPlugin);
 
 /* ─── Config ─── */
 const NAV_ITEMS = [

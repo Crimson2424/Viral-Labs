@@ -17,11 +17,7 @@
  */
 
 import { useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { SplitText } from "gsap/SplitText";
-import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
-import { useGSAP } from "@gsap/react";
+import { gsap, ScrollTrigger, SplitText, DrawSVGPlugin, useGSAP} from "./Gsapconfig";
 import GridOverlay from "./GridOverlay";
 import GlobalGrid from "./Globalgrid";
 import Navbar from "./Navbar";
@@ -30,8 +26,6 @@ import { transitionState } from "./transitionState";
 import { entranceState } from "./entranceState";
 import MissionStats from "./Missionstats";
 import { loadingState } from "./loadingState";
-
-gsap.registerPlugin(ScrollTrigger, SplitText, DrawSVGPlugin);
 
 export default function HeroSection() {
   const sectionRef = useRef();

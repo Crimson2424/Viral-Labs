@@ -22,8 +22,7 @@
  */
 
 import { useRef, forwardRef } from "react";
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
+import { gsap, useGSAP } from "./Gsapconfig";
 
 // ════════════════════════════════════════════════
 // SVGs

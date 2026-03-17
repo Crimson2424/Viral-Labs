@@ -31,9 +31,6 @@ void main() {
 // ============================================
 // BAKE SHADER — renders dissolve noise to a texture (once)
 // ============================================
-// Runs the exact same hash → noise → fbm functions as the original
-// shader, writing 3 pre-scaled values into RGB channels.
-// This runs ONCE on mount + debounced on resize, not every frame.
 
 const bakeVertexShader = /* glsl */ `
 varying vec2 vUv;
@@ -79,15 +76,12 @@ float fbm(vec2 p) {
 void main() {
   float aspect = uResolution.x / uResolution.y;
 
-  // R: blockNoise — pixelated fbm
   float noiseScale = 2.0;
   vec2 pixelatedUv = floor(vUv * uResolution / noiseScale) * noiseScale / uResolution;
   float blockNoise = fbm(pixelatedUv * 100.0) * 0.06;
 
-  // G: smoothNoiseFbm — smooth fbm
   float smoothNoiseFbm = fbm(vUv * 80.0) * 0.12;
 
-  // B: angularNoise — angle-based fbm
   vec2 centeredUv = vUv - vec2(0.5);
   centeredUv.x *= aspect;
   float angle = atan(centeredUv.y, centeredUv.x);
@@ -100,15 +94,6 @@ void main() {
 // ============================================
 // FRAGMENT — HDR output for bloom postprocessing
 // ============================================
-// OPTIMIZATIONS (zero visual change):
-//   1. 3x fbm (15 noise octaves) → single texture lookup from baked DataTexture
-//   2. noise() and fbm() functions removed from main shader
-//   3. Early-out when entranceAlpha ≈ 0 (pixel invisible)
-//   4. Early-out dissolve block when uRevealProgress ≈ 0
-//   5. Gate RGB split texture reads behind rgbFalloff threshold
-//   6. pow(x, 6.0) → manual multiply chain (identical math)
-//   7. smoothstep(0.0, 1.0, x) → manual hermite (identical math)
-//   8. Precompute shared sub-expressions
 
 const fragmentShader = /* glsl */ `
 uniform float uTime;
@@ -134,10 +119,6 @@ varying vec2 vUv;
 
 #define PI 3.14159265359
 
-// ═══════════════════════════════════════════════
-// EDGE DETECTION (fwidth)
-// ═══════════════════════════════════════════════
-
 float getLuminance(vec3 color) {
   return dot(color, vec3(0.299, 0.587, 0.114));
 }
@@ -148,19 +129,9 @@ float computeEdge(sampler2D tex, vec2 uv, float strength, float threshold, float
   return smoothstep(threshold - softness, threshold + softness, edge);
 }
 
-// ═══════════════════════════════════════════════
-// HASH (kept for sparkle + star calculations)
-// ═══════════════════════════════════════════════
-
 float hash(vec2 p) {
   return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
 }
-
-// noise() and fbm() REMOVED — baked into uDissolveNoise texture
-
-// ═══════════════════════════════════════════════
-// 3D PERLIN NOISE (for radial entrance reveal)
-// ═══════════════════════════════════════════════
 
 vec4 permute(vec4 x) { return mod(((x * 34.0) + 1.0) * x, 289.0); }
 vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
@@ -228,27 +199,16 @@ float cnoise(vec3 P) {
   return 2.2 * n_xyz;
 }
 
-// ═══════════════════════════════════════════════
-// MAIN
-// ═══════════════════════════════════════════════
-
 void main() {
   vec2 newUV = (vUv - vec2(0.5)) * uResolution.zw + vec2(0.5);
 
-  // ── Plane zoom-forward during ACT 1 scroll ──
   float zoomLevel = 1.0 + uZoomProgress * 0.6;
   newUV = (newUV - 0.5) / zoomLevel + 0.5;
 
-  // ── Precompute shared values ──
   float aspect = uResolution.x / uResolution.y;
   vec2 aspectUV = vec2(vUv.x * aspect, vUv.y);
   vec2 aspectMouse = vec2(uMouse.x * aspect, uMouse.y);
   float dist = distance(aspectUV, aspectMouse);
-
-  // ═══════════════════════════════════════════════
-  // ENTRANCE — RADIAL NOISE REVEAL (center outward)
-  // Computed early so we can early-out if pixel is invisible.
-  // ═══════════════════════════════════════════════
 
   vec2 displacedUv = vUv + cnoise(vec3(vUv * 5.0, uTime * 0.1));
   float revealStrength = cnoise(vec3(displacedUv * 5.0, uTime * 0.2));
@@ -259,15 +219,10 @@ void main() {
   float opacityProgress = smoothstep(0.0, 0.7, uEntrance);
   float entranceAlpha = revealStrength * opacityProgress;
 
-  // ── EARLY OUT: pixel is invisible → skip everything ──
   if (entranceAlpha < 0.001) {
     gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
     return;
   }
-
-  // ═══════════════════════════════════════════════
-  // ETHEREAL MOUSE INTERACTION
-  // ═══════════════════════════════════════════════
 
   float ethFalloff = 1.0 - smoothstep(0.0, uRadius, dist);
   ethFalloff = pow(ethFalloff, uSoftness);
@@ -301,7 +256,6 @@ void main() {
   float brightnessLift = 1.0 + proximity * highlightMask * velocityMag * 0.1;
   color *= brightnessLift;
 
-  // ── RGB split — skip 2 texture reads when effect is invisible ──
   float rgbFalloff = 1.0 - smoothstep(0.0, uRgbRadius, dist);
   rgbFalloff = rgbFalloff * rgbFalloff * (3.0 - 2.0 * rgbFalloff);
 
@@ -315,19 +269,13 @@ void main() {
 
   color = clamp(color, 0.0, 1.0);
 
-  // ═══════════════════════════════════════════════
-  // DISSOLVE + EDGE + SPARKLE — skip entirely before scroll
-  // ═══════════════════════════════════════════════
-
   if (uRevealProgress > 0.001) {
     float p = uRevealProgress;
 
-    // ── Grayscale transition ──
     float grayscaleProgress = clamp(p / 3.99, 0.0, 1.0);
     float gray = getLuminance(color);
     color = mix(color, vec3(gray), grayscaleProgress);
 
-    // ── Edge detection ──
     float edge = computeEdge(uTexture, newUV, 2.0, 0.1, 0.1);
     float edgeIntensity = p * 0.5;
     float edgeBrightnessVal = 1.0 - p;
@@ -337,18 +285,15 @@ void main() {
     baseColor += vec3(1.0) * edgeGlow * edgeBrightnessVal;
     color = baseColor;
 
-    // ── Dissolve geometry ──
     vec2 centeredUv = vUv - vec2(0.5);
     centeredUv.x *= aspect;
     float centerDist = length(centeredUv);
     float maxDist = length(vec2(aspect * 0.5, 0.5));
 
-    // ── Dissolve noise — single texture lookup replaces 3x fbm ──
     vec4 noiseLookup = texture2D(uDissolveNoise, vUv);
     float noisyDist = centerDist + noiseLookup.r + noiseLookup.g + noiseLookup.b;
     float normalizedDist = noisyDist / maxDist;
 
-    // ── Dissolve threshold — GROWS, SHRINKS BACK, GROWS again ──
     float dissolveThreshold;
     float growEnd = 0.25;
     float shrinkEnd = 0.45;
@@ -369,17 +314,12 @@ void main() {
     float dissolveProgress = p * p * (3.0 - 2.0 * p);
     float dissolveMask = smoothstep(dissolveThreshold - 0.015, dissolveThreshold, normalizedDist);
 
-    // ═══════════════════════════════════════════════
-    // HDR EDGE GLOW
-    // ═══════════════════════════════════════════════
-
     float distToEdge = abs(normalizedDist - dissolveThreshold);
     float edgeWidth = mix(0.06, 0.008, smoothstep(0.35, 0.50, p));
     float edgeBand = smoothstep(edgeWidth, 0.0, distToEdge);
     float hdrBrightness = mix(5.0, 0.8, smoothstep(0.35, 0.55, p));
     float hdrEdge = edgeBand * hdrBrightness * smoothstep(0.0, 0.04, p);
 
-    // ── Sparkles (hash is cheap, kept in shader) ──
     float sparkleZoneWidth = 0.03 * (1.0 - dissolveProgress) + 0.01;
     float sparkleZone = smoothstep(sparkleZoneWidth, 0.0, distToEdge);
 
@@ -390,7 +330,6 @@ void main() {
     sparkle = s4 * s2;
     sparkle *= sparkleZone;
 
-    // Star-cross sparkles
     vec2 starUv = fract(vUv * pixelRes / 6.0) - 0.5;
     float starCross = max(
       smoothstep(0.04, 0.0, abs(starUv.x)) * smoothstep(0.3, 0.0, abs(starUv.y)),
@@ -403,10 +342,6 @@ void main() {
     float sparkleHdr = mix(3.0, 0.8, smoothstep(0.35, 0.55, p));
     float sparkleIntensity = (sparkle * 4.0 + starGlint * 3.0) * sparkleHdr;
     sparkleIntensity *= smoothstep(0.02, 0.08, p);
-
-    // ═══════════════════════════════════════════════
-    // COMPOSITE
-    // ═══════════════════════════════════════════════
 
     float bloomPhase = 1.0 - smoothstep(0.40, 0.50, p);
     float insideDissolved = 1.0 - dissolveMask;
@@ -424,15 +359,12 @@ void main() {
     float glowAlpha = smoothstep(glowBand, 0.0, distToEdge) * smoothstep(0.0, 0.04, p);
     alpha = max(alpha, glowAlpha);
 
-    // In the glow-only zone (outside dissolveMask), replace image with edge glow color
-    // so the underlying image doesn't bleed through
     float isGlowOnly = step(dissolveMask, 0.01) * glowAlpha;
     color = mix(color, vec3(hdrEdge + sparkleIntensity), isGlowOnly);
 
     gl_FragColor = vec4(color, alpha * entranceAlpha);
 
   } else {
-    // ── No scroll yet — pure entrance output, skip all dissolve work ──
     gl_FragColor = vec4(color, entranceAlpha);
   }
 }
@@ -442,7 +374,6 @@ void main() {
 // SHADER MATERIAL
 // ============================================
 
-// 1x1 black placeholder so uDissolveNoise is never null
 const placeholderData = new Float32Array([0, 0, 0, 1]);
 const placeholderTexture = new THREE.DataTexture(
   placeholderData, 1, 1, THREE.RGBAFormat, THREE.FloatType
@@ -494,12 +425,8 @@ const SHADER_CONFIG = {
 };
 
 // ============================================
-// DISSOLVE NOISE BAKE — GPU render-to-texture
+// DISSOLVE NOISE BAKE
 // ============================================
-// Runs the exact same hash/noise/fbm GLSL as the original shader,
-// but only once (on mount + debounced resize).
-// Result is a render target whose .texture replaces 3x fbm per pixel per frame
-// with a single texture2D lookup.
 
 function createBakeResources() {
   const scene = new THREE.Scene();
@@ -541,22 +468,18 @@ function Scene() {
   const _ndcVec = useMemo(() => new THREE.Vector3(), []);
   const _camPos = useMemo(() => new THREE.Vector3(), []);
 
-  // ── Bake resources (created once) ──
   const bakeRef = useRef(null);
   const rtRef = useRef(null);
   const debounceRef = useRef(null);
 
-  // Create bake scene once
   useMemo(() => {
     bakeRef.current = createBakeResources();
   }, []);
 
-  // Bake dissolve noise to render target
   const bakeNoise = useCallback((width, height) => {
     const bake = bakeRef.current;
     if (!bake) return;
 
-    // Dispose previous render target
     if (rtRef.current) rtRef.current.dispose();
 
     const rt = new THREE.WebGLRenderTarget(width, height, {
@@ -569,22 +492,18 @@ function Scene() {
 
     bake.material.uniforms.uResolution.value.set(width, height);
 
-    // Render bake shader to texture
     gl.setRenderTarget(rt);
     gl.render(bake.scene, bake.camera);
     gl.setRenderTarget(null);
 
     rtRef.current = rt;
 
-    // Push to material immediately
     if (materialRef.current) {
       materialRef.current.uDissolveNoise = rt.texture;
     }
   }, [gl]);
 
-  // Initial bake + debounced resize
   useEffect(() => {
-    // Bake immediately on mount
     bakeNoise(size.width, size.height);
 
     const handleResize = () => {
@@ -602,7 +521,6 @@ function Scene() {
     return () => {
       window.removeEventListener("resize", handleResize);
       clearTimeout(debounceRef.current);
-      // Cleanup
       if (rtRef.current) rtRef.current.dispose();
       if (bakeRef.current) {
         bakeRef.current.geometry.dispose();
@@ -611,7 +529,6 @@ function Scene() {
     };
   }, [bakeNoise, size.width, size.height, gl]);
 
-  // ── Mouse events ──
   useEffect(() => {
     const onMove = (e) => {
       const x = e.clientX ?? e.touches?.[0]?.clientX;
@@ -646,7 +563,6 @@ function Scene() {
     mat.uEntrance = entranceState.warpProgress;
     mat.uZoomProgress = transitionState.zoomProgress;
 
-    // Ensure baked texture is current (handles race on first frame)
     if (rtRef.current && mat.uDissolveNoise !== rtRef.current.texture) {
       mat.uDissolveNoise = rtRef.current.texture;
     }
@@ -715,7 +631,7 @@ function Scene() {
 }
 
 // ============================================
-// BLOOM CONTROLLER — animates bloom based on progress
+// BLOOM CONTROLLER
 // ============================================
 
 function BloomController({ bloomRef }) {
