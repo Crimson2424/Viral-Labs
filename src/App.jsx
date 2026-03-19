@@ -1,19 +1,22 @@
 import React, { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Canvas } from "@react-three/fiber";
+import { View, PerspectiveCamera } from "@react-three/drei";
+import { gsap, ScrollTrigger } from "./components/Gsapconfig";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
 import HeroSection from "./components/Herosection";
-import PlaybookSection from "./components/PlaybookSection";
-import ViralEngineSection from "./components/ViralEngineSection";
-import GlobalGrid from "./components/Globalgrid";
 import GlobalCanvas from "./components/GlobalCanvas";
 import GlobalTexture from "./components/Globaltexture";
 import LoadingScreen from "./components/LoadingScreen";
+import GlobeContent from "./components/GlobeScene";
+import CreatorGlobe from "./components/CreatorGlobe";
+import ViralitySection from "./components/Viralitysection";
+import CreatorNetwork from "./components/CreatorNetwork";
+import PlaybookSection from "./components/PlaybookSection";
+import ViralEngineSection from "./components/ViralEngineSection";
+import GlobalGrid from "./components/Globalgrid";
 import { loadingState } from "./components/loadingState";
 import { entranceState } from "./components/entranceState";
-
-gsap.registerPlugin(ScrollTrigger);
 
 function DummySection() {
   return (
@@ -57,9 +60,20 @@ function DummySection() {
 
 const App = () => {
   const lenisRef = useRef(null);
+  const containerRef = useRef(null);
+
+  // View tracking refs — created here, passed down to sections
+  const globeContainerRef = useRef(null);
+  const creatorViewRef = useRef(null);
 
   useEffect(() => {
-    const lenis = new Lenis();
+    const lenis = new Lenis({
+      lerp: 0.08,
+      duration: 1.4,
+      smoothWheel: true,
+      wheelMultiplier: 0.9,
+      touchMultiplier: 1.5,
+    });
     lenisRef.current = lenis;
 
     lenis.stop();
@@ -74,26 +88,66 @@ const App = () => {
 
     lenis.on("scroll", ScrollTrigger.update);
 
-    gsap.ticker.add((time) => {
+    const rafCallback = (time) => {
       lenis.raf(time * 1000);
-    });
+    };
 
+    gsap.ticker.add(rafCallback);
     gsap.ticker.lagSmoothing(0);
 
     return () => {
       clearInterval(checkReady);
+      gsap.ticker.remove(rafCallback);
       lenis.destroy();
-      gsap.ticker.remove(lenis.raf);
     };
   }, []);
 
   return (
-    <main className="relative bg-[#121212]">
+    <main ref={containerRef} className="relative bg-[#121212]">
       <LoadingScreen videoSrc="/videos/loader.webm" />
       <GlobalCanvas />
+
+      {/* Shared Canvas — all Views live inside here */}
+      <Canvas
+        eventSource={containerRef}
+        eventPrefix="client"
+        camera={{ position: [0, 0, 3.5], fov: 45 }}
+        gl={{
+          antialias: false,
+          alpha: true,
+          powerPreference: "high-performance",
+        }}
+        dpr={[1, 2]}
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          pointerEvents: "none",
+          zIndex: 5,
+        }}
+      >
+        {/* Globe — tracks the container div inside ViralitySection */}
+        <View track={globeContainerRef}>
+          <PerspectiveCamera makeDefault position={[0, 0, 3.5]} fov={45} />
+          <GlobeContent containerRef={globeContainerRef} />
+        </View>
+
+        {/* Creator Network — tracks the container div inside CreatorNetwork */}
+        <View track={creatorViewRef}>
+          <PerspectiveCamera makeDefault position={[0, 0, 2.8]} fov={45} />
+          <group position={[-1.05, -0.25, 0.73]} rotation={[-0.2, 0.64, 1.23]}>
+            <CreatorGlobe containerRef={creatorViewRef} />
+          </group>
+        </View>
+      </Canvas>
+
       <HeroSection />
+      <ViralitySection globeContainerRef={globeContainerRef} />
       <PlaybookSection />
       <ViralEngineSection />
+      <CreatorNetwork viewRef={creatorViewRef} />
       <DummySection />
       <GlobalTexture />
     </main>

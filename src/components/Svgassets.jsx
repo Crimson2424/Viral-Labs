@@ -251,6 +251,153 @@ export const CtaGlowLine = forwardRef(({ className = "" }, ref) => (
   </svg>
 ));
 
+export const CardGlowH = forwardRef(({ className = "" }, ref) => (
+  <svg
+    ref={ref}
+    width="82"
+    height="23"
+    viewBox="0 0 82 23"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+  >
+    <g filter="url(#cardGlowH0)" style={{ mixBlendMode: "plus-lighter" }}>
+      <line x1="11" y1="11.5" x2="71" y2="11.5" stroke="#F05A1F" />
+    </g>
+    <g filter="url(#cardGlowH1)" style={{ mixBlendMode: "plus-lighter" }}>
+      <line x1="11" y1="11.5" x2="71" y2="11.5" stroke="#F05A1F" />
+    </g>
+    <g filter="url(#cardGlowH2)" style={{ mixBlendMode: "plus-lighter" }}>
+      <line x1="11" y1="11.5" x2="71" y2="11.5" stroke="#F05A1F" />
+    </g>
+    <g filter="url(#cardGlowH3)" style={{ mixBlendMode: "plus-lighter" }}>
+      <line x1="11" y1="11.5" x2="71" y2="11.5" stroke="#F05A1F" />
+    </g>
+    <g filter="url(#cardGlowH4)" style={{ mixBlendMode: "plus-lighter" }}>
+      <line x1="11" y1="11.5" x2="71" y2="11.5" stroke="#F05A1F" />
+    </g>
+    <defs>
+      <filter id="cardGlowH0" x="10" y="10" width="62" height="3" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+        <feFlood floodOpacity="0" result="BackgroundImageFix" />
+        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+        <feGaussianBlur stdDeviation="0.5" result="effect1" />
+      </filter>
+      <filter id="cardGlowH1" x="10" y="10" width="62" height="3" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+        <feFlood floodOpacity="0" result="BackgroundImageFix" />
+        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+        <feGaussianBlur stdDeviation="0.5" result="effect1" />
+      </filter>
+      <filter id="cardGlowH2" x="5" y="5" width="72" height="13" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+        <feFlood floodOpacity="0" result="BackgroundImageFix" />
+        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+        <feGaussianBlur stdDeviation="3" result="effect1" />
+      </filter>
+      <filter id="cardGlowH3" x="5" y="5" width="72" height="13" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+        <feFlood floodOpacity="0" result="BackgroundImageFix" />
+        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+        <feGaussianBlur stdDeviation="3" result="effect1" />
+      </filter>
+      <filter id="cardGlowH4" x="0" y="0" width="82" height="23" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+        <feFlood floodOpacity="0" result="BackgroundImageFix" />
+        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+        <feGaussianBlur stdDeviation="5.5" result="effect1" />
+      </filter>
+    </defs>
+  </svg>
+));
+
+// ── Card Vertical Glow Line (23×122) — orange glow accent on card edges ──
+export const CardGlowV = forwardRef(({ className = "" }, ref) => (
+  <svg
+    ref={ref}
+    width="23"
+    height="122"
+    viewBox="0 0 23 122"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+  >
+    <g filter="url(#cardGlowV0)" style={{ mixBlendMode: "plus-lighter" }}>
+      <line x1="11.5" y1="111" x2="11.5" y2="11" stroke="#F05A1F" />
+    </g>
+    <g filter="url(#cardGlowV1)" style={{ mixBlendMode: "plus-lighter" }}>
+      <line x1="11.5" y1="111" x2="11.5" y2="11" stroke="#F05A1F" />
+    </g>
+    <g filter="url(#cardGlowV2)" style={{ mixBlendMode: "plus-lighter" }}>
+      <line x1="11.5" y1="111" x2="11.5" y2="11" stroke="#F05A1F" />
+    </g>
+    <g filter="url(#cardGlowV3)" style={{ mixBlendMode: "plus-lighter" }}>
+      <line x1="11.5" y1="111" x2="11.5" y2="11" stroke="#F05A1F" />
+    </g>
+    <g filter="url(#cardGlowV4)" style={{ mixBlendMode: "plus-lighter" }}>
+      <line x1="11.5" y1="111" x2="11.5" y2="11" stroke="#F05A1F" />
+    </g>
+    <defs>
+      <filter id="cardGlowV0" x="10" y="10" width="3" height="102" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+        <feFlood floodOpacity="0" result="BackgroundImageFix" />
+        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+        <feGaussianBlur stdDeviation="0.5" result="effect1" />
+      </filter>
+      <filter id="cardGlowV1" x="10" y="10" width="3" height="102" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+        <feFlood floodOpacity="0" result="BackgroundImageFix" />
+        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+        <feGaussianBlur stdDeviation="0.5" result="effect1" />
+      </filter>
+      <filter id="cardGlowV2" x="5" y="5" width="13" height="112" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+        <feFlood floodOpacity="0" result="BackgroundImageFix" />
+        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+        <feGaussianBlur stdDeviation="3" result="effect1" />
+      </filter>
+      <filter id="cardGlowV3" x="5" y="5" width="13" height="112" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+        <feFlood floodOpacity="0" result="BackgroundImageFix" />
+        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+        <feGaussianBlur stdDeviation="3" result="effect1" />
+      </filter>
+      <filter id="cardGlowV4" x="0" y="0" width="23" height="122" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+        <feFlood floodOpacity="0" result="BackgroundImageFix" />
+        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+        <feGaussianBlur stdDeviation="5.5" result="effect1" />
+      </filter>
+    </defs>
+  </svg>
+));
+
+// ── Card Cubes (27×42) — two glowing orange squares ──
+export const CardCubes = forwardRef(({ className = "" }, ref) => (
+  <svg
+    ref={ref}
+    width="27"
+    height="42"
+    viewBox="0 0 27 42"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+  >
+    <rect x="10" y="32" width="7" height="7" transform="rotate(-90 10 32)" fill="#FF6F21" />
+    <rect x="10" y="17" width="7" height="7" transform="rotate(-90 10 17)" fill="#FF6F21" />
+    <g filter="url(#cardCubes0)">
+      <rect x="10" y="32" width="7" height="7" transform="rotate(-90 10 32)" fill="#FF6F21" />
+      <rect x="10" y="17" width="7" height="7" transform="rotate(-90 10 17)" fill="#FF6F21" />
+    </g>
+    <g filter="url(#cardCubes1)">
+      <rect x="10" y="32" width="7" height="7" transform="rotate(-90 10 32)" fill="#FF6F21" />
+      <rect x="10" y="17" width="7" height="7" transform="rotate(-90 10 17)" fill="#FF6F21" />
+    </g>
+    <defs>
+      <filter id="cardCubes0" x="0" y="0" width="27" height="42" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+        <feFlood floodOpacity="0" result="BackgroundImageFix" />
+        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+        <feGaussianBlur stdDeviation="5" result="effect1" />
+      </filter>
+      <filter id="cardCubes1" x="0" y="0" width="27" height="42" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+        <feFlood floodOpacity="0" result="BackgroundImageFix" />
+        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+        <feGaussianBlur stdDeviation="5" result="effect1" />
+      </filter>
+    </defs>
+  </svg>
+));
+
 // ══════════════════════════════════════════════════
 // Playbook Section SVGs
 // ══════════════════════════════════════════════════
