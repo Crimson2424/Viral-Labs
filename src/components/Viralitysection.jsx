@@ -11,11 +11,14 @@
  *
  * All initial states via gsap.set(). All tweens use .to() only.
  * useGSAP hook for cleanup + scope.
+ *
+ * REFACTORED: Globe View is now in App.jsx's Canvas. This component
+ * receives globeContainerRef as a prop and attaches it to the DOM
+ * element the View tracks.
  */
 
 import { useRef } from "react";
 import GlobalGrid from "./Globalgrid";
-import GlobeScene from "./GlobeScene";
 import { CardGlowH, CardGlowV, CardCubes } from "./SvgAssets";
 import { gsap, ScrollTrigger, SplitText, useGSAP } from "../components/Gsapconfig";
 import { viralityState } from "./viralityState";
@@ -24,7 +27,7 @@ import { viralityState } from "./viralityState";
 // MAIN SECTION
 // ════════════════════════════════════════════════
 
-export default function ViralitySection() {
+export default function ViralitySection({ globeContainerRef }) {
   const sectionRef = useRef();
   const glowRef = useRef();
 
@@ -291,13 +294,11 @@ export default function ViralitySection() {
         }}
       />
 
-      {/* Globe canvas — clipped between vertical border lines */}
+      {/* Globe tracking container — the View in App.jsx tracks this div */}
       <div
-        className="absolute inset-0 z-10"
-        style={{ clipPath: "inset(0 105px)" }}
-      >
-        <GlobeScene className="absolute inset-0" />
-      </div>
+        ref={globeContainerRef}
+        className="absolute top-0 bottom-0 left-[105px] right-[105px] z-10"
+      />
 
       <GlobalGrid />
 

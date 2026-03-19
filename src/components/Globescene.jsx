@@ -1,29 +1,25 @@
 /**
- * GlobeScene — Self-contained GPGPU particle globe with its own Canvas.
+ * GlobeScene — GPGPU particle globe (Canvas-free, for use inside <View>).
  *
- * CANVAS SIZE: Fills its parent container (full section).
- *              The globe mesh is centered at origin — GlobeGroup repositions
- *              it every frame based on viralityState.globeProgress (scrubbed
- *              by GSAP ScrollTrigger in the parent section).
+ * REFACTORED from self-contained Canvas to a pure scene component.
+ * Now used inside a <View> in App.jsx's shared Canvas.
  *
- * SCROLL ANIMATION:
- *   globeProgress 0 → globe at (startX, 0, startZ) — left side, closer
- *   globeProgress 1 → globe at (endX,   0, endZ)   — center, normal z
- *   Interpolation uses smooth easing for natural feel.
+ * KEY CHANGE — POINTER HANDLING:
+ *   Previously used gl.domElement (the canvas) for NDC coordinate math.
+ *   Now accepts a `containerRef` prop — the DOM element the <View> tracks.
+ *   Pointer NDC is calculated relative to that container's bounds, so
+ *   hover/click interactions stay accurate even though the actual Canvas
+ *   is a fixed full-screen overlay.
  *
- * INTERACTIONS:
- *   - Hover: particles push away from cursor ray (uHoverStrength)
- *   - Click & drag: particles attract toward click point (uMouseStrength)
- *
- * POINTER FIX: Uses gl.domElement.getBoundingClientRect() to calculate
- * NDC coordinates relative to the canvas element, not the viewport.
- * This is critical when the canvas isn't full-screen.
- *
- * No OrbitControls, no auto-rotate. Static camera.
+ * USAGE (inside App.jsx's Canvas):
+ *   <View track={globeContainerRef}>
+ *     <PerspectiveCamera makeDefault position={[0, 0, 3.5]} fov={45} />
+ *     <GlobeContent containerRef={globeContainerRef} />
+ *   </View>
  */
 
 import React, { useRef, useMemo, useEffect, useCallback, Suspense } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { useFBO } from "@react-three/drei";
 import * as THREE from "three";
 import { viralityState } from "./viralityState";
@@ -207,7 +203,6 @@ function GlobeGroup({ children }) {
     const p = viralityState.globeProgress;
     const { startX, startZ, endX, endZ, startScale, endScale } = viralityState;
 
-    // Linear interpolation from start → end based on scroll progress
     groupRef.current.position.x = startX + (endX - startX) * p;
     groupRef.current.position.z = startZ + (endZ - startZ) * p;
 
@@ -222,7 +217,7 @@ function GlobeGroup({ children }) {
 // SIMULATION
 // ============================================================================
 
-function Simulation({ children }) {
+function Simulation({ children, containerRef }) {
   const { gl } = useThree();
   const c = CONFIG;
 
@@ -295,15 +290,17 @@ function Simulation({ children }) {
 
   useEffect(() => { initParticles(); }, []);
 
-  // ── Pointer handling — coords relative to canvas element, not viewport ──
+  // ── Pointer handling — coords relative to TRACKED CONTAINER, not canvas ──
   const raycaster = useMemo(() => new THREE.Raycaster(), []);
   const pointer = useMemo(() => new THREE.Vector2(), []);
 
   useEffect(() => {
-    const canvas = gl.domElement;
+    const getTrackElement = () => containerRef?.current;
 
     const onMove = (e) => {
-      const rect = canvas.getBoundingClientRect();
+      const el = getTrackElement();
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
       pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
       pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
     };
@@ -318,23 +315,20 @@ function Simulation({ children }) {
       window.removeEventListener("pointerdown", onDown);
       window.removeEventListener("pointerup", onUp);
     };
-  }, [gl, pointer]);
+  }, [containerRef, pointer]);
 
   useFrame(({ camera }, delta) => {
     if (!init.current) return;
     const dt = Math.min(delta, 1 / 30);
     time.current += dt;
 
-    // Only enable pointer interactions after globe has finished animating in
     const interactable = viralityState.globeProgress >= 0.98;
 
-    // Raycast from pointer for hover interaction
     raycaster.setFromCamera(pointer, camera);
     ray.current.origin.copy(raycaster.ray.origin);
     ray.current.direction.copy(raycaster.ray.direction);
     ray.current.active = interactable;
 
-    // Find click intersection with sphere
     const sphere = new THREE.Sphere(new THREE.Vector3(0, 0, 0), c.sphereRadius * 2);
     const intersection = new THREE.Vector3();
     if (interactable && raycaster.ray.intersectSphere(sphere, intersection)) {
@@ -410,26 +404,17 @@ function Points({ getTextures }) {
 }
 
 // ============================================================================
-// EXPORTED COMPONENT — full-section Canvas with GlobeGroup
+// EXPORTED COMPONENT — pure scene content, no Canvas
 // ============================================================================
 
-export default function GlobeScene({ className = "", style }) {
+export default function GlobeContent({ containerRef }) {
   return (
-    <div className={className} style={style}>
-      <Canvas
-        camera={{ position: [0, 0, 3.5], fov: 45 }}
-        gl={{ antialias: false, alpha: true, powerPreference: "high-performance" }}
-        dpr={[1, 2]}
-        style={{ background: "transparent" }}
-      >
-        <Suspense fallback={null}>
-          <GlobeGroup>
-            <Simulation>
-              <Points />
-            </Simulation>
-          </GlobeGroup>
-        </Suspense>
-      </Canvas>
-    </div>
+    <Suspense fallback={null}>
+      <GlobeGroup>
+        <Simulation containerRef={containerRef}>
+          <Points />
+        </Simulation>
+      </GlobeGroup>
+    </Suspense>
   );
 }
