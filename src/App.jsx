@@ -12,18 +12,16 @@ import GlobeContent from "./components/GlobeScene";
 import CreatorGlobe from "./components/CreatorGlobe";
 import ViralitySection from "./components/Viralitysection";
 import CreatorNetwork from "./components/CreatorNetwork";
+import PlaybookSection from "./components/PlaybookSection";
+import ViralEngineSection from "./components/ViralEngineSection";
 import GlobalGrid from "./components/Globalgrid";
 import { loadingState } from "./components/loadingState";
 import { entranceState } from "./components/entranceState";
 
-
-// ══════════════════════════════════════════════════
-// DUMMY SECTION
-// ══════════════════════════════════════════════════
-
 function DummySection() {
   return (
     <section className="dummy-section relative z-[1] w-full py-40 px-38 overflow-hidden">
+      {/* Each section gets its own grid instance — scrolls naturally */}
       <GlobalGrid />
 
       <div className="pointer-events-none absolute top-0 left-[105px] w-px h-full bg-white/20 z-30" aria-hidden="true" />
@@ -60,16 +58,11 @@ function DummySection() {
   );
 }
 
-
-// ══════════════════════════════════════════════════
-// APP
-// ══════════════════════════════════════════════════
-
 const App = () => {
   const lenisRef = useRef(null);
   const containerRef = useRef(null);
 
-  // ── View tracking refs — created here, passed down to sections ──
+  // View tracking refs — created here, passed down to sections
   const globeContainerRef = useRef(null);
   const creatorViewRef = useRef(null);
 
@@ -114,7 +107,7 @@ const App = () => {
       <LoadingScreen videoSrc="/videos/loader.webm" />
       <GlobalCanvas />
 
-      {/* ══ SHARED CANVAS — all Views live inside here ══ */}
+      {/* Shared Canvas — all Views live inside here */}
       <Canvas
         eventSource={containerRef}
         eventPrefix="client"
@@ -152,6 +145,8 @@ const App = () => {
 
       <HeroSection />
       <ViralitySection globeContainerRef={globeContainerRef} />
+      <PlaybookSection />
+      <ViralEngineSection />
       <CreatorNetwork viewRef={creatorViewRef} />
       <DummySection />
       <GlobalTexture />
