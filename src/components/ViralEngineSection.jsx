@@ -11,6 +11,7 @@ import {
   RocketFrame5Svg,
   RocketFrame6Svg,
   RocketFrame7Svg,
+  RocketThrustersSvg,
   LinesVectorRocketSvg,
   GlowLineSvg,
   Line744Svg,
@@ -70,8 +71,43 @@ function StageLabel({ title, description }) {
   );
 }
 
+/* ── Thruster flame origins (SVG coords where each flame starts) ── */
+const FLAME_ORIGINS = [
+  { selector: ".thruster-center .thruster-flame", origin: "91 6.3" },
+  { selector: ".thruster-left-inner .thruster-flame", origin: "49.5 12.7" },
+  { selector: ".thruster-left-outer .thruster-flame", origin: "29 8.1" },
+  { selector: ".thruster-right-outer .thruster-flame", origin: "153 6.3" },
+  { selector: ".thruster-right-inner .thruster-flame", origin: "129.5 11.8" },
+];
+
+/* ── Random helper ── */
+const rand = (min, max) => min + Math.random() * (max - min);
+
+/*
+  Spread offsets — rows fan out from center on hover.
+  Stagger delay per row gives an organic cascade feel
+  instead of all 4 snapping simultaneously.
+*/
+const SPREAD = {
+  offsets: [-28, -10, 10, 28],
+  enter: {
+    duration: 0.85,
+    ease: "expo.out",         // very smooth deceleration — premium feel
+    stagger: 0.04,            // subtle cascade: top row first, bottom last
+  },
+  leave: {
+    duration: 0.7,
+    ease: "power3.inOut",     // smooth both ways — no abrupt start or end
+    stagger: 0.03,
+  },
+};
+
 export default function ViralEngineSection() {
   const sectionRef = useRef(null);
+  const thrusterRef = useRef(null);
+  const rocketColumnRef = useRef(null);
+  const hoverTlRef = useRef(null);
+  const spreadTlRef = useRef(null);
 
   useGSAP(
     () => {
@@ -147,7 +183,7 @@ export default function ViralEngineSection() {
       const statItems = section.querySelectorAll(".ve-stat-item");
       const cornerBrackets = section.querySelectorAll(".ve-corner");
 
-      gsap.set(cornerBrackets, { opacity: 0, scale: 0 });
+      gsap.set(cornerBrackets, { opacity: 0 });
       gsap.set(statItems, { opacity: 0, y: 25 });
 
       const statsTl = gsap.timeline({
@@ -160,10 +196,9 @@ export default function ViralEngineSection() {
 
       statsTl.to(cornerBrackets, {
         opacity: 1,
-        scale: 1,
         duration: 0.5,
         stagger: 0.08,
-        ease: "back.out(2.5)",
+        ease: "power2.out",
       });
 
       statsTl.to(
@@ -179,7 +214,7 @@ export default function ViralEngineSection() {
       );
 
       /* ═══════════════════════════════════════════════
-         2. RIGHT COLUMN — Rocket rows
+         2. RIGHT COLUMN — Rocket rows scroll entrance
          ═══════════════════════════════════════════════ */
 
       const rows = section.querySelectorAll(".ve-rocket-row");
@@ -284,6 +319,179 @@ export default function ViralEngineSection() {
           },
         });
       });
+
+      /* ═══════════════════════════════════════════════
+         4. THRUSTER IDLE FLICKER SETUP
+         ═══════════════════════════════════════════════ */
+
+      const thrusterSvg = thrusterRef.current;
+      const rocketColumn = rocketColumnRef.current;
+      if (!thrusterSvg || !rocketColumn) return;
+
+      const flames = thrusterSvg.querySelectorAll(".thruster-flame");
+      const bases = thrusterSvg.querySelectorAll(".thruster-base");
+
+      gsap.set(flames, { opacity: 0.3, scaleY: 0.5 });
+      gsap.set(bases, { opacity: 0.4 });
+
+      FLAME_ORIGINS.forEach(({ selector, origin }) => {
+        const el = thrusterSvg.querySelector(selector);
+        if (el) gsap.set(el, { svgOrigin: origin });
+      });
+
+      let isHovered = false;
+      const idleTweens = [];
+
+      function flickerFlame(flame) {
+        if (isHovered) return;
+        const tween = gsap.to(flame, {
+          opacity: rand(0.15, 0.45),
+          scaleY: rand(0.35, 0.7),
+          duration: rand(0.12, 0.35),
+          ease: "sine.inOut",
+          onComplete: () => flickerFlame(flame),
+        });
+        idleTweens.push(tween);
+      }
+
+      flames.forEach((flame) => {
+        gsap.delayedCall(rand(0, 0.3), () => flickerFlame(flame));
+      });
+
+      bases.forEach((base) => {
+        gsap.to(base, {
+          opacity: rand(0.25, 0.45),
+          duration: rand(0.2, 0.5),
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          delay: rand(0, 0.4),
+        });
+      });
+
+      /* ═══════════════════════════════════════════════
+         5. UNIFIED HOVER — SPREAD + IGNITE
+            Smooth expo/power3 easings, per-row stagger,
+            and gradual thruster ramp for premium feel.
+         ═══════════════════════════════════════════════ */
+
+      const rocketRows = rocketColumn.querySelectorAll(".ve-rocket-row");
+
+      const handleEnter = () => {
+        isHovered = true;
+
+        // ── A) Spread rows apart — staggered cascade ──
+        if (spreadTlRef.current) spreadTlRef.current.kill();
+
+        const spreadTl = gsap.timeline();
+        rocketRows.forEach((row, i) => {
+          spreadTl.to(
+            row,
+            {
+              y: SPREAD.offsets[i],
+              duration: SPREAD.enter.duration,
+              ease: SPREAD.enter.ease,
+            },
+            i * SPREAD.enter.stagger   // subtle cascade
+          );
+        });
+        spreadTlRef.current = spreadTl;
+
+        // ── B) Ignite thrusters — ramp up, not instant snap ──
+        if (hoverTlRef.current) hoverTlRef.current.kill();
+        idleTweens.forEach((t) => t.kill());
+        idleTweens.length = 0;
+
+        const fireTl = gsap.timeline();
+
+        // Ramp phase: flames grow smoothly into full burn
+        fireTl.to(flames, {
+          opacity: 1,
+          scaleY: 1.4,
+          duration: 0.45,
+          stagger: { each: 0.04, from: "random" },
+          ease: "expo.out",
+          overwrite: true,
+        });
+
+        fireTl.to(
+          bases,
+          {
+            opacity: 1,
+            duration: 0.35,
+            ease: "power2.out",
+            overwrite: true,
+          },
+          "<0.05"    // bases brighten just after flames start
+        );
+
+        // Sustain phase: chaotic flicker while hovered
+        fireTl.to(flames, {
+          keyframes: [
+            { scaleY: 1.35, opacity: 0.9, duration: 0.08 },
+            { scaleY: 1.1, opacity: 0.75, duration: 0.1 },
+            { scaleY: 1.45, opacity: 1, duration: 0.07 },
+            { scaleY: 1.2, opacity: 0.85, duration: 0.09 },
+          ],
+          stagger: { each: 0.03, from: "random" },
+          ease: "none",
+          repeat: -1,
+        });
+
+        hoverTlRef.current = fireTl;
+      };
+
+      const handleLeave = () => {
+        isHovered = false;
+
+        // ── A) Collapse rows — smooth symmetrical ease ──
+        if (spreadTlRef.current) spreadTlRef.current.kill();
+
+        const collapseTl = gsap.timeline();
+        rocketRows.forEach((row, i) => {
+          collapseTl.to(
+            row,
+            {
+              y: 0,
+              duration: SPREAD.leave.duration,
+              ease: SPREAD.leave.ease,
+            },
+            i * SPREAD.leave.stagger
+          );
+        });
+        spreadTlRef.current = collapseTl;
+
+        // ── B) Wind down thrusters — gradual fade, not abrupt cut ──
+        if (hoverTlRef.current) hoverTlRef.current.kill();
+
+        gsap.to(flames, {
+          opacity: 0.3,
+          scaleY: 0.5,
+          duration: 0.55,
+          stagger: { each: 0.04, from: "random" },
+          ease: "power3.inOut",
+          overwrite: true,
+          onComplete: () => {
+            flames.forEach((flame) => flickerFlame(flame));
+          },
+        });
+
+        gsap.to(bases, {
+          opacity: 0.4,
+          duration: 0.5,
+          ease: "power3.inOut",
+          overwrite: true,
+        });
+      };
+
+      rocketColumn.addEventListener("mouseenter", handleEnter);
+      rocketColumn.addEventListener("mouseleave", handleLeave);
+
+      return () => {
+        rocketColumn.removeEventListener("mouseenter", handleEnter);
+        rocketColumn.removeEventListener("mouseleave", handleLeave);
+        idleTweens.forEach((t) => t.kill());
+      };
     },
     { scope: sectionRef }
   );
@@ -295,17 +503,17 @@ export default function ViralEngineSection() {
     >
       <GlobalGrid />
 
-      {/* ── Grid lines (matching PlaybookSection + MissionStats at 105px) ── */}
+      {/* ── Grid lines ── */}
       <div className="pointer-events-none absolute top-0 left-[105px] w-px h-full bg-white/20 z-30" aria-hidden="true" />
       <div className="pointer-events-none absolute top-0 right-[105px] w-px h-full bg-white/20 z-30" aria-hidden="true" />
       <div className="pointer-events-none absolute top-0 left-[105px] right-[105px] h-px bg-white/20 z-30" aria-hidden="true" />
       <div className="pointer-events-none absolute bottom-0 left-[105px] right-[105px] h-px bg-white/20 z-30" aria-hidden="true" />
 
-      {/* ── Corner markers (same as MissionStats) ── */}
-      <CornerLeft className="pointer-events-none absolute -top-0.5 left-[105px] z-30" />
-      <CornerRight className="pointer-events-none absolute -top-0.5 right-[105px] z-30" />
-      <CornerLeft className="pointer-events-none absolute -bottom-1 left-[105px] z-30" style={{ transform: "scaleY(-1)" }} />
-      <CornerRight className="pointer-events-none absolute -bottom-1 right-[105px] z-30" style={{ transform: "scaleY(-1)" }} />
+      {/* ── Corner markers ── */}
+      <CornerLeft className="pointer-events-none absolute -top-0.5 left-[105px] z-40" />
+      <CornerRight className="pointer-events-none absolute -top-0.5 right-[105px] z-40" />
+      <CornerLeft className="pointer-events-none absolute -bottom-1 left-[105px] z-40" style={{ transform: "scaleY(-1)" }} />
+      <CornerRight className="pointer-events-none absolute -bottom-1 right-[105px] z-40" style={{ transform: "scaleY(-1)" }} />
 
       {/* Main Content */}
       <div className="relative z-40 max-w-7xl mx-auto pt-35">
@@ -313,7 +521,6 @@ export default function ViralEngineSection() {
         {/* LEFT COLUMN */}
         <div className="absolute left-0 top-0 w-[24%] flex flex-col h-full z-10">
 
-          {/* Header */}
           <div className="flex flex-col gap-1">
             <p className="font-host text-base text-vl-orange uppercase tracking-wide ve-header-subtitle">
               STRUCTURED IN. VIRAL OUT.
@@ -324,10 +531,8 @@ export default function ViralEngineSection() {
             </h2>
           </div>
 
-          {/* Glow line */}
           <GlowLineSvg className="w-54 h-auto mt-35 -ml-3 ve-glow-line" />
 
-          {/* Body text */}
           <div className="flex flex-col gap-6 mt-6">
             <p className="font-host text-base text-white tracking-tighter leading-normal ve-body-text">
               Behind every campaign is a structured growth system. The Viral
@@ -340,10 +545,8 @@ export default function ViralEngineSection() {
             </p>
           </div>
 
-          {/* Spacer */}
           <div className="flex my-25" />
 
-          {/* Stats box */}
           <div className="relative inline-flex flex-col gap-4 p-5 max-w-50 items-center ve-stats-box">
             <CornerVectorRocketSvg
               className="absolute top-0 right-0 w-2.5 h-2.5 ve-corner"
@@ -375,8 +578,11 @@ export default function ViralEngineSection() {
           </div>
         </div>
 
-        {/* CENTER + RIGHT COLUMNS */}
-        <div className="ml-[28%] grid grid-cols-9 gap-x-4 gap-y-6">
+        {/* CENTER + RIGHT COLUMNS — hover triggers spread + ignite */}
+        <div
+          ref={rocketColumnRef}
+          className="ml-[28%] grid grid-cols-9 gap-x-4 gap-y-6 cursor-pointer"
+        >
 
           {/* ━━━ ROW 1 ━━━ */}
           <div className="col-span-9 grid grid-cols-9 gap-x-4 ve-rocket-row">
@@ -413,10 +619,14 @@ export default function ViralEngineSection() {
             </div>
           </div>
 
-          {/* ━━━ ROW 4 ━━━ */}
+          {/* ━━━ ROW 4 — Rocket Frame 7 + Thrusters ━━━ */}
           <div className="col-span-9 grid grid-cols-9 gap-x-4 ve-rocket-row">
-            <div className="col-span-5">
-              <RocketFrame7Svg className="w-full ve-rocket-frame" />
+            <div className="col-span-5 flex flex-col items-center ve-rocket-frame">
+              <RocketFrame7Svg className="w-full" />
+              <RocketThrustersSvg
+                ref={thrusterRef}
+                className="w-[100%] scale-110 -mt-5 pointer-events-none"
+              />
             </div>
             <div className="col-span-4 flex flex-col justify-start">
               <LinesVectorRocketSvg className="w-full h-auto pointer-events-none ve-connector-line" />
@@ -425,7 +635,11 @@ export default function ViralEngineSection() {
           </div>
 
         </div>
+        {/* end CENTER + RIGHT COLUMNS */}
+
       </div>
+      {/* end Main Content */}
+
     </section>
   );
 }

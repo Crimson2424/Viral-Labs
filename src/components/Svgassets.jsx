@@ -1599,3 +1599,94 @@ export const Line744Svg = forwardRef(({ className = "" }, ref) => (
 export const CornerVectorRocketSvg = forwardRef(({ className = "", style = {} }, ref) => (
   <img ref={ref} src="/svgs/corner Vector rocket.svg" alt="" className={className} style={style} />
 ));
+
+// ── Rocket Thrusters (182×42) — orange flame glow below rocket frame 7 ──
+// PASTE THIS into SvgAssets.jsx right after the RocketFrame7Svg export
+
+export const RocketThrustersSvg = forwardRef(({ className = "" }, ref) => (
+  <svg ref={ref} className={className} width="182" height="42" viewBox="0 0 182 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+    {/* ── Center thruster (cx=91) ── */}
+    <g className="thruster thruster-center">
+      <g className="thruster-base">
+        <g filter="url(#thrA)"><ellipse cx="91" cy="6.297" rx="27" ry="2.297" fill="#fff"/></g>
+        <g filter="url(#thrB)" style={{ mixBlendMode: "plus-lighter" }}><ellipse cx="91" cy="6.297" rx="27" ry="2.297" fill="#ff6f21"/></g>
+        <g filter="url(#thrC)" style={{ mixBlendMode: "plus-lighter" }}><ellipse cx="91" cy="6.297" rx="27" ry="2.297" fill="#ff6f21"/></g>
+        <g filter="url(#thrD)" style={{ mixBlendMode: "plus-lighter" }}><ellipse cx="91" cy="6.297" rx="27" ry="2.297" fill="#ff6f21"/></g>
+      </g>
+      <g className="thruster-flame" filter="url(#thrE)" style={{ mixBlendMode: "plus-lighter" }}><path d="M118 6.297c0 1.269-13.168 19.756-28.08 19.756S64 7.566 64 6.297C64 5.03 76.088 4 91 4s27 1.029 27 2.297" fill="#ff6f21"/></g>
+    </g>
+
+    {/* ── Left-inner thruster (cx=49.5) ── */}
+    <g className="thruster thruster-left-inner">
+      <g className="thruster-base">
+        <g filter="url(#thrF)"><ellipse cx="49.5" cy="12.73" rx="29.5" ry="2.297" fill="#fff"/></g>
+        <g filter="url(#thrG)" style={{ mixBlendMode: "plus-lighter" }}><ellipse cx="49.5" cy="12.73" rx="29.5" ry="2.297" fill="#ff6f21"/></g>
+        <g filter="url(#thrH)" style={{ mixBlendMode: "plus-lighter" }}><ellipse cx="49.5" cy="12.73" rx="29.5" ry="2.297" fill="#ff6f21"/></g>
+        <g filter="url(#thrI)" style={{ mixBlendMode: "plus-lighter" }}><ellipse cx="49.5" cy="12.73" rx="29.5" ry="2.297" fill="#ff6f21"/></g>
+      </g>
+      <g className="thruster-flame" filter="url(#thrJ)" style={{ mixBlendMode: "plus-lighter" }}><path d="M79 12.922C79 14.296 57.5 38 48 38S20 14.296 20 12.922c0-1.375 13.208-2.489 29.5-2.489S79 11.547 79 12.922" fill="#ff6f21"/></g>
+    </g>
+
+    {/* ── Left-outer thruster (cx=29) ── */}
+    <g className="thruster thruster-left-outer">
+      <g className="thruster-base">
+        <g filter="url(#thrK)"><ellipse cx="29" cy="8.13" rx="25" ry="2.297" fill="#fff"/></g>
+        <g filter="url(#thrL)" style={{ mixBlendMode: "plus-lighter" }}><ellipse cx="29" cy="8.13" rx="25" ry="2.297" fill="#ff6f21"/></g>
+        <g filter="url(#thrM)" style={{ mixBlendMode: "plus-lighter" }}><ellipse cx="29" cy="8.13" rx="25" ry="2.297" fill="#ff6f21"/></g>
+        <g filter="url(#thrN)" style={{ mixBlendMode: "plus-lighter" }}><ellipse cx="29" cy="8.13" rx="25" ry="2.297" fill="#ff6f21"/></g>
+      </g>
+      <g className="thruster-flame" filter="url(#thrO)" style={{ mixBlendMode: "plus-lighter" }}><path d="M54 8.13c0 1.268-12.193 19.756-26 19.756S4 9.398 4 8.13s11.193-2.297 25-2.297S54 6.86 54 8.13" fill="#ff6f21"/></g>
+    </g>
+
+    {/* ── Right-outer thruster (cx=153) ── */}
+    <g className="thruster thruster-right-outer">
+      <g className="thruster-base">
+        <g filter="url(#thrP)"><ellipse cx="153" cy="6.297" rx="25" ry="2.297" fill="#fff"/></g>
+        <g filter="url(#thrQ)" style={{ mixBlendMode: "plus-lighter" }}><ellipse cx="153" cy="6.297" rx="25" ry="2.297" fill="#ff6f21"/></g>
+        <g filter="url(#thrR)" style={{ mixBlendMode: "plus-lighter" }}><ellipse cx="153" cy="6.297" rx="25" ry="2.297" fill="#ff6f21"/></g>
+        <g filter="url(#thrS)" style={{ mixBlendMode: "plus-lighter" }}><ellipse cx="153" cy="6.297" rx="25" ry="2.297" fill="#ff6f21"/></g>
+      </g>
+      <g className="thruster-flame" filter="url(#thrT)" style={{ mixBlendMode: "plus-lighter" }}><path d="M178 6.297c0 1.269-12.193 19.756-26 19.756S128 7.566 128 6.297C128 5.03 139.193 4 153 4s25 1.029 25 2.297" fill="#ff6f21"/></g>
+    </g>
+
+    {/* ── Right-inner thruster (cx=129.5) ── */}
+    <g className="thruster thruster-right-inner">
+      <g className="thruster-base">
+        <g filter="url(#thrU)"><ellipse cx="129.5" cy="11.809" rx="28.5" ry="2.297" fill="#fff"/></g>
+        <g filter="url(#thrV)" style={{ mixBlendMode: "plus-lighter" }}><ellipse cx="129.5" cy="11.809" rx="28.5" ry="2.297" fill="#ff6f21"/></g>
+        <g filter="url(#thrW)" style={{ mixBlendMode: "plus-lighter" }}><ellipse cx="129.5" cy="11.809" rx="28.5" ry="2.297" fill="#ff6f21"/></g>
+        <g filter="url(#thrX)" style={{ mixBlendMode: "plus-lighter" }}><ellipse cx="129.5" cy="11.809" rx="28.5" ry="2.297" fill="#ff6f21"/></g>
+      </g>
+      <g className="thruster-flame" filter="url(#thrY)" style={{ mixBlendMode: "plus-lighter" }}><path d="M158 11.809c0 1.269-20 25.27-29.5 25.27-8 0-27.5-24.001-27.5-25.27s12.76-2.297 28.5-2.297S158 10.54 158 11.809" fill="#ff6f21"/></g>
+    </g>
+
+    <defs>
+      <filter id="thrA" x="60" y="0" width="62" height="12.595" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB"><feFlood floodOpacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="2" result="effect1"/></filter>
+      <filter id="thrB" x="60" y="0" width="62" height="12.595" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB"><feFlood floodOpacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="2" result="effect1"/></filter>
+      <filter id="thrC" x="60" y="0" width="62" height="12.595" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB"><feFlood floodOpacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="2" result="effect1"/></filter>
+      <filter id="thrD" x="60" y="0" width="62" height="12.595" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB"><feFlood floodOpacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="2" result="effect1"/></filter>
+      <filter id="thrE" x="60" y="0" width="62" height="30.053" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB"><feFlood floodOpacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="2" result="effect1"/></filter>
+      <filter id="thrF" x="16" y="6.433" width="67" height="12.595" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB"><feFlood floodOpacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="2" result="effect1"/></filter>
+      <filter id="thrG" x="16" y="6.433" width="67" height="12.595" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB"><feFlood floodOpacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="2" result="effect1"/></filter>
+      <filter id="thrH" x="16" y="6.433" width="67" height="12.595" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB"><feFlood floodOpacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="2" result="effect1"/></filter>
+      <filter id="thrI" x="16" y="6.433" width="67" height="12.595" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB"><feFlood floodOpacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="2" result="effect1"/></filter>
+      <filter id="thrJ" x="16" y="6.433" width="67" height="35.567" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB"><feFlood floodOpacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="2" result="effect1"/></filter>
+      <filter id="thrK" x="0" y="1.833" width="58" height="12.595" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB"><feFlood floodOpacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="2" result="effect1"/></filter>
+      <filter id="thrL" x="0" y="1.833" width="58" height="12.595" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB"><feFlood floodOpacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="2" result="effect1"/></filter>
+      <filter id="thrM" x="0" y="1.833" width="58" height="12.595" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB"><feFlood floodOpacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="2" result="effect1"/></filter>
+      <filter id="thrN" x="0" y="1.833" width="58" height="12.595" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB"><feFlood floodOpacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="2" result="effect1"/></filter>
+      <filter id="thrO" x="0" y="1.833" width="58" height="30.053" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB"><feFlood floodOpacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="2" result="effect1"/></filter>
+      <filter id="thrP" x="124" y="0" width="58" height="12.595" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB"><feFlood floodOpacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="2" result="effect1"/></filter>
+      <filter id="thrQ" x="124" y="0" width="58" height="12.595" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB"><feFlood floodOpacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="2" result="effect1"/></filter>
+      <filter id="thrR" x="124" y="0" width="58" height="12.595" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB"><feFlood floodOpacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="2" result="effect1"/></filter>
+      <filter id="thrS" x="124" y="0" width="58" height="12.595" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB"><feFlood floodOpacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="2" result="effect1"/></filter>
+      <filter id="thrT" x="124" y="0" width="58" height="30.053" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB"><feFlood floodOpacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="2" result="effect1"/></filter>
+      <filter id="thrU" x="97" y="5.512" width="65" height="12.595" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB"><feFlood floodOpacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="2" result="effect1"/></filter>
+      <filter id="thrV" x="97" y="5.512" width="65" height="12.595" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB"><feFlood floodOpacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="2" result="effect1"/></filter>
+      <filter id="thrW" x="97" y="5.512" width="65" height="12.595" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB"><feFlood floodOpacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="2" result="effect1"/></filter>
+      <filter id="thrX" x="97" y="5.512" width="65" height="12.595" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB"><feFlood floodOpacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="2" result="effect1"/></filter>
+      <filter id="thrY" x="97" y="5.512" width="65" height="35.567" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB"><feFlood floodOpacity="0" result="BackgroundImageFix"/><feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feGaussianBlur stdDeviation="2" result="effect1"/></filter>
+    </defs>
+  </svg>
+));
