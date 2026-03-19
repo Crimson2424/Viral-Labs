@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import GlobalGrid from "./Globalgrid";
 import ReconRadarInlineSvg from "./SvgAssets";
@@ -47,6 +48,8 @@ const BlueprintGridIcon = () => (
 
 export default function PlaybookSection() {
   const radarRef = useRef(null);
+  const blueprintRef = useRef(null);
+  const deployRef = useRef(null);
 
   /* ─────────────────────────────────────────────
      Radar sweep + signal pulse animations
@@ -161,6 +164,109 @@ export default function PlaybookSection() {
     { scope: radarRef }
   );
 
+  /* ─────────────────────────────────────────────
+     Blueprint marquee – rows are 200% wide with two identical halves.
+     GSAP shifts by exactly 50% (one half), so the snap is invisible.
+     Scroll velocity temporarily boosts speed.
+     ───────────────────────────────────────────── */
+  useGSAP(
+    () => {
+      const rows = blueprintRef.current?.querySelectorAll(".bp-row");
+      if (!rows?.length) return;
+
+      const tweens = [];
+
+      rows.forEach((row, i) => {
+        const goesRight = i % 2 === 0;
+        gsap.set(row, { xPercent: goesRight ? -50 : 0 });
+        const tween = gsap.to(row, {
+          xPercent: goesRight ? 0 : -50,
+          duration: 20,
+          repeat: -1,
+          ease: "none",
+        });
+        tweens.push(tween);
+      });
+
+      // Track current boosted timeScale so we can tween it smoothly
+      const speed = { value: 1 };
+      let decayTween = null;
+
+      ScrollTrigger.create({
+        trigger: blueprintRef.current,
+        start: "top bottom",
+        end: "bottom top",
+        onUpdate(self) {
+          // self.getVelocity() returns px/s — normalize to a boost multiplier
+          const velocity = Math.abs(self.getVelocity());
+          const boost = 1 + Math.min(velocity / 300, 5); // cap at 6× speed
+
+          // Kill any running decay so new scroll takes priority
+          if (decayTween) decayTween.kill();
+
+          // Instantly apply the boost
+          speed.value = boost;
+          tweens.forEach((t) => t.timeScale(speed.value));
+
+          // After scroll stops, ease back to normal speed
+          decayTween = gsap.to(speed, {
+            value: 1,
+            duration: 1.2,
+            ease: "power2.out",
+            delay: 0.1,
+            onUpdate() {
+              tweens.forEach((t) => t.timeScale(speed.value));
+            },
+          });
+        },
+      });
+    },
+    { scope: blueprintRef }
+  );
+
+  /* ─────────────────────────────────────────────
+     Deploy screens marquee – left column up, right column down.
+     Uses GSAP's native y property (not attr.transform strings)
+     so the numeric values can actually be tweened smoothly.
+     ───────────────────────────────────────────── */
+  useGSAP(
+    () => {
+      const svg = deployRef.current;
+      if (!svg) return;
+
+      const colLeft = svg.querySelector(".deploy-col-left");
+      const colRight = svg.querySelector(".deploy-col-right");
+      if (!colLeft || !colRight) return;
+
+      const SET = 488; // 4 phones × 122px per unit (SVG coords)
+
+      // Left column: start centered, drift up one full set
+      gsap.set(colLeft, { y: -100 });
+      gsap.to(colLeft, {
+        y: -100 - SET,
+        duration: 16,
+        repeat: -1,
+        ease: "none",
+        onRepeat() {
+          gsap.set(colLeft, { y: -100 });
+        },
+      });
+
+      // Right column: start shifted up, drift down one full set
+      gsap.set(colRight, { y: -100 - SET });
+      gsap.to(colRight, {
+        y: -100,
+        duration: 16,
+        repeat: -1,
+        ease: "none",
+        onRepeat() {
+          gsap.set(colRight, { y: -100 - SET });
+        },
+      });
+    },
+    { scope: deployRef }
+  );
+
   return (
     <section className="relative z-25 w-full  overflow-hidden py-40 px-8 md:px-16 lg:px-24 xl:px-36">
       <GlobalGrid />
@@ -232,7 +338,7 @@ export default function PlaybookSection() {
         </div>
 
         {/* ━━━ BLUEPRINT CARD (col-span-5) ━━━ */}
-        <div className="col-span-5 relative isolate h-96 rounded overflow-hidden border border-solid border-[#383838] bg-[#171717]">
+        <div ref={blueprintRef} className="col-span-5 relative isolate h-96 rounded overflow-hidden border border-solid border-[#383838] bg-[#171717]">
           {/* SVG layers */}
           <EllipseBlueprintSvg className="absolute top-0 left-0 h-full w-auto pointer-events-none z-[6]" />
           <LightRay1BlueprintSvg className="absolute bottom-0 -left-15 w-4/5 h-14 pointer-events-none z-[7]" />
@@ -249,108 +355,90 @@ export default function PlaybookSection() {
             className="absolute top-0 bottom-0 my-auto left-0 w-full pointer-events-none z-[5]"
             style={{ aspectRatio: '291 / 274' }}
           >
-            {/* ── Dashed background lines (one per row, extend edge-to-edge) ── */}
-            {[10.575, 26.375, 41.475, 56.785, 72.195, 87.995].map((y, i) => (
-              <div
-                key={i}
-                className="absolute -left-[200%] w-[500%] h-px"
-                style={{
-                  top: `${y}%`,
-                  backgroundImage: `repeating-linear-gradient(to right, ${i === 2 ? '#FF6F21' : '#B2B2B2'} 0px, ${i === 2 ? '#FF6F21' : '#B2B2B2'} 4px, transparent 4px, transparent 12px)`,
-                  opacity: 0.5,
-                }}
-              />
-            ))}
-            {/* ── ROW 1 · y 15–43 ─────────────────────────── */}
-            {/* Rect — orange border, icon only */}
-            <div
-              className="absolute flex items-center pl-3 bg-[#1C1C1C] border border-[#FF6F21]/50 rounded-md"
-              style={{ left: '54.32%', top: '5.60%', width: '20.48%', height: '9.95%' }}
-            >
-              <BlueprintGridIcon />
-            </div>
-            {/* Pill — gray border, empty (extends past card edge) */}
-            <div
-              className="absolute bg-[#282828] border border-[#3E3E3E] rounded-full"
-              style={{ left: '82.76%', top: '5.60%', width: '24.23%', height: '9.95%' }}
-            />
-
-            {/* ── ROW 2 · y 53–80 ─────────────────────────── */}
-            {/* Rect — gray border, icon only */}
-            <div
-              className="absolute flex items-center pl-3 bg-[#1C1C1C] border border-[#343434] rounded-md"
-              style={{ left: '32.22%', top: '21.40%', width: '20.29%', height: '9.95%' }}
-            >
-              <BlueprintGridIcon />
-            </div>
-            {/* Pill — gray border, "Format" */}
-            <div
-              className="absolute flex items-center justify-center bg-[#282828] border border-[#3E3E3E] rounded-full"
-              style={{ left: '58.48%', top: '21.40%', width: '26.05%', height: '9.95%' }}
-            >
-              <span className="text-[#707070] text-xs font-host font-normal whitespace-nowrap leading-none">Format</span>
+            {/* ── ROW 1 ─────────────────────────── */}
+            <div className="bp-row absolute left-0 w-[200%]" style={{ top: '5.60%', height: '9.95%' }}>
+              <div className="absolute -left-[50%] w-[200%] h-px top-1/2" style={{ backgroundImage: 'repeating-linear-gradient(to right, #B2B2B2 0px, #B2B2B2 4px, transparent 4px, transparent 12px)', opacity: 0.5 }} />
+              {[0, 1].map(c => (
+                <div key={c} className="absolute w-1/2 h-full" style={{ left: c === 0 ? '0%' : '50%' }}>
+                  <div className="absolute flex items-center pl-3 bg-[#1C1C1C] border border-[#FF6F21]/50 rounded-md" style={{ left: '54.32%', top: 0, width: '20.48%', height: '100%' }}>
+                    <BlueprintGridIcon />
+                  </div>
+                  <div className="absolute bg-[#282828] border border-[#3E3E3E] rounded-full" style={{ left: '82.76%', top: 0, width: '24.23%', height: '100%' }} />
+                </div>
+              ))}
             </div>
 
-            {/* ── ROW 3 · y 91–118 ────────────────────────── */}
-            {/* Rect — orange border, icon only */}
-            <div
-              className="absolute flex items-center pl-3 bg-[#1C1C1C] border border-[#FF6F21]/50 rounded-md"
-              style={{ left: '60.89%', top: '36.5%', width: '21.81%', height: '9.95%' }}
-            >
-              <BlueprintGridIcon />
-            </div>
-            {/* Pill — orange border, "Trend" */}
-            <div
-              className="absolute flex items-center justify-center bg-[#282828] border border-[#FF6F21]/50 rounded-full"
-              style={{ left: '85.67%', top: '36.5%', width: '20.57%', height: '9.95%' }}
-            >
-              <span className="text-[#707070] text-xs font-host font-normal whitespace-nowrap leading-none">Trend</span>
-            </div>
-
-            {/* ── ROW 4 · y 136–164 ───────────────────────── */}
-            {/* Rect — gray border, icon only */}
-            <div
-              className="absolute flex items-center pl-3 bg-[#1C1C1C] border border-[#343434] rounded-md"
-              style={{ left: '52.41%', top: '51.81%', width: '17.02%', height: '9.95%' }}
-            >
-              <BlueprintGridIcon />
-            </div>
-            {/* Pill — gray border, empty (extends past card edge) */}
-            <div
-              className="absolute bg-[#282828] border border-[#3E3E3E] rounded-full"
-              style={{ left: '77.40%', top: '51.81%', width: '17.77%', height: '9.95%' }}
-            />
-
-            {/* ── ROW 5 · y 184–211 ───────────────────────── */}
-            {/* Rect — orange border, icon + "Content style" */}
-            <div
-              className="absolute flex items-center gap-2 pl-3 bg-[#1C1C1C] border border-[#FF6F21]/50 rounded-md"
-              style={{ left: '22.22%', top: '67.22%', width: '27.26%', height: '9.95%' }}
-            >
-              <BlueprintGridIcon />
-              <span className="text-[#707070] text-xs font-host font-normal whitespace-nowrap leading-none">Content style</span>
-            </div>
-            {/* Pill — gray border, "Creative" */}
-            <div
-              className="absolute flex items-center justify-center bg-[#282828] border border-[#3E3E3E] rounded-full"
-              style={{ left: '66.44%', top: '67.22%', width: '23.01%', height: '9.95%' }}
-            >
-              <span className="text-[#707070] text-xs font-host font-normal whitespace-nowrap leading-none">Creative</span>
+            {/* ── ROW 2 ─────────────────────────── */}
+            <div className="bp-row absolute left-0 w-[200%]" style={{ top: '21.40%', height: '9.95%' }}>
+              <div className="absolute -left-[50%] w-[200%] h-px top-1/2" style={{ backgroundImage: 'repeating-linear-gradient(to right, #B2B2B2 0px, #B2B2B2 4px, transparent 4px, transparent 12px)', opacity: 0.5 }} />
+              {[0, 1].map(c => (
+                <div key={c} className="absolute w-1/2 h-full" style={{ left: c === 0 ? '0%' : '50%' }}>
+                  <div className="absolute flex items-center pl-3 bg-[#1C1C1C] border border-[#343434] rounded-md" style={{ left: '32.22%', top: 0, width: '20.29%', height: '100%' }}>
+                    <BlueprintGridIcon />
+                  </div>
+                  <div className="absolute flex items-center justify-center bg-[#282828] border border-[#3E3E3E] rounded-full" style={{ left: '58.48%', top: 0, width: '26.05%', height: '100%' }}>
+                    <span className="text-[#707070] text-xs font-host font-normal whitespace-nowrap leading-none">Format</span>
+                  </div>
+                </div>
+              ))}
             </div>
 
-            {/* ── ROW 6 · y 222–249 ───────────────────────── */}
-            {/* Rect — gray border, icon only */}
-            <div
-              className="absolute flex items-center pl-3 bg-[#1C1C1C] border border-[#343434] rounded-md"
-              style={{ left: '48.22%', top: '83.02%', width: '17.84%', height: '9.95%' }}
-            >
-              <BlueprintGridIcon />
+            {/* ── ROW 3 (orange line) ────────────── */}
+            <div className="bp-row absolute left-0 w-[200%]" style={{ top: '36.5%', height: '9.95%' }}>
+              <div className="absolute -left-[50%] w-[200%] h-px top-1/2" style={{ backgroundImage: 'repeating-linear-gradient(to right, #FF6F21 0px, #FF6F21 4px, transparent 4px, transparent 12px)', opacity: 0.5 }} />
+              {[0, 1].map(c => (
+                <div key={c} className="absolute w-1/2 h-full" style={{ left: c === 0 ? '0%' : '50%' }}>
+                  <div className="absolute flex items-center pl-3 bg-[#1C1C1C] border border-[#FF6F21]/50 rounded-md" style={{ left: '60.89%', top: 0, width: '21.81%', height: '100%' }}>
+                    <BlueprintGridIcon />
+                  </div>
+                  <div className="absolute flex items-center justify-center bg-[#282828] border border-[#FF6F21]/50 rounded-full" style={{ left: '85.67%', top: 0, width: '20.57%', height: '100%' }}>
+                    <span className="text-[#707070] text-xs font-host font-normal whitespace-nowrap leading-none">Trend</span>
+                  </div>
+                </div>
+              ))}
             </div>
-            {/* Pill — gray border, empty */}
-            <div
-              className="absolute bg-[#282828] border border-[#3E3E3E] rounded-full"
-              style={{ left: '80.02%', top: '83.02%', width: '17.60%', height: '9.95%' }}
-            />
+
+            {/* ── ROW 4 ─────────────────────────── */}
+            <div className="bp-row absolute left-0 w-[200%]" style={{ top: '51.81%', height: '9.95%' }}>
+              <div className="absolute -left-[50%] w-[200%] h-px top-1/2" style={{ backgroundImage: 'repeating-linear-gradient(to right, #B2B2B2 0px, #B2B2B2 4px, transparent 4px, transparent 12px)', opacity: 0.5 }} />
+              {[0, 1].map(c => (
+                <div key={c} className="absolute w-1/2 h-full" style={{ left: c === 0 ? '0%' : '50%' }}>
+                  <div className="absolute flex items-center pl-3 bg-[#1C1C1C] border border-[#343434] rounded-md" style={{ left: '52.41%', top: 0, width: '17.02%', height: '100%' }}>
+                    <BlueprintGridIcon />
+                  </div>
+                  <div className="absolute bg-[#282828] border border-[#3E3E3E] rounded-full" style={{ left: '77.40%', top: 0, width: '17.77%', height: '100%' }} />
+                </div>
+              ))}
+            </div>
+
+            {/* ── ROW 5 ─────────────────────────── */}
+            <div className="bp-row absolute left-0 w-[200%]" style={{ top: '67.22%', height: '9.95%' }}>
+              <div className="absolute -left-[50%] w-[200%] h-px top-1/2" style={{ backgroundImage: 'repeating-linear-gradient(to right, #B2B2B2 0px, #B2B2B2 4px, transparent 4px, transparent 12px)', opacity: 0.5 }} />
+              {[0, 1].map(c => (
+                <div key={c} className="absolute w-1/2 h-full" style={{ left: c === 0 ? '0%' : '50%' }}>
+                  <div className="absolute flex items-center gap-2 pl-3 bg-[#1C1C1C] border border-[#FF6F21]/50 rounded-md" style={{ left: '22.22%', top: 0, width: '27.26%', height: '100%' }}>
+                    <BlueprintGridIcon />
+                    <span className="text-[#707070] text-xs font-host font-normal whitespace-nowrap leading-none">Content style</span>
+                  </div>
+                  <div className="absolute flex items-center justify-center bg-[#282828] border border-[#3E3E3E] rounded-full" style={{ left: '66.44%', top: 0, width: '23.01%', height: '100%' }}>
+                    <span className="text-[#707070] text-xs font-host font-normal whitespace-nowrap leading-none">Creative</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* ── ROW 6 ─────────────────────────── */}
+            <div className="bp-row absolute left-0 w-[200%]" style={{ top: '83.02%', height: '9.95%' }}>
+              <div className="absolute -left-[50%] w-[200%] h-px top-1/2" style={{ backgroundImage: 'repeating-linear-gradient(to right, #B2B2B2 0px, #B2B2B2 4px, transparent 4px, transparent 12px)', opacity: 0.5 }} />
+              {[0, 1].map(c => (
+                <div key={c} className="absolute w-1/2 h-full" style={{ left: c === 0 ? '0%' : '50%' }}>
+                  <div className="absolute flex items-center pl-3 bg-[#1C1C1C] border border-[#343434] rounded-md" style={{ left: '48.22%', top: 0, width: '17.84%', height: '100%' }}>
+                    <BlueprintGridIcon />
+                  </div>
+                  <div className="absolute bg-[#282828] border border-[#3E3E3E] rounded-full" style={{ left: '80.02%', top: 0, width: '17.60%', height: '100%' }} />
+                </div>
+              ))}
+            </div>
 
           </div>
 
@@ -374,7 +462,7 @@ export default function PlaybookSection() {
             className="absolute top-[53%] -left-1.5 w-[90%] h-auto pointer-events-none"
             style={{ mixBlendMode: "plus-lighter" }}
           />
-          <ScreensDeploySvg className="absolute top-0 left-[58%] h-full w-auto pointer-events-none z-1 isolate" />
+          <ScreensDeploySvg ref={deployRef} className="absolute top-0 left-[58%] h-full w-auto pointer-events-none z-1 isolate" />
           <CubesSvg className="absolute bottom-1.5 left-3 w-7 pointer-events-none z-2" />
 
           {/* Text content */}
