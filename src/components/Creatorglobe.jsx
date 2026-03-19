@@ -1,0 +1,721 @@
+/**
+ * CreatorGlobe — R3F conversion of the vanilla Three.js creator network globe.
+ *
+ * Converted from standalone WebGLRenderer to R3F scene content for use
+ * inside a <View> in App.jsx's shared Canvas.
+ *
+ * FEATURES:
+ *  - Inner dark sphere + fresnel edge glow
+ *  - Earth map land particles (loaded from specular image)
+ *  - 20 network hubs with pulsing orange rings
+ *  - Constellation network mesh
+ *  - Hover trajectory bezier paths (hub → hub)
+ *  - Autonomous ambient trajectory paths
+ *  - Drag-to-rotate globe interaction
+ *  - Hub hover detection → tooltip data via creatorGlobeState
+ *
+ * POINTER MATH:
+ *  Uses containerRef (the View's tracked DOM element) for NDC calculation,
+ *  same pattern as the GPGPU particle globe in GlobeScene.jsx.
+ *
+ * TOOLTIP BRIDGE:
+ *  Writes to creatorGlobeState.hoveredData (on enter/leave) and
+ *  creatorGlobeState.tooltipX/Y (every frame) so the DOM tooltip in
+ *  CreatorNetwork can read position without React re-renders.
+ *  Calls onHoverChange(data|null) for React state updates on enter/leave only.
+ *
+ * USAGE (inside App.jsx Canvas):
+ *  <View track={creatorViewRef}>
+ *    <PerspectiveCamera makeDefault position={[0, 0, 2.8]} fov={45} />
+ *    <CreatorGlobe containerRef={creatorViewRef} />
+ *  </View>
+ */
+
+import { useRef, useMemo, useEffect, useCallback } from "react";
+import { useFrame, useThree } from "@react-three/fiber";
+import * as THREE from "three";
+import { creatorGlobeState } from "./creatorGlobeState";
+
+// ============================================================================
+// SHADER SOURCES
+// ============================================================================
+
+const fresnelVertexShader = `
+  varying vec3 vNormal;
+  varying vec3 vViewPosition;
+  void main() {
+    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+    vViewPosition = -mvPosition.xyz;
+    vNormal = normalize(normalMatrix * normal);
+    gl_Position = projectionMatrix * mvPosition;
+  }
+`;
+
+const fresnelFragmentShader = `
+  varying vec3 vNormal;
+  varying vec3 vViewPosition;
+  void main() {
+    vec3 normal = normalize(vNormal);
+    vec3 viewDir = normalize(vViewPosition);
+    float intensity = pow(1.0 - max(dot(normal, viewDir), 0.0), 4.2);
+    gl_FragColor = vec4(0.8, 0.85, 0.9, intensity * 0.15);
+  }
+`;
+
+const constellationVertexShader = `
+  attribute float aOpacity;
+  varying float vOpacity;
+  void main() {
+    vOpacity = aOpacity;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`;
+
+const constellationFragmentShader = `
+  varying float vOpacity;
+  void main() {
+    gl_FragColor = vec4(1.0, 1.0, 1.0, vOpacity);
+  }
+`;
+
+// ============================================================================
+// CONSTELLATION NETWORK GENERATOR (dense lat/lon rectangular grid)
+// ============================================================================
+
+function generateConstellationNetwork(latDivisions = 36, lonDivisions = 56, radius = 1.2) {
+  const baseOpacity = 0.07;
+  const brightOpacity = 0.25;
+  const shimmerChance = 0.5;
+
+  const nodes = [];
+  for (let lat = 1; lat < latDivisions; lat++) {
+    const row = [];
+    const phi = (lat / latDivisions) * Math.PI;
+    for (let lon = 0; lon < lonDivisions; lon++) {
+      const theta = (lon / lonDivisions) * Math.PI * 2;
+      row.push(new THREE.Vector3(
+        Math.sin(phi) * Math.cos(theta) * radius,
+        Math.cos(phi) * radius,
+        Math.sin(phi) * Math.sin(theta) * radius
+      ));
+    }
+    nodes.push(row);
+  }
+  const latRows = nodes.length;
+
+  const linePositions = [];
+  const lineOpacities = [];
+  const shimmerDotPositions = [];
+
+  for (let lat = 0; lat < latRows; lat++) {
+    for (let lon = 0; lon < lonDivisions; lon++) {
+      const source = nodes[lat][lon];
+      const isShimmer = Math.random() < shimmerChance;
+      const srcOpacity = isShimmer ? brightOpacity : baseOpacity;
+
+      const right = nodes[lat][(lon + 1) % lonDivisions];
+      linePositions.push(source.x, source.y, source.z, right.x, right.y, right.z);
+      lineOpacities.push(srcOpacity, baseOpacity);
+
+      if (lat < latRows - 1) {
+        const below = nodes[lat + 1][lon];
+        linePositions.push(source.x, source.y, source.z, below.x, below.y, below.z);
+        lineOpacities.push(srcOpacity, baseOpacity);
+
+        const diag = nodes[lat + 1][(lon + 1) % lonDivisions];
+        linePositions.push(source.x, source.y, source.z, diag.x, diag.y, diag.z);
+        lineOpacities.push(srcOpacity, baseOpacity);
+      }
+
+      if (isShimmer) {
+        shimmerDotPositions.push(source.x, source.y, source.z);
+      }
+    }
+  }
+
+  const lineGeo = new THREE.BufferGeometry();
+  lineGeo.setAttribute("position", new THREE.Float32BufferAttribute(linePositions, 3));
+  lineGeo.setAttribute("aOpacity", new THREE.Float32BufferAttribute(lineOpacities, 1));
+
+  const dotPositions = [];
+  for (let lat = 0; lat < latRows; lat++) {
+    for (let lon = 0; lon < lonDivisions; lon++) {
+      const n = nodes[lat][lon];
+      dotPositions.push(n.x, n.y, n.z);
+    }
+  }
+  const dotGeo = new THREE.BufferGeometry();
+  dotGeo.setAttribute("position", new THREE.Float32BufferAttribute(dotPositions, 3));
+
+  const shimmerDotGeo = new THREE.BufferGeometry();
+  shimmerDotGeo.setAttribute("position", new THREE.Float32BufferAttribute(shimmerDotPositions, 3));
+
+  return { lineGeo, dotGeo, shimmerDotGeo };
+}
+
+// ============================================================================
+// INDIA FIXED POINT (center of India ~20.5°N, 78.9°E on unit sphere)
+// ============================================================================
+
+const INDIA_POINT = (() => {
+  const theta = ((78.9 + 180) / 360) * Math.PI * 2;
+  const phi = (90 - 20.5) * Math.PI / 180;
+  return new THREE.Vector3(
+    Math.cos(theta) * Math.sin(phi),
+    Math.cos(phi),
+    Math.sin(theta) * Math.sin(phi)
+  ).normalize();
+})();
+
+// ============================================================================
+// MOCK DATA
+// ============================================================================
+
+const MOCK_HANDLES = [
+  "@alex_creates", "@sarah.vlogs", "@chris.tech", "@emma_style",
+  "@gamer_dude", "@fit_journey", "@world.wanderer", "@beats_by_j",
+  "@design.ninja", "@code_master",
+];
+const MOCK_PLATFORMS = ["x", "instagram", "tiktok"];
+
+function generateHubData() {
+  const baseInstalls = Math.floor(Math.random() * 8000 + 2000);
+  const handle = MOCK_HANDLES[Math.floor(Math.random() * MOCK_HANDLES.length)] + Math.floor(Math.random() * 99);
+  const platform = MOCK_PLATFORMS[Math.floor(Math.random() * MOCK_PLATFORMS.length)];
+  return {
+    handle,
+    platform,
+    avatar: `https://i.pravatar.cc/150?u=${handle}`,
+    nodeId: `NODE-${Math.floor(Math.random() * 8999 + 1000)}`,
+    monthlyInstalls: baseInstalls.toLocaleString(),
+    totalInstalls: (baseInstalls * (Math.floor(Math.random() * 20) + 10)).toLocaleString(),
+    growth: "+" + (Math.random() * 25 + 5).toFixed(1) + "%",
+    viralCoeff: (Math.random() * 1.5 + 1.1).toFixed(2),
+    usd: (baseInstalls * 4.2).toLocaleString(undefined, { maximumFractionDigits: 0 }),
+    sources: [
+      { name: "US / Canada", value: Math.floor(baseInstalls * (Math.random() * 0.4 + 0.4)) },
+      { name: "Europe", value: Math.floor(baseInstalls * (Math.random() * 0.3 + 0.1)) },
+      { name: "Asia Pacific", value: Math.floor(baseInstalls * (Math.random() * 0.2 + 0.1)) },
+    ].sort((a, b) => b.value - a.value),
+  };
+}
+
+// ============================================================================
+// MAIN COMPONENT
+// ============================================================================
+
+export default function CreatorGlobe({ containerRef }) {
+  const globeRef = useRef();
+  const { camera } = useThree();
+
+  const state = useRef({
+    initialized: false,
+    isDragging: false,
+    previousMouse: { x: 0, y: 0 },
+    dragQuaternion: new THREE.Quaternion(),
+    autoRotY: 0,
+    activeHoverHub: null,
+    trajectoryProgress: 0,
+    autoTrajectoryState: "idle",
+    autoTrajectoryProgress: 0,
+    autoPauseTimer: 0,
+    networkHubs: [],
+    networkRings: [],
+    networkHitboxes: [],
+  });
+
+  const pointer = useMemo(() => new THREE.Vector2(-9999, -9999), []);
+  const raycaster = useMemo(() => new THREE.Raycaster(), []);
+
+  const _parentInvQuat = useMemo(() => new THREE.Quaternion(), []);
+  const _camRight = useMemo(() => new THREE.Vector3(), []);
+  const _camUp = useMemo(() => new THREE.Vector3(), []);
+  const _qDelta = useMemo(() => new THREE.Quaternion(), []);
+  const _tiltQuat = useMemo(
+    () => new THREE.Quaternion().setFromEuler(new THREE.Euler(-0.45, 0, 0)),
+    []
+  );
+
+  const pointsMeshRef = useRef();
+  const webMeshRef = useRef();
+  const webDotsRef = useRef();
+  const innerSphereRef = useRef();
+
+  const trajectoryGroupRef = useRef();
+  const lineGeoRef = useRef();
+  const targetRingRef = useRef();
+
+  const autoTrajectoryGroupRef = useRef();
+  const autoLineGeoRef = useRef();
+  const autoTargetRingRef = useRef();
+  const autoCurve = useMemo(() => new THREE.QuadraticBezierCurve3(
+    new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()
+  ), []);
+
+  const glowMaterial = useMemo(() => new THREE.ShaderMaterial({
+    vertexShader: fresnelVertexShader,
+    fragmentShader: fresnelFragmentShader,
+    transparent: true,
+    blending: THREE.AdditiveBlending,
+    side: THREE.BackSide,
+    depthWrite: false,
+  }), []);
+
+  const constellationLineMat = useMemo(() => new THREE.ShaderMaterial({
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    vertexShader: constellationVertexShader,
+    fragmentShader: constellationFragmentShader,
+  }), []);
+
+  const dotTexture = useMemo(() => {
+    const size = 64;
+    const canvas = document.createElement("canvas");
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext("2d");
+    const half = size / 2;
+    const gradient = ctx.createRadialGradient(half, half, 0, half, half, half);
+    gradient.addColorStop(0, "rgba(255,255,255,1)");
+    gradient.addColorStop(0.4, "rgba(255,255,255,0.6)");
+    gradient.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, size, size);
+    const tex = new THREE.CanvasTexture(canvas);
+    return tex;
+  }, []);
+
+  const lineMat = useMemo(() => new THREE.LineBasicMaterial({
+    color: 0xFF6F21, transparent: true, opacity: 1.0, blending: THREE.AdditiveBlending,
+  }), []);
+  const ringMat = useMemo(() => new THREE.MeshBasicMaterial({
+    color: 0xf1f1f1, transparent: true, opacity: 0.9, side: THREE.DoubleSide, blending: THREE.AdditiveBlending,
+  }), []);
+
+  // ════════════════════════════════════════════════
+  // LOAD EARTH IMAGE + SPAWN PARTICLES & HUBS
+  // ════════════════════════════════════════════════
+
+  useEffect(() => {
+    const globe = globeRef.current;
+    if (!globe) return;
+
+    globe.scale.set(0.01, 0.01, 0.01);
+
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_specular_2048.jpg";
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+      ctx.drawImage(img, 0, 0);
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+      const pts = [];
+      const numPoints = 60000;
+      const phi_golden = Math.PI * (3 - Math.sqrt(5));
+
+      for (let i = 0; i < numPoints * 3; i++) {
+        const y = 1 - (i / (numPoints * 3 - 1)) * 2;
+        const radius = Math.sqrt(1 - y * y);
+        const theta = phi_golden * i;
+        const phi = Math.acos(y);
+        let uTheta = theta % (2 * Math.PI);
+        if (uTheta < 0) uTheta += 2 * Math.PI;
+
+        const mapX = Math.floor((uTheta / (2 * Math.PI)) * canvas.width);
+        const mapY = Math.floor((phi / Math.PI) * canvas.height);
+        const index = (mapY * canvas.width + mapX) * 4;
+
+        if (imgData.data[index] < 90) {
+          pts.push(new THREE.Vector3(
+            Math.cos(theta) * radius * 0.98,
+            y * 0.98,
+            Math.sin(theta) * radius * 0.98
+          ));
+        }
+      }
+
+      if (pointsMeshRef.current) {
+        pointsMeshRef.current.geometry.dispose();
+        pointsMeshRef.current.geometry = new THREE.BufferGeometry().setFromPoints(pts);
+      }
+
+      const s = state.current;
+      const numHubs = 20;
+
+      for (let i = 0; i < numHubs; i++) {
+        const randIndex = Math.floor(Math.random() * pts.length);
+        const hubPos = pts[randIndex].clone().normalize();
+        s.networkHubs.push(hubPos);
+
+        const hubGroup = new THREE.Group();
+        hubGroup.position.copy(hubPos).multiplyScalar(1.003);
+        hubGroup.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), hubPos);
+        globe.add(hubGroup);
+
+        for (let j = 0; j < 3; j++) {
+          const ring = new THREE.Mesh(
+            new THREE.RingGeometry(0.015, 0.02, 32),
+            new THREE.MeshBasicMaterial({
+              color: 0xFF6F21,
+              transparent: true,
+              depthWrite: false,
+              side: THREE.DoubleSide,
+            })
+          );
+          ring.renderOrder = 11;
+          ring.userData = { delay: j + Math.random() * 0.5 };
+          hubGroup.add(ring);
+          s.networkRings.push(ring);
+        }
+
+        const dot = new THREE.Mesh(
+          new THREE.CircleGeometry(0.01, 16),
+          new THREE.MeshBasicMaterial({
+            color: 0xFF6F21,
+            depthWrite: false,
+            side: THREE.DoubleSide,
+          })
+        );
+        dot.renderOrder = 12;
+        hubGroup.add(dot);
+
+        const hitbox = new THREE.Mesh(
+          new THREE.SphereGeometry(0.035, 16, 16),
+          new THREE.MeshBasicMaterial({ visible: false })
+        );
+        hitbox.userData = {
+          position: hubPos,
+          ...generateHubData(),
+        };
+        hubGroup.add(hitbox);
+        s.networkHitboxes.push(hitbox);
+      }
+
+      s.initialized = true;
+    };
+  }, []);
+
+  // ════════════════════════════════════════════════
+  // POINTER EVENTS
+  // ════════════════════════════════════════════════
+
+  useEffect(() => {
+    const getEl = () => containerRef?.current;
+
+    const onMove = (e) => {
+      const el = getEl();
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+      const s = state.current;
+
+      if (s.isDragging) {
+        const dx = e.clientX - s.previousMouse.x;
+        const dy = e.clientY - s.previousMouse.y;
+
+        const globe = globeRef.current;
+        if (globe && globe.parent) {
+          globe.parent.getWorldQuaternion(_parentInvQuat).invert();
+          _camRight.set(1, 0, 0).applyQuaternion(camera.quaternion).applyQuaternion(_parentInvQuat);
+          _camUp.set(0, 1, 0).applyQuaternion(camera.quaternion).applyQuaternion(_parentInvQuat);
+          _qDelta.setFromAxisAngle(_camUp, dx * 0.005);
+          s.dragQuaternion.premultiply(_qDelta);
+          _qDelta.setFromAxisAngle(_camRight, dy * 0.005);
+          s.dragQuaternion.premultiply(_qDelta);
+        }
+      }
+      s.previousMouse = { x: e.clientX, y: e.clientY };
+    };
+
+    const onDown = (e) => {
+      const el = getEl();
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) return;
+
+      raycaster.setFromCamera(pointer, camera);
+      if (innerSphereRef.current) {
+        const hits = raycaster.intersectObject(innerSphereRef.current);
+        if (hits.length > 0) {
+          state.current.isDragging = true;
+          creatorGlobeState.isDragging = true;
+        }
+      }
+      state.current.previousMouse = { x: e.clientX, y: e.clientY };
+    };
+
+    const onUp = () => {
+      state.current.isDragging = false;
+      creatorGlobeState.isDragging = false;
+    };
+
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerdown", onDown);
+    window.addEventListener("pointerup", onUp);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("pointerup", onUp);
+    };
+  }, [containerRef, pointer, camera, raycaster]);
+
+  const updateTrajectoryTarget = useCallback((vStart, vEnd) => {
+    const midPoint = vStart.clone().add(vEnd).multiplyScalar(0.5);
+    const dist = vStart.distanceTo(vEnd);
+    const arcHeight = 0.15 + dist * 0.35;
+    midPoint.normalize().multiplyScalar(midPoint.length() + arcHeight);
+    const curve = new THREE.QuadraticBezierCurve3(vStart, midPoint, vEnd);
+
+    if (lineGeoRef.current) {
+      lineGeoRef.current.setFromPoints(curve.getPoints(50));
+      lineGeoRef.current.setDrawRange(0, 0);
+    }
+    if (targetRingRef.current) {
+      targetRingRef.current.position.copy(vEnd).multiplyScalar(1.01);
+      targetRingRef.current.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), vEnd);
+    }
+  }, []);
+
+  // ════════════════════════════════════════════════
+  // ANIMATION LOOP
+  // ════════════════════════════════════════════════
+
+  useFrame(({ clock }) => {
+    const globe = globeRef.current;
+    if (!globe) return;
+
+    const s = state.current;
+    const time = clock.getElapsedTime();
+
+    globe.scale.lerp(new THREE.Vector3(1, 1, 1), 0.03);
+
+    if (!s.isDragging) {
+      s.autoRotY -= s.activeHoverHub ? 0.0002 : 0.001;
+    }
+
+    const autoQuat = _qDelta.setFromAxisAngle(_camUp.set(0, 1, 0), s.autoRotY);
+    const targetQuat = _parentInvQuat.copy(_tiltQuat).multiply(s.dragQuaternion).multiply(autoQuat);
+    globe.quaternion.slerp(targetQuat, 0.1);
+
+    const pointerInBounds = pointer.x >= -1 && pointer.x <= 1 && pointer.y >= -1 && pointer.y <= 1;
+
+    if (!s.isDragging && s.initialized && pointerInBounds) {
+      raycaster.setFromCamera(pointer, camera);
+
+      const hubHits = raycaster.intersectObjects(s.networkHitboxes);
+      const hoveredHub = hubHits.length > 0 ? hubHits[0].object : null;
+
+      if (hoveredHub && hoveredHub !== s.activeHoverHub) {
+        s.activeHoverHub = hoveredHub;
+        s.trajectoryProgress = 0;
+        if (trajectoryGroupRef.current) trajectoryGroupRef.current.visible = true;
+
+        creatorGlobeState.hoveredData = hoveredHub.userData;
+
+        const startPos = hoveredHub.userData.position;
+        updateTrajectoryTarget(startPos, INDIA_POINT);
+      } else if (!hoveredHub && s.activeHoverHub) {
+        s.activeHoverHub = null;
+        creatorGlobeState.hoveredData = null;
+      }
+    } else if (!pointerInBounds && s.activeHoverHub) {
+      s.activeHoverHub = null;
+      creatorGlobeState.hoveredData = null;
+    }
+
+    if (s.activeHoverHub && containerRef?.current) {
+      const vector = s.activeHoverHub.userData.position.clone();
+      vector.applyMatrix4(globe.matrixWorld);
+      vector.project(camera);
+
+      const rect = containerRef.current.getBoundingClientRect();
+      creatorGlobeState.tooltipX = (vector.x * 0.5 + 0.5) * rect.width;
+      creatorGlobeState.tooltipY = (vector.y * -0.5 + 0.5) * rect.height;
+    }
+
+    s.networkRings.forEach((ring) => {
+      const t = (time - ring.userData.delay) % 3;
+      if (t < 0) {
+        ring.visible = false;
+      } else {
+        ring.visible = true;
+        const scale = 1 + t * 3;
+        ring.scale.set(scale, scale, scale);
+        ring.material.opacity = Math.max(0, 0.6 - t / 2);
+      }
+    });
+
+    if (s.activeHoverHub) {
+      s.trajectoryProgress = Math.min(1.0, s.trajectoryProgress + 0.025);
+    } else {
+      s.trajectoryProgress = Math.max(0, s.trajectoryProgress - 0.04);
+      if (s.trajectoryProgress <= 0 && trajectoryGroupRef.current) {
+        trajectoryGroupRef.current.visible = false;
+      }
+    }
+
+    if (trajectoryGroupRef.current?.visible) {
+      const drawCount = Math.floor(51 * s.trajectoryProgress);
+      if (lineGeoRef.current) lineGeoRef.current.setDrawRange(0, drawCount);
+      if (targetRingRef.current) {
+        targetRingRef.current.scale.setScalar(Math.min(1, s.trajectoryProgress * 1.2));
+        targetRingRef.current.visible = s.trajectoryProgress > 0.85;
+      }
+    }
+
+    if (s.networkHubs.length > 1) {
+      if (s.autoTrajectoryState === "idle") {
+        s.autoPauseTimer++;
+        if (s.autoPauseTimer > 90) {
+          s.autoPauseTimer = 0;
+          s.autoTrajectoryState = "animating";
+          s.autoTrajectoryProgress = 0;
+          if (autoTrajectoryGroupRef.current) autoTrajectoryGroupRef.current.visible = true;
+
+          const idx1 = Math.floor(Math.random() * s.networkHubs.length);
+          let idx2 = Math.floor(Math.random() * s.networkHubs.length);
+          while (idx1 === idx2) idx2 = Math.floor(Math.random() * s.networkHubs.length);
+
+          const startPos = s.networkHubs[idx1];
+          const endPos = s.networkHubs[idx2];
+
+          autoCurve.v0.copy(startPos);
+          const midPoint = startPos.clone().add(endPos).multiplyScalar(0.5);
+          const dist = startPos.distanceTo(endPos);
+          const arcHeight = 0.15 + dist * 0.35;
+          midPoint.normalize().multiplyScalar(midPoint.length() + arcHeight);
+          autoCurve.v1.copy(midPoint);
+          autoCurve.v2.copy(endPos);
+
+          if (autoLineGeoRef.current) autoLineGeoRef.current.setFromPoints(autoCurve.getPoints(50));
+          if (autoTargetRingRef.current) {
+            autoTargetRingRef.current.position.copy(endPos).multiplyScalar(1.01);
+            autoTargetRingRef.current.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), endPos);
+          }
+        }
+      } else if (s.autoTrajectoryState === "animating") {
+        s.autoTrajectoryProgress += 0.004;
+
+        const head = Math.min(1, s.autoTrajectoryProgress / 0.7);
+        const tail = Math.max(0, (s.autoTrajectoryProgress - 0.3) / 0.7);
+        const startIdx = Math.floor(tail * 51);
+        const endIdx = Math.floor(head * 51);
+
+        if (autoLineGeoRef.current) autoLineGeoRef.current.setDrawRange(startIdx, endIdx - startIdx);
+
+        if (autoTargetRingRef.current) {
+          if (head > 0.9) {
+            autoTargetRingRef.current.visible = true;
+            autoTargetRingRef.current.scale.setScalar((1 - tail) * 1.5);
+            autoTargetRingRef.current.material.opacity = 1 - tail;
+          } else {
+            autoTargetRingRef.current.visible = false;
+          }
+        }
+
+        if (s.autoTrajectoryProgress >= 1.0) {
+          s.autoTrajectoryState = "idle";
+          if (autoTrajectoryGroupRef.current) autoTrajectoryGroupRef.current.visible = false;
+        }
+      }
+    }
+  });
+
+  const { lineGeo: constellationLineGeo, dotGeo: constellationDotGeo, shimmerDotGeo } = useMemo(
+    () => generateConstellationNetwork(36, 56, 1.2),
+    []
+  );
+
+  // ════════════════════════════════════════════════
+  // JSX SCENE GRAPH
+  // ════════════════════════════════════════════════
+
+  return (
+    <group ref={globeRef}>
+      <mesh ref={innerSphereRef}>
+        <sphereGeometry args={[0.96, 32, 32]} />
+        <meshBasicMaterial color="#242424" />
+      </mesh>
+
+      <mesh>
+        <sphereGeometry args={[0.98, 48, 48]} />
+        <primitive object={glowMaterial} attach="material" />
+      </mesh>
+
+      <points ref={pointsMeshRef} renderOrder={1}>
+        <bufferGeometry />
+        <pointsMaterial
+          size={0.01}
+          color="#ffffff"
+          transparent
+          opacity={0.73}
+          sizeAttenuation
+          depthWrite={false}
+        />
+      </points>
+
+      <lineSegments ref={webMeshRef}>
+        <primitive object={constellationLineGeo} attach="geometry" />
+        <primitive object={constellationLineMat} attach="material" />
+      </lineSegments>
+
+      <points ref={webDotsRef}>
+        <primitive object={constellationDotGeo} attach="geometry" />
+        <pointsMaterial
+          size={0.008}
+          map={dotTexture}
+          color="#ffffff"
+          transparent
+          opacity={0.2}
+          sizeAttenuation
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+        />
+      </points>
+
+      <points renderOrder={6}>
+        <primitive object={shimmerDotGeo} attach="geometry" />
+        <pointsMaterial
+          size={0.02}
+          map={dotTexture}
+          color="#ffffff"
+          transparent
+          opacity={0.4}
+          sizeAttenuation
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+        />
+      </points>
+
+      <group ref={trajectoryGroupRef} visible={false}>
+        <line>
+          <bufferGeometry ref={lineGeoRef} />
+          <primitive object={lineMat} attach="material" />
+        </line>
+        <mesh ref={targetRingRef}>
+          <ringGeometry args={[0.05, 0.055, 32]} />
+          <primitive object={ringMat} attach="material" />
+        </mesh>
+      </group>
+
+      <group ref={autoTrajectoryGroupRef} visible={false}>
+        <line>
+          <bufferGeometry ref={autoLineGeoRef} />
+          <primitive object={lineMat.clone()} attach="material" />
+        </line>
+        <mesh ref={autoTargetRingRef}>
+          <ringGeometry args={[0.05, 0.055, 32]} />
+          <primitive object={ringMat.clone()} attach="material" />
+        </mesh>
+      </group>
+    </group>
+  );
+}
