@@ -7,11 +7,6 @@
  *   Phase 2 — Text mask reveals (inner wrappers slide up)
  *             Logo icon fades in
  *
- * HOVER — LOGO (logo icon + text area):
- *   Logo SVG scales up 1.2x + rotates 360° → stays scaled while hovered.
- *   On leave: reverses — rotates back + scales to 1.
- *   Paused timeline with play()/reverse().
- *
  * HOVER — NAV LINKS (after entrance):
  *   Character stagger via text-shadow + translateY.
  *
@@ -20,21 +15,25 @@
  *   Arrow: clip-masked slide-in from left + rotate 45° → 0°
  *   Glow line: DrawSVG grows from center outward (50% 50% → 0% 100%)
  *
+ * SOUND WAVE BUTTON:
+ *   Continuous flowing sine wave generated via phase animation + path recalculation.
+ *   Click toggles mute/unmute:
+ *     Unmuted → amplitude at 12, wave flows actively.
+ *     Muted   → amplitude tweens down to 1, wave becomes nearly flat but still flows.
+ *
  * All initial states via gsap.set() or CSS.
  * All tweens use .to() only.
  * useGSAP hook for cleanup.
  */
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { gsap, SplitText, DrawSVGPlugin, useGSAP } from "./Gsapconfig";
 import { ViralLabsLogo, ArrowIcon, NavGlowLine } from "./SvgAssets";
-import { useState } from "react";
 import { entranceState } from "./entranceState";
 
 /* ─── Config ─── */
 const NAV_ITEMS = [
   { label: "Home", href: "#home" },
-  { label: "How It Works", href: "#how-it-works" },
   { label: "Results", href: "#results" },
   { label: "About", href: "#about" },
   { label: "Contact", href: "#contact" },
@@ -45,6 +44,15 @@ const CHAR_DELAY_INCREMENT = 0.01;
 const ARROW_SIZE = 12;
 const CTA_GAP = 8;
 const TEXT_OFFSET = (ARROW_SIZE + CTA_GAP) / 2;
+
+/* ─── Wave config ─── */
+const WAVE_WIDTH = 80;
+const WAVE_HEIGHT = 40;
+const WAVE_CENTER_Y = 20;
+const WAVE_FREQUENCY = 0.08;
+const WAVE_RESOLUTION = 1;
+const WAVE_UNMUTED_AMPLITUDE = 12;
+const WAVE_MUTED_AMPLITUDE = 1;
 
 /* ─── CharSpans — pre-split characters for stagger hover ─── */
 function CharSpans({ text }) {
@@ -65,8 +73,56 @@ function CharSpans({ text }) {
   ));
 }
 
+/* ─── SoundWaveButton — corner brackets + continuous sine wave ─── */
+function SoundWaveButton({ onClick, isPlaying, wavePathRef }) {
+  return (
+    <button
+      onClick={onClick}
+      className="sound-wave-btn relative flex items-center justify-center px-1.5 py-1.5 shrink-0 cursor-pointer bg-transparent border-none outline-none"
+      aria-label={isPlaying ? "Mute sound" : "Play sound"}
+    >
+      {/* Top-left */}
+      <svg className="absolute top-0 left-0" width="7" height="7" viewBox="0 0 5 5" fill="none">
+        <path d="M4.697 0.251H0.251V4.742" stroke="#FF6F21" strokeWidth="0.72" />
+      </svg>
+      {/* Top-right */}
+      <svg className="absolute top-0 right-0" width="7" height="7" viewBox="0 0 5 5" fill="none">
+        <path d="M0.303 0.251H4.749V4.742" stroke="#FF6F21" strokeWidth="0.72" />
+      </svg>
+      {/* Bottom-right */}
+      <svg className="absolute bottom-0 right-0" width="7" height="7" viewBox="0 0 5 5" fill="none">
+        <path d="M0.303 4.749H4.749V0.258" stroke="#FF6F21" strokeWidth="0.72" />
+      </svg>
+      {/* Bottom-left */}
+      <svg className="absolute bottom-0 left-0" width="7" height="7" viewBox="0 0 5 5" fill="none">
+        <path d="M4.697 4.749H0.251V0.258" stroke="#FF6F21" strokeWidth="0.72" />
+      </svg>
+
+      {/* Continuous sine wave */}
+      <svg
+        className="relative z-10 overflow-hidden"
+        width="24"
+        height="14"
+        viewBox={`0 0 ${WAVE_WIDTH} ${WAVE_HEIGHT}`}
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          ref={wavePathRef}
+          d=""
+          stroke="white"
+          strokeWidth="3"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </button>
+  );
+}
+
 export default function Navbar({ entranceDelay = 0.3 }) {
   const [activeNav, setActiveNav] = useState("Home");
+  const [isSoundPlaying, setIsSoundPlaying] = useState(false);
 
   const headerRef = useRef();
   const navRef = useRef();
@@ -75,6 +131,35 @@ export default function Navbar({ entranceDelay = 0.3 }) {
   const logoTextRef = useRef();
   const glowLineRef = useRef();
   const ctaItemRef = useRef();
+
+  /* Wave refs */
+  const wavePathRef = useRef();
+  const waveStateRef = useRef({
+    phase: 0,
+    currentAmplitude: WAVE_MUTED_AMPLITUDE,
+  });
+
+  /* ─── Sine wave path generator ─── */
+  const generateSineWavePath = () => {
+    const { phase, currentAmplitude } = waveStateRef.current;
+    const points = Math.floor(WAVE_WIDTH / WAVE_RESOLUTION);
+    let path = "";
+
+    for (let i = 0; i <= points; i++) {
+      const x = (i / points) * WAVE_WIDTH;
+      const y =
+        WAVE_CENTER_Y +
+        Math.sin(x * WAVE_FREQUENCY + phase) * currentAmplitude;
+
+      if (i === 0) {
+        path += `M ${x} ${y}`;
+      } else {
+        path += ` L ${x} ${y}`;
+      }
+    }
+
+    return path;
+  };
 
   useGSAP(
     () => {
@@ -97,30 +182,33 @@ export default function Navbar({ entranceDelay = 0.3 }) {
       const ctaInner = navRef.current.querySelector(".nav-cta-inner");
       gsap.set(ctaInner, { yPercent: 110 });
 
+      // ── Sound wave button — starts hidden ──
+      const soundBtn = navRef.current.querySelector(".sound-wave-btn");
+      gsap.set(soundBtn, { opacity: 0, scale: 0.8 });
+
       // ── DrawSVG — glow lines start collapsed at center ──
       const glowLines = glowLineRef.current.querySelectorAll("line");
       gsap.set(glowLines, { drawSVG: "50% 50%" });
 
       // ═══════════════════════════════════════
-      // HOVER TIMELINES (all paused)
+      // CONTINUOUS SINE WAVE ANIMATION
       // ═══════════════════════════════════════
+      // Infinite timeline animates phase → onUpdate regenerates path.
+      // Wave always flows; amplitude controls whether it looks alive or flat.
 
-      // ── Logo hover: scale up + full 360° rotation ──
-      const logoTl = gsap.timeline({ paused: true });
-      logoTl.to(logoIconRef.current, {
-        scale: 1.2,
-        rotation: 360,
-        duration: 0.6,
-        ease: "power2.inOut",
-        transformOrigin: "center center",
+      gsap.timeline({ repeat: -1, ease: "none" }).to(waveStateRef.current, {
+        phase: Math.PI * 4,
+        duration: 4,
+        ease: "none",
+        onUpdate: () => {
+          const pathData = generateSineWavePath();
+          wavePathRef.current?.setAttribute("d", pathData);
+        },
       });
 
-      const logoArea = logoAreaRef.current;
-      const onLogoEnter = () => logoTl.play();
-      const onLogoLeave = () => logoTl.reverse();
-
-      logoArea.addEventListener("mouseenter", onLogoEnter);
-      logoArea.addEventListener("mouseleave", onLogoLeave);
+      // ═══════════════════════════════════════
+      // HOVER TIMELINES (all paused)
+      // ═══════════════════════════════════════
 
       // ── Glow line hover: expand from center ──
       const glowTl = gsap.timeline({ paused: true });
@@ -176,6 +264,13 @@ export default function Navbar({ entranceDelay = 0.3 }) {
         "<0.06"
       );
 
+      // Sound wave button pops in after CTA
+      tl.to(
+        soundBtn,
+        { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.7)" },
+        "<0.1"
+      );
+
       // ── After entrance: hand off to CSS hover ──
       tl.call(() => {
         gsap.set(linkInners, { clearProps: "transform" });
@@ -187,14 +282,36 @@ export default function Navbar({ entranceDelay = 0.3 }) {
 
       // ── Cleanup listeners ──
       return () => {
-        logoArea.removeEventListener("mouseenter", onLogoEnter);
-        logoArea.removeEventListener("mouseleave", onLogoLeave);
         ctaEl.removeEventListener("mouseenter", onCtaEnter);
         ctaEl.removeEventListener("mouseleave", onCtaLeave);
       };
     },
     { scope: headerRef }
   );
+
+  /* ─── Sound toggle handler ─── */
+  const handleSoundToggle = () => {
+    const next = !isSoundPlaying;
+    setIsSoundPlaying(next);
+
+    if (next) {
+      // Unmute → smoothly grow amplitude
+      gsap.to(waveStateRef.current, {
+        currentAmplitude: WAVE_UNMUTED_AMPLITUDE,
+        duration: 1.2,
+        ease: "power2.out",
+        overwrite: "auto",
+      });
+    } else {
+      // Mute → smoothly flatten
+      gsap.to(waveStateRef.current, {
+        currentAmplitude: WAVE_MUTED_AMPLITUDE,
+        duration: 0.8,
+        ease: "power2.out",
+        overwrite: "auto",
+      });
+    }
+  };
 
   /* ─── Styles ─── */
   const navStyle = {
@@ -265,7 +382,7 @@ export default function Navbar({ entranceDelay = 0.3 }) {
           display: flex;
           align-items: center;
           justify-content: center;
-          transform: translateX(-110%) rotate(45deg);
+          transform: translateX(-150%) rotate(45deg);
         }
 
         .hover-ready .cta-arrow-inner {
@@ -285,12 +402,23 @@ export default function Navbar({ entranceDelay = 0.3 }) {
           overflow: hidden;
           height: ${textClipHeight};
           line-height: ${textClipHeight};
+          padding-right: 2px;
+        }
+
+        /* ═══════════════════════════════════
+           SOUND WAVE BUTTON HOVER
+           ═══════════════════════════════════ */
+        .sound-wave-btn {
+          transition: opacity 0.3s ease;
+        }
+        .sound-wave-btn:hover {
+          opacity: 0.8;
         }
       `}</style>
 
       <header
         ref={headerRef}
-        className="absolute top-[9px] left-1/2 -translate-x-1/2 z-50"
+        className="absolute top-[9px] left-0 w-full flex justify-center z-50"
       >
         <nav
           ref={navRef}
@@ -301,18 +429,18 @@ export default function Navbar({ entranceDelay = 0.3 }) {
           <a
             ref={logoAreaRef}
             href="#home"
-            className="flex items-center gap-0.5 shrink-0 cursor-pointer"
+            className="flex items-center gap-0 shrink-0 cursor-pointer"
             aria-label="Viral Labs Home"
           >
             <span
               ref={logoIconRef}
               className="inline-flex items-center justify-center"
             >
-              <ViralLabsLogo className="w-[16px] h-[15px] translate-y-[1px]" />
+              <ViralLabsLogo className="w-[16px] h-[16px] translate-y-[1px]" />
             </span>
             <span
               ref={logoTextRef}
-              className="font-bricolage font-semibold text-white text-[18.3px] leading-none"
+              className="font-bricolage font-normal text-white text-md leading-none pr-1"
               style={{ letterSpacing: "-1.1px", ...fontStyle }}
             >
               Viral Labs
@@ -329,7 +457,7 @@ export default function Navbar({ entranceDelay = 0.3 }) {
                   e.preventDefault();
                   setActiveNav(item.label);
                 }}
-                className="nav-link-item relative font-bricolage font-light text-white text-sm text-center tracking-[-0.56px] leading-none"
+                className="nav-link-item relative inline-flex items-center font-bricolage font-light text-white text-sm text-center tracking-[-0.56px] leading-none"
                 style={fontStyle}
                 aria-current={activeNav === item.label ? "page" : undefined}
               >
@@ -343,7 +471,7 @@ export default function Navbar({ entranceDelay = 0.3 }) {
           </div>
 
           {/* ── CTA Button with Glow ── */}
-          <div className="relative inline-flex items-center justify-center px-2.5 py-0">
+          <div className="relative inline-flex items-center justify-center py-0">
             <a
               ref={ctaItemRef}
               href="#go-viral"
@@ -354,7 +482,7 @@ export default function Navbar({ entranceDelay = 0.3 }) {
                 <span className="text-clip">
                   <span className="nav-cta-inner inline-block">
                     <span
-                      className="font-bricolage font-normal text-white text-sm text-center tracking-[-0.56px] leading-none"
+                      className="font-bricolage font-thin text-white text-sm text-center tracking-[-0.56px] leading-none"
                       style={fontStyle}
                     >
                       <CharSpans text="Go Viral" />
@@ -377,6 +505,13 @@ export default function Navbar({ entranceDelay = 0.3 }) {
               className="absolute bottom-0 -left-2 w-[calc(100%+16px)] pointer-events-none"
             />
           </div>
+
+          {/* ── Sound Wave Button ── */}
+          <SoundWaveButton
+            onClick={handleSoundToggle}
+            isPlaying={isSoundPlaying}
+            wavePathRef={wavePathRef}
+          />
 
           {/* ── Glow lights ── */}
           <div

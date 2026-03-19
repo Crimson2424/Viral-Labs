@@ -8,7 +8,8 @@
  * ENTRANCE — on page load:
  *   PHASE 0 — BG PLANE NOISE DISSOLVE (0.0s → 2.8s)
  *   PHASE 1 — GRID + OVERLAY REVEAL (2.2s → 3.2s)
- *   PHASE 2 — ★ BIG TEXT + HEADING (3.0s → ~7.0s)
+ *   PHASE 2 — HEADING CHARS STAGGER UP (3.0s → ~4.5s)
+ *   PHASE 3 — SUBHEADING SCRAMBLE + CTA (4.0s → ~6.0s)
  *
  *   SCROLL — (+=400%, pinned, scrub)
  *   ACT 1 — ZOOM TRANSITION (0.00 → 0.40)
@@ -17,7 +18,7 @@
  */
 
 import { useRef } from "react";
-import { gsap, ScrollTrigger, SplitText, DrawSVGPlugin, useGSAP} from "./Gsapconfig";
+import { gsap, ScrollTrigger, SplitText, DrawSVGPlugin, useGSAP } from "./Gsapconfig";
 import GridOverlay from "./GridOverlay";
 import GlobalGrid from "./Globalgrid";
 import Navbar from "./Navbar";
@@ -38,22 +39,13 @@ export default function HeroSection() {
 
   const gridOverlayRef = useRef();
 
-  const bigTextWrapRef = useRef();
-  const bigRow1Ref = useRef();
-  const bigRow2SpacerRef = useRef();
-  const bigRow3Ref = useRef();
-
   const ctaScrambleRef = useRef(null);
 
   useGSAP(
     () => {
       // ═══════════════════════════════════════
-      // STEP 0 — SPLITTEXT FIRST, THEN MEASURE
+      // STEP 0 — SPLITTEXT + GRADIENT SETUP
       // ═══════════════════════════════════════
-
-      const engSpan = headingRef.current.querySelector(".hw-eng");
-      const virSpan = headingRef.current.querySelector(".hw-vir");
-      gsap.set([engSpan, virSpan], { display: "inline-block" });
 
       const heroHeadingSplit = SplitText.create(".hero-heading", {
         type: "chars, lines",
@@ -62,64 +54,7 @@ export default function HeroSection() {
         charsClass: "hero-char",
       });
 
-      const engNatRect = engSpan.getBoundingClientRect();
-      const virNatRect = virSpan.getBoundingClientRect();
-      const engNatCX = engNatRect.left + engNatRect.width / 2;
-      const engNatCY = engNatRect.top + engNatRect.height / 2;
-      const virNatCX = virNatRect.left + virNatRect.width / 2;
-      const virNatCY = virNatRect.top + virNatRect.height / 2;
-
-      const row1Rect = bigRow1Ref.current.getBoundingClientRect();
-      const spacerRect = bigRow2SpacerRef.current.getBoundingClientRect();
-      const rowHeight = row1Rect.height;
-
-      const row1FontSize = parseFloat(window.getComputedStyle(bigRow1Ref.current.querySelector("p")).fontSize);
-      const headingFontSize = parseFloat(window.getComputedStyle(headingRef.current).fontSize);
-      const bigScale = row1FontSize / headingFontSize;
-
-      const engScaledW = engNatRect.width * bigScale;
-      const virScaledW = virNatRect.width * bigScale;
-      const wordGap = rowHeight * 0.3;
-      const totalW = engScaledW + wordGap + virScaledW;
-      const screenCX = window.innerWidth / 2;
-      const bigCY = spacerRect.top + spacerRect.height / 2;
-      const engBigAbsCX = screenCX - totalW / 2 + engScaledW / 2;
-      const virBigAbsCX = screenCX + totalW / 2 - virScaledW / 2;
-      const engBigX = engBigAbsCX - engNatCX;
-      const engBigY = bigCY - engNatCY;
-      const virBigX = virBigAbsCX - virNatCX;
-      const virBigY = bigCY - virNatCY;
-      const offscreenX = -(window.innerWidth + 500);
-
-      // ═══════════════════════════════════════
-      // STEP 1 — FIND ALL CLIPPING ANCESTORS
-      // ═══════════════════════════════════════
-      const clippingAncestors = [];
-      const collectClippers = (startEl) => {
-        let node = startEl.parentElement;
-        while (node && node !== sectionRef.current) {
-          const cs = window.getComputedStyle(node);
-          if (
-            (cs.overflow !== "visible" ||
-              cs.overflowX !== "visible" ||
-              cs.overflowY !== "visible") &&
-            !clippingAncestors.includes(node)
-          ) {
-            clippingAncestors.push(node);
-          }
-          node = node.parentElement;
-        }
-      };
-      collectClippers(engSpan);
-      collectClippers(virSpan);
-
-      // ═══════════════════════════════════════
-      // STEP 2 — INITIAL STATES
-      // ═══════════════════════════════════════
-
-      gsap.set(clippingAncestors, { overflow: "visible" });
-      gsap.set(heroContentRef.current, { opacity: 0, zIndex: 25 });
-
+      // Per-char gradient that spans each line seamlessly
       heroHeadingSplit.lines.forEach((line) => {
         const lineWidth = line.offsetWidth;
         line.querySelectorAll(".hero-char").forEach((char) => {
@@ -136,37 +71,18 @@ export default function HeroSection() {
         });
       });
 
-      const engChars = [...headingRef.current.querySelectorAll(".hw-eng .hero-char")];
-      const virChars = [...headingRef.current.querySelectorAll(".hw-vir .hero-char")];
-      const keywordChars = [...engChars, ...virChars];
       const allChars = heroHeadingSplit.chars;
-      const otherChars = allChars.filter((c) => !keywordChars.includes(c));
 
-      gsap.set(keywordChars, { yPercent: 0, opacity: 1, filter: "blur(0px)" });
-      gsap.set(otherChars, { yPercent: 110, opacity: 0, filter: "blur(14px)" });
+      // ═══════════════════════════════════════
+      // STEP 1 — INITIAL STATES
+      // ═══════════════════════════════════════
 
-      gsap.set(engSpan, {
-        scale: bigScale,
-        x: engBigX + offscreenX,
-        y: engBigY,
-        transformOrigin: "center center",
-      });
-      gsap.set(virSpan, {
-        scale: bigScale,
-        x: virBigX + offscreenX,
-        y: virBigY,
-        transformOrigin: "center center",
-      });
+      gsap.set(heroContentRef.current, { opacity: 0 });
 
-      gsap.set(bigTextWrapRef.current, { opacity: 1 });
-      gsap.set(bigRow1Ref.current, {
-        xPercent: 100, y: 0, opacity: 1, clipPath: "inset(0 0 0 0)",
-      });
-      gsap.set(bigRow2SpacerRef.current, { visibility: "hidden" });
-      gsap.set(bigRow3Ref.current, {
-        xPercent: 100, y: 0, opacity: 1, clipPath: "inset(0 0 0 0)",
-      });
+      // All heading chars start hidden below with blur
+      gsap.set(allChars, { yPercent: 110, opacity: 0, filter: "blur(14px)" });
 
+      // Subheading — scramble setup
       const heroSubSplit = SplitText.create(".hero-subheading", {
         type: "chars, words, lines",
         mask: "lines",
@@ -191,6 +107,7 @@ export default function HeroSection() {
         char.textContent = asciiChars[Math.floor(Math.random() * asciiChars.length)];
       });
 
+      // CTA — border, text scramble, arrow, glow
       gsap.set(ctaRef.current, { opacity: 0 });
 
       const ctaBorderPath = document.querySelector(".cta-border-path");
@@ -221,6 +138,7 @@ export default function HeroSection() {
         strokeDasharray: arrowLen,
         strokeDashoffset: arrowLen,
       });
+      gsap.set(".cta-arrow", { opacity: 0 });
 
       gsap.set(".cta-sub", { yPercent: 110 });
 
@@ -234,6 +152,7 @@ export default function HeroSection() {
       // ═══════════════════════════════════════
       const entrance = gsap.timeline({ paused: true });
 
+      // ── PHASE 0 — BG PLANE NOISE DISSOLVE (0.0 → 2.8) ──
       entrance.to(entranceState, {
         warpProgress: 1, duration: 2.8, ease: "power2.inOut",
       }, 0);
@@ -241,6 +160,7 @@ export default function HeroSection() {
         particleOpacity: 1, duration: 1.2, ease: "power2.out",
       }, 1.8);
 
+      // ── PHASE 1 — GRID + OVERLAY REVEAL (2.2 → 3.2) ──
       entrance.to(heroContentRef.current, {
         opacity: 1, duration: 1.0, ease: "power2.inOut",
       }, 2.2);
@@ -253,65 +173,22 @@ export default function HeroSection() {
         gridOverlayRef.current?.play();
       }, null, 2.8);
 
-      // ═══════════════════════════════════════
-      // ★ PHASE 2: BIG TEXT ANIMATION
-      // ═══════════════════════════════════════
-
-      entrance.to(bigRow1Ref.current,
-        { xPercent: 0, duration: 1.0, ease: "power4.out" }, 3.0);
-      entrance.to(engSpan,
-        { x: engBigX, duration: 1.0, ease: "power4.out" }, 3.15);
-      entrance.to(virSpan,
-        { x: virBigX, duration: 1.0, ease: "power4.out" }, 3.15);
-      entrance.to(bigRow3Ref.current,
-        { xPercent: 0, duration: 1.0, ease: "power4.out" }, 3.3);
-
-      entrance.to(bigRow1Ref.current, {
-        y: rowHeight,
-        clipPath: "inset(0 0 100% 0)",
-        duration: 0.6,
-        ease: "power3.inOut",
-      }, 4.2);
-      entrance.to(bigRow3Ref.current, {
-        y: -rowHeight,
-        clipPath: "inset(100% 0 0 0)",
-        duration: 0.6,
-        ease: "power3.inOut",
-      }, 4.2);
-
-      entrance.set(bigTextWrapRef.current, { visibility: "hidden" }, 4.8);
-
-      entrance.to(engSpan, {
-        scale: 1, x: 0, y: 0,
-        duration: 1.0, ease: "power2.inOut",
-      }, 4.8);
-      entrance.to(virSpan, {
-        scale: 1, x: 0, y: 0,
-        duration: 1.0, ease: "power2.inOut",
-      }, 5.2);
-
-      entrance.set(clippingAncestors, { overflow: "hidden" }, 6.25);
-      entrance.set(heroContentRef.current, {
-        overflow: "hidden", zIndex: 10,
-      }, 6.25);
-      entrance.set(headingRef.current, {
-        scale: 1, filter: "blur(0px)",
-      }, 6.25);
-
-      entrance.to(otherChars, {
+      // ── PHASE 2 — ALL HEADING CHARS STAGGER UP (3.0 → ~4.5) ──
+      entrance.to(allChars, {
         yPercent: 0, filter: "blur(0px)", opacity: 1,
         stagger: 0.03, duration: 0.8, ease: "expo.out",
-      }, 6.1);
+      }, 3.0);
 
+      // ── PHASE 3 — SUBHEADING SCRAMBLE (4.0 → ~4.6) ──
       entrance.to(subheadingRef.current, {
         opacity: 1, duration: 0.3, ease: "power2.out",
-      }, 6.9);
+      }, 4.0);
 
       subChars.forEach((char, i) => {
         const original = originalTexts[i];
         if (original.trim() === "") return;
 
-        const delay = 6.9 + i * 0.025;
+        const delay = 4.0 + i * 0.025;
         const proxy = { progress: 0 };
 
         entrance.to(proxy, {
@@ -329,21 +206,22 @@ export default function HeroSection() {
         }, delay);
       });
 
-      entrance.set(ctaRef.current, { opacity: 1 }, 7.3);
+      // ── CTA REVEAL (4.5 → ~5.8) ──
+      entrance.set(ctaRef.current, { opacity: 1 }, 4.5);
       entrance.to(ctaBorderPath, {
         drawSVG: "100%",
         duration: 0.7,
         ease: "power2.inOut",
-      }, 7.3);
+      }, 4.5);
 
       entrance.to(".cta-text", {
         opacity: 1, duration: 0.1, ease: "power1.out",
-      }, 7.8);
+      }, 5.0);
       ctaChars.forEach((char, i) => {
         const original = ctaOriginals[i];
         if (original.trim() === "") return;
 
-        const delay = 7.8 + i * 0.025;
+        const delay = 5.0 + i * 0.025;
         const proxy = { progress: 0 };
         entrance.to(proxy, {
           progress: 1,
@@ -360,24 +238,25 @@ export default function HeroSection() {
         }, delay);
       });
 
+      entrance.set(".cta-arrow", { opacity: 1 }, 5.4);
       entrance.to(arrowPath, {
         strokeDashoffset: 0,
         duration: 0.4,
         ease: "power2.inOut",
-      }, 8.2);
+      }, 5.4);
 
       entrance.to(".cta-sub",
-        { yPercent: 0, duration: 0.7, ease: "expo.out" }, 8.5);
+        { yPercent: 0, duration: 0.7, ease: "expo.out" }, 5.6);
 
       entrance.to(ctaGlowLines, {
         drawSVG: "0% 100%",
         duration: 0.6,
         ease: "power2.inOut",
-      }, 8.7);
+      }, 5.8);
 
       entrance.call(() => {
         if (entranceState.playNavbar) entranceState.playNavbar();
-      }, null, 9.1);
+      }, null, 6.2);
 
       // ═══════════════════════════════════════
       // SCROLL TIMELINE
@@ -424,21 +303,21 @@ export default function HeroSection() {
           { opacity: 0, y: -30, duration: 0.03, ease: "power2.in" }, 0)
 
         .to(headingRef.current,
-          { scale: 2.5, opacity: 0, duration: 0.11, ease: "power2.in" }, 0.03)
+          { scale: 1.6, opacity: 0, duration: 0.11, ease: "power2.in" }, 0.03)
         .to(headingRef.current,
-          { filter: "blur(12px)", duration: 0.04, ease: "power2.in" }, 0.10)
+          { filter: "blur(12px)", duration: 0.06, ease: "power2.in" }, 0.06)
 
         .to(transitionState,
           { zoomProgress: 1, duration: 0.25, ease: "power1.in" }, 0.03)
 
         .to(missionTextRef.current,
-          { scale: 2.5, duration: 0.13, ease: "power2.in" }, 0.14)
+          { scale: 1.8, duration: 0.13, ease: "power2.in" }, 0.14)
         .to(missionTextRef.current,
           { opacity: 1, duration: 0.03, ease: "power2.out" }, 0.14)
         .to(missionTextRef.current,
           { opacity: 0, duration: 0.05, ease: "power2.in" }, 0.22)
         .to(missionTextRef.current,
-          { filter: "blur(14px)", duration: 0.03, ease: "power2.in" }, 0.24)
+          { filter: "blur(14px)", duration: 0.05, ease: "power2.in" }, 0.19)
 
         .to(missionRef.current, { opacity: 1, duration: 0.02 }, 0.28)
         .set(missionRef.current, { pointerEvents: "auto" }, 0.28)
@@ -547,7 +426,7 @@ export default function HeroSection() {
         className="absolute inset-x-0 top-0 z-[10] h-screen min-h-[945px] overflow-hidden"
       >
         <GridOverlay ref={gridOverlayRef} showTexture={true}>
-          <Navbar entranceDelay={9.1} />
+          <Navbar entranceDelay={6.2} />
           <div className="relative z-40 flex flex-col items-center justify-center h-full pt-14">
             <div className="mb-6 h-[30px]" />
 
@@ -650,31 +529,6 @@ export default function HeroSection() {
             </div>
           </div>
         </GridOverlay>
-      </div>
-
-      {/* ═══ DECORATIVE BIG TEXT ROWS ═══ */}
-      <div
-        ref={bigTextWrapRef}
-        className="absolute inset-x-0 top-0 z-[20] h-screen min-h-[945px] flex flex-col items-center justify-center pointer-events-none"
-      >
-        <div ref={bigRow1Ref} className="relative w-full flex-shrink-0" style={{ zIndex: 1 }}>
-          <p className="font-bricolage font-medium text-white text-center w-full whitespace-nowrap select-none"
-            style={{ fontSize: "clamp(60px, 7vw, 120px)", lineHeight: 0.85, letterSpacing: "-3px" }}>
-            Engineering Virality
-          </p>
-        </div>
-        <div ref={bigRow2SpacerRef} className="relative w-full flex-shrink-0" style={{ zIndex: 2, visibility: "hidden" }}>
-          <p className="font-bricolage font-medium text-white text-center w-full whitespace-nowrap select-none"
-            style={{ fontSize: "clamp(60px, 7vw, 120px)", lineHeight: 0.85, letterSpacing: "-3px" }}>
-            Engineering Virality
-          </p>
-        </div>
-        <div ref={bigRow3Ref} className="relative w-full flex-shrink-0" style={{ zIndex: 1 }}>
-          <p className="font-bricolage font-medium text-white text-center w-full whitespace-nowrap select-none"
-            style={{ fontSize: "clamp(60px, 7vw, 120px)", lineHeight: 0.85, letterSpacing: "-3px" }}>
-            Engineering Virality
-          </p>
-        </div>
       </div>
 
       {/* ═══ MissionStats ═══ */}
