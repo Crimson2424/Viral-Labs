@@ -5,21 +5,9 @@ import { useGSAP } from "@gsap/react";
 import GlobalGrid from "./Globalgrid";
 import ReconRadarInlineSvg from "./Svgassets";
 import {
-  LightRay1ReconSvg,
-  LightRay2ReconSvg,
-  LightRay1BlueprintSvg,
-  LightRay2BlueprintSvg,
-  LightRay1OptimizeSvg,
-  LightRay2OptimizeSvg,
   GridLinesOptimizeSvg,
   GridLinesReconSvg,
-  CubesSvg,
-  LinesDeploySvg,
-  ScreensDeploySvg,
   EllipseBlueprintSvg,
-  GridLineLeft,
-  GridLineRight,
-  GridCrosshair,
 } from "./Svgassets";
 
 /* Grid icon */
@@ -466,34 +454,36 @@ export default function PlaybookSection() {
      ───────────────────────────────────────────── */
   useGSAP(
     () => {
-      const svg = deployRef.current;
-      if (!svg) return;
+      const container = deployRef.current;
+      if (!container) return;
 
-      const colLeft = svg.querySelector(".deploy-col-left");
-      const colRight = svg.querySelector(".deploy-col-right");
+      const colLeft = container.querySelector(".deploy-col-left");
+      const colRight = container.querySelector(".deploy-col-right");
       if (!colLeft || !colRight) return;
 
-      const SET = 488;
+      // Each column has 8 images (4 visible + 4 duplicate for seamless loop)
+      // Each image is 25% of container height, so one set = 100% of container height
+      const SET = colLeft.scrollHeight / 2;
 
-      gsap.set(colLeft, { y: -100 });
+      gsap.set(colLeft, { y: -SET * 0.2 });
       gsap.to(colLeft, {
-        y: -100 - SET,
+        y: -SET * 0.2 - SET,
         duration: 16,
         repeat: -1,
         ease: "none",
         onRepeat() {
-          gsap.set(colLeft, { y: -100 });
+          gsap.set(colLeft, { y: -SET * 0.2 });
         },
       });
 
-      gsap.set(colRight, { y: -100 - SET });
+      gsap.set(colRight, { y: -SET * 0.2 - SET });
       gsap.to(colRight, {
-        y: -100,
+        y: -SET * 0.2,
         duration: 16,
         repeat: -1,
         ease: "none",
         onRepeat() {
-          gsap.set(colRight, { y: -100 - SET });
+          gsap.set(colRight, { y: -SET * 0.2 - SET });
         },
       });
     },
@@ -513,16 +503,21 @@ export default function PlaybookSection() {
       <div className="pointer-events-none absolute bottom-0 left-[105px] right-[105px] h-px bg-white/20 z-30" aria-hidden="true" />
 
       {/* Header */}
-      <div className="relative z-40 flex flex-col items-center mb-25">
-        <p className="pb-header-label font-host font-normal text-base text-vl-orange uppercase text-center leading-normal">
-          PROCESS
-        </p>
-        <h2 className="font-host font-medium text-6xl text-[#f1f1f1] tracking-tighter leading-tighter text-center mb-6">
-          <span className="block pb-header-title-line">The Viral Ops</span>
-          <span className="block pb-header-title-line">Playbook</span>
-        </h2>
-        <p className="pb-header-desc font-host font-thin text-xl text-white text-center tracking-tight max-w-2xl leading-tight mx-auto">
-          Every mission runs through a structured <br /> growth operation framework.
+      <div className="relative z-40 max-w-[95.5rem] mx-auto flex flex-col lg:flex-row justify-between items-start gap-8 lg:gap-16 mb-16 md:mb-24">
+        {/* LEFT */}
+        <div className="flex flex-col">
+          <p className="pb-header-label font-host font-normal text-sm uppercase text-vl-orange mb-2">
+            PROCESS
+          </p>
+          <h2 className="font-host font-medium text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white leading-tighter tracking-tighter">
+            <span className="block pb-header-title-line">The Viral Labs</span>
+            <span className="block pb-header-title-line">Methodology</span>
+          </h2>
+        </div>
+
+        {/* RIGHT */}
+        <p className="pb-header-desc font-host font-normal text-base sm:text-lg md:text-xl text-white max-w-md leading-tight linehe lg:mt-10 text-right">
+          Every mission runs through a structured growth operation framework.
         </p>
       </div>
 
@@ -531,8 +526,8 @@ export default function PlaybookSection() {
 
         {/* ━━━ RECON CARD ━━━ */}
         <div className="pb-card col-span-7 relative isolate h-96 rounded overflow-hidden border border-solid border-[#383838] shadow-lg shadow-black/30 bg-[#171717] cursor-pointer transition-[border-color] duration-300">
-          <LightRay1ReconSvg className="absolute top-0 left-0 h-full w-auto pointer-events-none" />
-          <LightRay2ReconSvg className="absolute top-0 right-0 h-3/5 w-auto pointer-events-none" />
+          <img src="/images/light ray 1 recon.webp" alt="" className="absolute top-0 left-0 h-full w-auto object-contain pointer-events-none" />
+          <img src="/images/light ray 2 recon.png" alt="" className="absolute top-0 right-0 h-3/5 w-auto object-contain pointer-events-none" />
           <GridLinesReconSvg className="absolute top-0 right-0 h-full w-auto opacity-70 pointer-events-none" />
 
           <ReconRadarInlineSvg
@@ -540,34 +535,30 @@ export default function PlaybookSection() {
             className="absolute top-0 right-0 h-full w-auto pointer-events-none"
           />
 
-          <CubesSvg className="absolute bottom-4 right-2.5 w-7 pointer-events-none" />
+          <img src="/images/cubes.png" alt="" className="absolute bottom-2 right-2 w-4 sm:w-5 md:w-6 object-contain pointer-events-none" />
 
-          <div className="absolute z-10 top-10 left-7">
+          <div className="absolute z-10 top-6 left-5 sm:top-8 sm:left-6 lg:top-10 lg:left-7">
             <h3 className="font-bricolage font-medium text-4xl text-[#dddddd] tracking-tighter">
               Recon
             </h3>
-            <p className="font-host font-normal text-md text-[#a1a1a1] tracking-tight max-w-56 mt-3">
-              We identify where attention is forming before the market reacts.
+            <p className="font-host font-normal text-sm text-[#a1a1a1] tracking-tighter max-w-56 mt-2 sm:mt-3 md:mt-4">
+              Pre-execution, we analyze ICP, consumption, and platform dynamics to identify what distributes organically within the niche and why.
             </p>
           </div>
-
-          <p className="absolute z-10 left-7 bottom-7 font-host font-normal text-sm text-[#a1a1a1] max-w-56">
-            Trend mapping, Attention mining, Platform signal analysis.
-          </p>
         </div>
 
         {/* ━━━ BLUEPRINT CARD ━━━ */}
         <div ref={blueprintRef} className="pb-card col-span-5 relative isolate h-96 rounded overflow-hidden border border-solid border-[#383838] bg-[#171717] cursor-pointer transition-[border-color] duration-300">
           <EllipseBlueprintSvg className="absolute top-0 left-0 h-full w-auto pointer-events-none z-[6]" />
-          <LightRay1BlueprintSvg className="absolute bottom-0 -left-15 w-4/5 h-14 pointer-events-none z-[7]" />
-          <LightRay2BlueprintSvg className="absolute top-0 right-0 w-3/5 h-full pointer-events-none z-6" />
+          <img src="/images/light ray 1 blueprint.webp" alt="" className="absolute bottom-0 -left-20 w-4/5 h-14 object-contain pointer-events-none z-7" />
+          <img src="/images/light ray 2 blueprint.webp" alt="" className="absolute top-0 -right-1 w-3/5 h-full object-contain pointer-events-none z-6" />
 
           <div
             className="absolute top-0 bottom-0 my-auto left-0 w-full pointer-events-none z-[5]"
             style={{ aspectRatio: '291 / 274' }}
           >
             {/* ── ROW 1 ── */}
-            <div className="bp-row absolute left-0 w-[200%]" style={{ top: '5.60%', height: '9.95%' }}>
+            <div className="bp-row absolute left-0 w-[200%]" style={{ top: '10%', height: '9.95%' }}>
               <div className="absolute -left-[50%] w-[200%] h-px top-1/2" style={{ backgroundImage: 'repeating-linear-gradient(to right, #B2B2B2 0px, #B2B2B2 4px, transparent 4px, transparent 12px)', opacity: 0.5 }} />
               {[0, 1].map(c => (
                 <div key={c} className="absolute w-1/2 h-full" style={{ left: c === 0 ? '0%' : '50%' }}>
@@ -580,7 +571,7 @@ export default function PlaybookSection() {
             </div>
 
             {/* ── ROW 2 ── */}
-            <div className="bp-row absolute left-0 w-[200%]" style={{ top: '21.40%', height: '9.95%' }}>
+            <div className="bp-row absolute left-0 w-[200%]" style={{ top: '23%', height: '9.95%' }}>
               <div className="absolute -left-[50%] w-[200%] h-px top-1/2" style={{ backgroundImage: 'repeating-linear-gradient(to right, #B2B2B2 0px, #B2B2B2 4px, transparent 4px, transparent 12px)', opacity: 0.5 }} />
               {[0, 1].map(c => (
                 <div key={c} className="absolute w-1/2 h-full" style={{ left: c === 0 ? '0%' : '50%' }}>
@@ -595,7 +586,7 @@ export default function PlaybookSection() {
             </div>
 
             {/* ── ROW 3 (orange) ── */}
-            <div className="bp-row absolute left-0 w-[200%]" style={{ top: '36.5%', height: '9.95%' }}>
+            <div className="bp-row absolute left-0 w-[200%]" style={{ top: '36%', height: '9.95%' }}>
               <div className="absolute -left-[50%] w-[200%] h-px top-1/2" style={{ backgroundImage: 'repeating-linear-gradient(to right, #FF6F21 0px, #FF6F21 4px, transparent 4px, transparent 12px)', opacity: 0.5 }} />
               {[0, 1].map(c => (
                 <div key={c} className="absolute w-1/2 h-full" style={{ left: c === 0 ? '0%' : '50%' }}>
@@ -610,7 +601,7 @@ export default function PlaybookSection() {
             </div>
 
             {/* ── ROW 4 ── */}
-            <div className="bp-row absolute left-0 w-[200%]" style={{ top: '51.81%', height: '9.95%' }}>
+            <div className="bp-row absolute left-0 w-[200%]" style={{ top: '49%', height: '9.95%' }}>
               <div className="absolute -left-[50%] w-[200%] h-px top-1/2" style={{ backgroundImage: 'repeating-linear-gradient(to right, #B2B2B2 0px, #B2B2B2 4px, transparent 4px, transparent 12px)', opacity: 0.5 }} />
               {[0, 1].map(c => (
                 <div key={c} className="absolute w-1/2 h-full" style={{ left: c === 0 ? '0%' : '50%' }}>
@@ -623,7 +614,7 @@ export default function PlaybookSection() {
             </div>
 
             {/* ── ROW 5 ── */}
-            <div className="bp-row absolute left-0 w-[200%]" style={{ top: '67.22%', height: '9.95%' }}>
+            <div className="bp-row absolute left-0 w-[200%]" style={{ top: '62%', height: '9.95%' }}>
               <div className="absolute -left-[50%] w-[200%] h-px top-1/2" style={{ backgroundImage: 'repeating-linear-gradient(to right, #B2B2B2 0px, #B2B2B2 4px, transparent 4px, transparent 12px)', opacity: 0.5 }} />
               {[0, 1].map(c => (
                 <div key={c} className="absolute w-1/2 h-full" style={{ left: c === 0 ? '0%' : '50%' }}>
@@ -639,7 +630,7 @@ export default function PlaybookSection() {
             </div>
 
             {/* ── ROW 6 ── */}
-            <div className="bp-row absolute left-0 w-[200%]" style={{ top: '83.02%', height: '9.95%' }}>
+            <div className="bp-row absolute left-0 w-[200%]" style={{ top: '75%', height: '9.95%' }}>
               <div className="absolute -left-[50%] w-[200%] h-px top-1/2" style={{ backgroundImage: 'repeating-linear-gradient(to right, #B2B2B2 0px, #B2B2B2 4px, transparent 4px, transparent 12px)', opacity: 0.5 }} />
               {[0, 1].map(c => (
                 <div key={c} className="absolute w-1/2 h-full" style={{ left: c === 0 ? '0%' : '50%' }}>
@@ -652,61 +643,89 @@ export default function PlaybookSection() {
             </div>
           </div>
 
-          <CubesSvg className="absolute bottom-1.5 right-2.5 w-7 pointer-events-none z-6" />
+          <img src="/images/cubes.png" alt="" className="absolute bottom-2 right-2 w-4 sm:w-5 md:w-8 object-contain pointer-events-none z-6" />
 
-          <div className="absolute z-10 top-10 left-7">
+          <div className="absolute z-10 top-6 left-5 sm:top-8 sm:left-6 lg:top-10 lg:left-7">
             <h3 className="font-bricolage font-medium text-4xl text-[#dddddd] tracking-tighter">
-              Blueprint
+              Architecture
             </h3>
-            <p className="font-host font-normal text-md text-[#a1a1a1] tracking-tight max-w-48 mt-3">
-              We design repeatable creative systems, not one off experiments.
+            <p className="font-host font-normal text-sm text-[#a1a1a1] tracking-tighter max-w-48 mt-2 sm:mt-3 md:mt-4">
+              We define the optimal distribution model UGC, creator networks, multi-account systems, or founder led content to match market objectives and maximize reach.
             </p>
           </div>
         </div>
 
         {/* ━━━ DEPLOY CARD ━━━ */}
         <div className="pb-card col-span-5 relative isolate h-96 rounded overflow-hidden border border-solid border-[#383838] bg-[#171717] cursor-pointer transition-[border-color] duration-300">
-          <LinesDeploySvg
-            className="absolute top-[53%] -left-1.5 w-[90%] h-auto pointer-events-none"
-            style={{ mixBlendMode: "plus-lighter" }}
+          <img
+            src="/images/lines.png"
+            alt=""
+            className="absolute inset-x-0 bottom-15 w-full h-auto object-contain pointer-events-none mix-blend-plus-lighter"
           />
-          <ScreensDeploySvg ref={deployRef} className="absolute top-0 left-[58%] h-full w-auto pointer-events-none z-1 isolate" />
-          <CubesSvg className="absolute bottom-1.5 left-3 w-7 pointer-events-none z-2" />
 
-          <div className="absolute z-10 top-10 left-7">
+          {/* Mobile screens — two-column scrolling marquee */}
+          <div ref={deployRef} className="absolute top-0 right-0 w-2/5 h-full overflow-hidden pointer-events-none z-1 isolate">
+            <div className="relative h-full flex gap-2">
+              {/* Left column (moves up) */}
+              <div className="deploy-col-left flex flex-col gap-2 w-1/2">
+                {[...Array(8)].map((_, i) => (
+                  <img
+                    key={`l-${i}`}
+                    src="/images/mobile.png"
+                    alt=""
+                    className="w-full h-auto object-contain"
+                  />
+                ))}
+              </div>
+              {/* Right column (moves down) */}
+              <div className="deploy-col-right flex flex-col gap-2 w-1/2">
+                {[...Array(8)].map((_, i) => (
+                  <img
+                    key={`r-${i}`}
+                    src="/images/mobile.png"
+                    alt=""
+                    className="w-full h-auto object-contain"
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <img src="/images/cubes.png" alt="" className="absolute bottom-2 left-3 w-4 sm:w-5 md:w-6 object-contain pointer-events-none z-2" />
+
+          <div className="absolute z-10 top-6 left-5 sm:top-8 sm:left-6 lg:top-10 lg:left-7">
             <h3 className="font-bricolage font-medium text-4xl text-[#dddddd] tracking-tighter">
-              Deploy
+              Execution
             </h3>
-            <p className="font-host font-normal text-md text-[#a1a1a1] tracking-tight max-w-56 mt-3">
-              We activate our creator network in coordinated distribution waves.
+            <p className="font-host font-normal text-sm text-[#a1a1a1] tracking-tighter max-w-56 mt-2 sm:mt-3 md:mt-4">
+              We execute optimal distribution—from UGC to pre-IPO—via structured content systems, publishing rhythms, and performance reviews.
             </p>
           </div>
         </div>
 
         {/* ━━━ OPTIMIZE CARD ━━━ */}
         <div className="pb-card col-span-7 relative isolate h-96 rounded overflow-hidden border border-solid border-[#383838] bg-[#171717] cursor-pointer transition-[border-color] duration-300">
-          <LightRay1OptimizeSvg className="absolute top-0 left-0 h-full w-auto pointer-events-none" />
+          <img src="/images/light ray 1 optimize.webp" alt="" className="absolute top-0 left-0 h-full w-auto object-contain pointer-events-none" />
           <GridLinesOptimizeSvg className="absolute top-0 left-1/3 h-full w-auto opacity-70 pointer-events-none" />
           <img
             src="/images/Globe and mobile.png"
             alt=""
-            className="absolute top-5 left-1/4 w-3/4 h-[90%] pointer-events-none object-contain"
+            className="absolute top-5 left-1/4 w-3/4 h-9/10 pointer-events-none object-contain"
           />
-          <LightRay2OptimizeSvg className="absolute bottom-0 right-0 h-28 w-auto pointer-events-none" />
-          <CubesSvg className="absolute bottom-1.5 right-2.5 w-7 pointer-events-none" />
+          <img src="/images/light ray 2 optimize.webp" alt="" className="absolute bottom-0 right-0 h-28 w-auto object-contain pointer-events-none" />
+          <img src="/images/cubes.png" alt="" className="absolute bottom-2 right-2 w-4 sm:w-5 md:w-6 object-contain pointer-events-none" />
 
-          <div className="absolute z-10 top-10 left-7">
+          <div className="absolute z-10 top-6 left-5 sm:top-8 sm:left-6 lg:top-10 lg:left-7">
             <h3 className="font-bricolage font-medium text-4xl text-[#dddddd] tracking-tighter">
-              Optimize
+              Refinement
             </h3>
-            <p className="font-host font-normal text-md text-[#a1a1a1] tracking-tight max-w-56 mt-3">
-              We refine performance through live data and behavioral feedback
-              loops.
+            <p className="font-host font-normal text-sm text-[#a1a1a1] tracking-tighter max-w-56 mt-2 sm:mt-3 md:mt-4">
+              We refine the distribution system based on live performance.
             </p>
           </div>
 
-          <p className="absolute z-10 left-7 bottom-7 font-host font-normal text-sm text-[#a1a1a1] max-w-56">
-            Performance loops, retention angles, install conversion tuning.
+          <p className="absolute z-10 left-5 bottom-5 sm:left-6 sm:bottom-6 lg:left-7 lg:bottom-7 font-host font-normal text-sm text-[#a1a1a1] max-w-56">
+            We scale what works and cut what doesn't, refining the engagement for maximum precision and impact.
           </p>
         </div>
       </div>
