@@ -981,7 +981,7 @@ export const CubesSvg = forwardRef(({ className = "" }, ref) => (
 // ── IMG-based components (too large to inline) ──
 
 export const GlobeAndMobileSvg = forwardRef(({ className = "" }, ref) => (
-  <img ref={ref} src="/svgs/Globe and mobile.svg" alt="" className={className} />
+  <img ref={ref} src="/images/Globe_and_mobile.webp" alt="" className={className} />
 ));
 
 export const LinesDeploySvg = forwardRef(({ className = "" }, ref) => (
