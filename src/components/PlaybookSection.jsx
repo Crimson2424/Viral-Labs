@@ -3,7 +3,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import GlobalGrid from "./Globalgrid";
-import ReconRadarInlineSvg from "./SvgAssets";
+import ReconRadarInlineSvg from "./Svgassets";
 import {
   LightRay1ReconSvg,
   LightRay2ReconSvg,
@@ -14,14 +14,13 @@ import {
   GridLinesOptimizeSvg,
   GridLinesReconSvg,
   CubesSvg,
-  GlobeAndMobileSvg,
   LinesDeploySvg,
   ScreensDeploySvg,
   EllipseBlueprintSvg,
   GridLineLeft,
   GridLineRight,
   GridCrosshair,
-} from "./SvgAssets";
+} from "./Svgassets";
 
 /* Grid icon */
 const BlueprintGridIcon = () => (
@@ -688,7 +687,11 @@ export default function PlaybookSection() {
         <div className="pb-card col-span-7 relative isolate h-96 rounded overflow-hidden border border-solid border-[#383838] bg-[#171717] cursor-pointer transition-[border-color] duration-300">
           <LightRay1OptimizeSvg className="absolute top-0 left-0 h-full w-auto pointer-events-none" />
           <GridLinesOptimizeSvg className="absolute top-0 left-1/3 h-full w-auto opacity-70 pointer-events-none" />
-          <GlobeAndMobileSvg className="absolute top-5 left-1/4 w-3/4 h-[90%] pointer-events-none" />
+          <img
+            src="/images/Globe and mobile.png"
+            alt=""
+            className="absolute top-5 left-1/4 w-3/4 h-[90%] pointer-events-none object-contain"
+          />
           <LightRay2OptimizeSvg className="absolute bottom-0 right-0 h-28 w-auto pointer-events-none" />
           <CubesSvg className="absolute bottom-1.5 right-2.5 w-7 pointer-events-none" />
 
