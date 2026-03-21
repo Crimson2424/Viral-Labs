@@ -11,10 +11,11 @@
  *   PHASE 2 — HEADING CHARS STAGGER UP (3.0s → ~4.5s)
  *   PHASE 3 — SUBHEADING SCRAMBLE + CTA (4.0s → ~6.0s)
  *
- *   SCROLL — (+=400%, pinned, scrub)
+ *   SCROLL — (+=600%, pinned, scrub)
  *   ACT 1 — ZOOM TRANSITION (0.00 → 0.40)
- *   ACT 2 — MISSION STATS (0.55 → 0.95)
- *   HOLD (0.95 → 1.00)
+ *   ACT 2 — MISSION STATS ENTRANCE (0.55 → 0.93)
+ *   ACT 3 — STAT SCROLL CYCLING (0.76 → 0.88 via onUpdate)
+ *   HOLD (0.93 → 1.00)
  */
 
 import { useRef } from "react";
@@ -40,6 +41,8 @@ export default function HeroSection() {
   const gridOverlayRef = useRef();
 
   const ctaScrambleRef = useRef(null);
+  const missionStatsRef = useRef();
+  const lastTriggeredStepRef = useRef(0);
 
   useGSAP(
     () => {
@@ -286,10 +289,28 @@ export default function HeroSection() {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
-          end: "+=400%",
+          end: "+=600%",
           pin: true,
           scrub: 1,
           pinSpacing: true,
+          onUpdate: (self) => {
+            if (!entranceState.isComplete) return;
+            const p = self.progress;
+            let targetStep = 0;
+            if (p >= 0.88) targetStep = 2;
+            else if (p >= 0.76) targetStep = 1;
+
+            if (targetStep !== lastTriggeredStepRef.current) {
+              missionStatsRef.current?.animateToStep(targetStep);
+              lastTriggeredStepRef.current = targetStep;
+            }
+          },
+          onLeave: () => {
+            missionStatsRef.current?.startAutoCycle();
+          },
+          onEnterBack: () => {
+            missionStatsRef.current?.stopAutoCycle();
+          },
         },
       });
 
@@ -533,7 +554,7 @@ export default function HeroSection() {
 
       {/* ═══ MissionStats ═══ */}
       <div ref={missionRef} className="relative z-20 opacity-0 pointer-events-none">
-        <MissionStats />
+        <MissionStats ref={missionStatsRef} />
       </div>
     </section>
   );

@@ -13,7 +13,8 @@
  *   Label: slides up/out, text swaps, new label slides in from below.
  *   Dots: color crossfade between steps.
  *
- *   Cycle: 100M+ → 150M+ → 200M+ → repeat
+ *   Scroll-driven: 150M+ → 200M+ → 900M+ (via HeroSection onUpdate)
+ *   After unpin: resumes auto-cycling (repeat: -1)
  *
  * GSAP class targets (for HeroSection scroll entrance):
  *   .impact-label, .impact-heading, .impact-desc, .screen-card,
@@ -21,30 +22,13 @@
  *   .stats-arc, .stat-number, .stat-sub, .stat-dot
  */
 
-import { useRef, forwardRef } from "react";
+import { useRef, forwardRef, useImperativeHandle } from "react";
 import { gsap, useGSAP } from "./Gsapconfig";
 
 // ════════════════════════════════════════════════
 // SVGs
 // ════════════════════════════════════════════════
 
-const BracketLeft = forwardRef(({ className = "" }, ref) => (
-  <svg ref={ref} width="4" height="16" viewBox="0 0 4 16" fill="none" className={className}>
-    <path d="M-6.24657e-05 15.2961V7.34329e-05H3.19994V0.928074H1.05594V14.3521H3.19994V15.2961H-6.24657e-05Z" fill="#FF6F21" />
-  </svg>
-));
-
-const BracketRight = forwardRef(({ className = "" }, ref) => (
-  <svg ref={ref} width="4" height="16" viewBox="0 0 4 16" fill="none" className={className} style={{ transform: "scaleX(-1)" }}>
-    <path d="M-6.24657e-05 15.2961V7.34329e-05H3.19994V0.928074H1.05594V14.3521H3.19994V15.2961H-6.24657e-05Z" fill="#FF6F21" />
-  </svg>
-));
-
-const PlayIcon = forwardRef(({ className = "" }, ref) => (
-  <svg ref={ref} width="16" height="18" viewBox="0 0 16 18" fill="none" className={className}>
-    <path d="M14.29 9L0.649414 16.875V1.125L14.29 9Z" stroke="white" strokeWidth="1.29909" />
-  </svg>
-));
 
 const CornerLeft = forwardRef(({ className = "", ...props }, ref) => (
   <svg ref={ref} width="5" height="9" viewBox="0 0 5 9" fill="none" className={className} {...props}>
@@ -81,49 +65,33 @@ const DashedArc = forwardRef(({ className = "" }, ref) => (
   </svg>
 ));
 
-const SCREENS = [
-  { views: "1.6 Million", image: "/images/marquee-image.png" },
-  { views: "1.6 Million", image: "/images/marquee-image.png" },
-  { views: "1.6 Million", image: "/images/marquee-image.png" },
-  { views: "1.6 Million", image: "/images/marquee-image.png" },
-  { views: "1.6 Million", image: "/images/marquee-image.png" },
+const LOGOS = [
+  { src: "/images/Logo 1.png", alt: "Logo" },
+  { src: "/images/idag8zcHyV_1773986487960 1.png", alt: "Deel" },
+  { src: "/images/Dr._Martens_Logo 1.png", alt: "Dr. Martens" },
+  { src: "/images/flo-svg 1.png", alt: "Flo" },
+  { src: "/images/Vector.png", alt: "The North Face" },
 ];
-
-function ScreenCard({ views, image }) {
-  return (
-    <div className="screen-card flex flex-col gap-3 items-center w-64 shrink-0 opacity-0 translate-y-20 scale-92">
-      <div className="relative w-full aspect-[254/495] bg-white overflow-hidden">
-        <img src={image} alt="" className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute bottom-0 left-0 w-full h-58 bg-gradient-to-b from-transparent to-black" />
-      </div>
-      <div className="flex items-center justify-between w-full">
-        <BracketLeft />
-        <div className="flex items-center justify-between w-56">
-          <PlayIcon />
-          <span className="font-host font-medium text-base text-white text-center leading-normal">{views}</span>
-        </div>
-        <BracketRight />
-      </div>
-    </div>
-  );
-}
 
 // ════════════════════════════════════════════════
 // STAT CYCLE CONFIG
 // ════════════════════════════════════════════════
 
 const STAT_STEPS = [
-  { value: 100, label: "Viral Impressions" },
-  { value: 150, label: "Content Pieces Delivered" },
-  { value: 200, label: "Viral Views Generated" },
+  { value: 150, label: "Viral Impressions" },
+  { value: 200, label: "Content Pieces Delivered" },
+  { value: 900, label: "Views Generated" },
 ];
 
-export default function MissionStats() {
+export default forwardRef(function MissionStats(props, ref) {
   const trackRef = useRef();
   const arcRef = useRef();
   const digitCols = useRef([]);
   const statLabelRef = useRef();
   const dotsRef = useRef([]);
+  const currentStepRef = useRef(0);
+  const isAnimatingRef = useRef(false);
+  const autoCycleTlRef = useRef(null);
 
   // ── GSAP marquee ──
   useGSAP(() => {
@@ -168,67 +136,128 @@ export default function MissionStats() {
     gsap.set(dots[0], { backgroundColor: orange });
     gsap.set(dots[1], { backgroundColor: white });
     gsap.set(dots[2], { backgroundColor: white });
+  });
 
-    // ── Build cycling timeline ──
+  // ── Reusable: animate from current step to target step ──
+  function animateToStep(targetStep) {
+    const cols = digitCols.current.filter(Boolean);
+    const labelEl = statLabelRef.current;
+    const dots = dotsRef.current.filter(Boolean);
+    if (cols.length < 3 || !labelEl || dots.length < 3) return;
+    if (targetStep === currentStepRef.current || isAnimatingRef.current) return;
+
+    isAnimatingRef.current = true;
+    const fromStep = currentStepRef.current;
+    const orange = "#FF6F21";
+    const white = "#FFFFFF";
+    const nextStep = STAT_STEPS[targetStep];
+    const nextDigits = String(nextStep.value).padStart(3, "0").split("").map(Number);
+
+    const tl = gsap.timeline({
+      onComplete: () => {
+        currentStepRef.current = targetStep;
+        isAnimatingRef.current = false;
+      },
+    });
+
+    // Odometer roll
+    nextDigits.forEach((d, colIdx) => {
+      tl.to(cols[colIdx], {
+        yPercent: -(d * 10),
+        duration: 0.9,
+        ease: "power3.inOut",
+      }, colIdx * 0.1);
+    });
+
+    // Label slide out
+    tl.to(labelEl, {
+      yPercent: -120, opacity: 0,
+      duration: 0.35, ease: "power3.in",
+    }, 0);
+
+    // Label swap + reposition
+    tl.call(() => { labelEl.textContent = nextStep.label; }, null, 0.4);
+    tl.set(labelEl, { yPercent: 120 }, 0.4);
+
+    // Label slide in
+    tl.to(labelEl, {
+      yPercent: 0, opacity: 1,
+      duration: 0.4, ease: "power3.out",
+    }, 0.45);
+
+    // Dots crossfade
+    tl.to(dots[fromStep], {
+      backgroundColor: white, duration: 0.4, ease: "power2.inOut",
+    }, 0);
+    tl.to(dots[targetStep], {
+      backgroundColor: orange, duration: 0.4, ease: "power2.inOut",
+    }, 0.25);
+  }
+
+  // ── Auto-cycling: builds the original repeat:-1 timeline ──
+  function startAutoCycle() {
+    if (autoCycleTlRef.current) return;
+
+    const cols = digitCols.current.filter(Boolean);
+    const labelEl = statLabelRef.current;
+    const dots = dotsRef.current.filter(Boolean);
+    if (cols.length < 3 || !labelEl || dots.length < 3) return;
+
+    const orange = "#FF6F21";
+    const white = "#FFFFFF";
+
     const tl = gsap.timeline({ repeat: -1 });
     let pos = 0;
 
-    STAT_STEPS.forEach((step, i) => {
+    STAT_STEPS.forEach((_, i) => {
       const nextI = (i + 1) % STAT_STEPS.length;
       const nextStep = STAT_STEPS[nextI];
       const nextDigits = String(nextStep.value).padStart(3, "0").split("").map(Number);
 
-      // ── HOLD current state ──
       tl.to({}, { duration: 2.5 }, pos);
       pos += 2.5;
 
-      // ── ODOMETER: roll each digit column with cascading stagger ──
-      // Hundreds starts first, then tens, then ones — like a real counter
       nextDigits.forEach((d, colIdx) => {
         tl.to(cols[colIdx], {
-          yPercent: -(d * 10),
-          duration: 0.9,
-          ease: "power3.inOut",
+          yPercent: -(d * 10), duration: 0.9, ease: "power3.inOut",
         }, pos + colIdx * 0.1);
       });
 
-      // ── LABEL: slide out ──
       tl.to(labelEl, {
-        yPercent: -120,
-        opacity: 0,
-        duration: 0.35,
-        ease: "power3.in",
+        yPercent: -120, opacity: 0, duration: 0.35, ease: "power3.in",
       }, pos);
-
-      // ── LABEL: swap text + reposition below ──
-      tl.call(() => {
-        labelEl.textContent = nextStep.label;
-      }, null, pos + 0.4);
+      tl.call(() => { labelEl.textContent = nextStep.label; }, null, pos + 0.4);
       tl.set(labelEl, { yPercent: 120 }, pos + 0.4);
-
-      // ── LABEL: slide in from below ──
       tl.to(labelEl, {
-        yPercent: 0,
-        opacity: 1,
-        duration: 0.4,
-        ease: "power3.out",
+        yPercent: 0, opacity: 1, duration: 0.4, ease: "power3.out",
       }, pos + 0.45);
 
-      // ── DOTS: crossfade colors ──
       tl.to(dots[i], {
-        backgroundColor: white,
-        duration: 0.4,
-        ease: "power2.inOut",
+        backgroundColor: white, duration: 0.4, ease: "power2.inOut",
       }, pos);
       tl.to(dots[nextI], {
-        backgroundColor: orange,
-        duration: 0.4,
-        ease: "power2.inOut",
+        backgroundColor: orange, duration: 0.4, ease: "power2.inOut",
       }, pos + 0.25);
 
       pos += 0.9;
     });
-  });
+
+    autoCycleTlRef.current = tl;
+  }
+
+  function stopAutoCycle() {
+    if (autoCycleTlRef.current) {
+      autoCycleTlRef.current.kill();
+      autoCycleTlRef.current = null;
+    }
+  }
+
+  // ── Expose imperative methods for HeroSection scroll control ──
+  useImperativeHandle(ref, () => ({
+    animateToStep,
+    startAutoCycle,
+    stopAutoCycle,
+  }));
 
   return (
     <div className="relative w-full overflow-visible">
@@ -269,7 +298,7 @@ export default function MissionStats() {
           <FrameCorner className="frame-corner absolute -bottom-5 -left-5 z-10 opacity-0" style={{ transform: "scaleY(-1)" }} />
           <FrameCorner className="frame-corner absolute -bottom-5 -right-5 z-10 opacity-0" style={{ transform: "scale(-1, -1)" }} />
 
-          <div className="relative overflow-hidden py-10">
+          <div className="relative overflow-hidden py-6">
             <div
               className="marquee-fade absolute inset-y-0 left-0 w-40 z-10 pointer-events-none opacity-0"
               style={{ background: "linear-gradient(to right, #121212 0%, transparent 100%)" }}
@@ -279,15 +308,25 @@ export default function MissionStats() {
               style={{ background: "linear-gradient(to left, #121212 0%, transparent 100%)" }}
             />
 
-            <div ref={trackRef} className="flex w-max">
-              <div className="marquee-set flex gap-30 shrink-0 pr-30">
-                {SCREENS.map((screen, i) => (
-                  <ScreenCard key={`a-${i}`} {...screen} />
+            <div ref={trackRef} className="flex w-max items-center">
+              <div className="marquee-set flex gap-20 shrink-0 pr-20 items-center">
+                {LOGOS.map((logo, i) => (
+                  <img
+                    key={`a-${i}`}
+                    src={logo.src}
+                    alt={logo.alt}
+                    className="screen-card h-10 w-auto object-contain opacity-0 translate-y-5"
+                  />
                 ))}
               </div>
-              <div className="marquee-set flex gap-30 shrink-0 pr-30">
-                {SCREENS.map((screen, i) => (
-                  <ScreenCard key={`b-${i}`} {...screen} />
+              <div className="marquee-set flex gap-20 shrink-0 pr-20 items-center">
+                {LOGOS.map((logo, i) => (
+                  <img
+                    key={`b-${i}`}
+                    src={logo.src}
+                    alt={logo.alt}
+                    className="screen-card h-10 w-auto object-contain opacity-0 translate-y-5"
+                  />
                 ))}
               </div>
             </div>
@@ -369,4 +408,4 @@ export default function MissionStats() {
       </div>
     </div>
   );
-}
+});
