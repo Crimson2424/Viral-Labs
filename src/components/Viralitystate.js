@@ -20,5 +20,5 @@ export const viralityState = {
 
   // Scale endpoints
   startScale: 3.5,
-  endScale: 1.2,
+  endScale: 0.9,
 };
