@@ -13,8 +13,8 @@
  *   Label: slides up/out, text swaps, new label slides in from below.
  *   Dots: color crossfade between steps.
  *
- *   Scroll-driven: 150M+ → 200M+ → 900M+ (via HeroSection onUpdate)
- *   After unpin: resumes auto-cycling (repeat: -1)
+ *   Scroll-driven: 100M+ → 200M+ → 900M+ (own ScrollTrigger, ignores HeroSection calls)
+ *   After unpin: resumes auto-cycling from current step (repeat: -1)
  *
  * GSAP class targets (for HeroSection scroll entrance):
  *   .impact-label, .impact-heading, .impact-desc, .screen-card,
@@ -23,7 +23,7 @@
  */
 
 import { useRef, forwardRef, useImperativeHandle } from "react";
-import { gsap, useGSAP } from "./Gsapconfig";
+import { gsap, ScrollTrigger, useGSAP } from "./Gsapconfig";
 
 // ════════════════════════════════════════════════
 // SVGs
@@ -78,20 +78,22 @@ const LOGOS = [
 // ════════════════════════════════════════════════
 
 const STAT_STEPS = [
-  { value: 150, label: "Viral Impressions" },
+  { value: 100, label: "Viral Impressions" },
   { value: 200, label: "Content Pieces Delivered" },
   { value: 900, label: "Views Generated" },
 ];
 
 export default forwardRef(function MissionStats(props, ref) {
+  const wrapperRef = useRef();
   const trackRef = useRef();
   const arcRef = useRef();
   const digitCols = useRef([]);
   const statLabelRef = useRef();
   const dotsRef = useRef([]);
   const currentStepRef = useRef(0);
-  const isAnimatingRef = useRef(false);
+  const activeStepTlRef = useRef(null);
   const autoCycleTlRef = useRef(null);
+  const scrollControlledRef = useRef(true);
 
   // ── GSAP marquee ──
   useGSAP(() => {
@@ -103,7 +105,7 @@ export default forwardRef(function MissionStats(props, ref) {
 
     const halfWidth = firstSet.offsetWidth;
     gsap.set(track, { x: 0 });
-    gsap.to(track, { x: -halfWidth, duration: 35, ease: "none", repeat: -1 });
+    gsap.to(track, { x: -halfWidth, duration: 20, ease: "none", repeat: -1 });
   }, { scope: trackRef });
 
   // ── GSAP dashed arc rotation ──
@@ -138,15 +140,20 @@ export default forwardRef(function MissionStats(props, ref) {
     gsap.set(dots[2], { backgroundColor: white });
   });
 
-  // ── Reusable: animate from current step to target step ──
-  function animateToStep(targetStep) {
+  // ── Internal: animate from current step to target step ──
+  function _animateToStep(targetStep) {
     const cols = digitCols.current.filter(Boolean);
     const labelEl = statLabelRef.current;
     const dots = dotsRef.current.filter(Boolean);
     if (cols.length < 3 || !labelEl || dots.length < 3) return;
-    if (targetStep === currentStepRef.current || isAnimatingRef.current) return;
+    if (targetStep === currentStepRef.current) return;
 
-    isAnimatingRef.current = true;
+    // Kill any in-progress step animation and snap to its end state
+    if (activeStepTlRef.current) {
+      activeStepTlRef.current.progress(1).kill();
+      activeStepTlRef.current = null;
+    }
+
     const fromStep = currentStepRef.current;
     const orange = "#FF6F21";
     const white = "#FFFFFF";
@@ -156,9 +163,11 @@ export default forwardRef(function MissionStats(props, ref) {
     const tl = gsap.timeline({
       onComplete: () => {
         currentStepRef.current = targetStep;
-        isAnimatingRef.current = false;
+        activeStepTlRef.current = null;
       },
     });
+
+    activeStepTlRef.current = tl;
 
     // Odometer roll
     nextDigits.forEach((d, colIdx) => {
@@ -194,7 +203,7 @@ export default forwardRef(function MissionStats(props, ref) {
     }, 0.25);
   }
 
-  // ── Auto-cycling: builds the original repeat:-1 timeline ──
+  // ── Auto-cycling: builds repeat:-1 timeline from current step ──
   function startAutoCycle() {
     if (autoCycleTlRef.current) return;
 
@@ -205,11 +214,13 @@ export default forwardRef(function MissionStats(props, ref) {
 
     const orange = "#FF6F21";
     const white = "#FFFFFF";
+    const startIdx = currentStepRef.current;
 
     const tl = gsap.timeline({ repeat: -1 });
     let pos = 0;
 
-    STAT_STEPS.forEach((_, i) => {
+    for (let j = 0; j < STAT_STEPS.length; j++) {
+      const i = (startIdx + j) % STAT_STEPS.length;
       const nextI = (i + 1) % STAT_STEPS.length;
       const nextStep = STAT_STEPS[nextI];
       const nextDigits = String(nextStep.value).padStart(3, "0").split("").map(Number);
@@ -240,7 +251,7 @@ export default forwardRef(function MissionStats(props, ref) {
       }, pos + 0.25);
 
       pos += 0.9;
-    });
+    }
 
     autoCycleTlRef.current = tl;
   }
@@ -252,21 +263,63 @@ export default forwardRef(function MissionStats(props, ref) {
     }
   }
 
-  // ── Expose imperative methods for HeroSection scroll control ──
+  // ── Own ScrollTrigger for step control (overrides HeroSection's calls) ──
+  useGSAP(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+
+    const section = wrapper.closest("section");
+    if (!section) return;
+
+    let lastScrollStep = 0;
+    ScrollTrigger.create({
+      trigger: section,
+      start: "top top",
+      end: "+=600%",
+      onUpdate: (self) => {
+        const p = self.progress;
+
+        // Only control steps after entrance is complete (~0.93)
+        if (p < 0.93) return;
+
+        let targetStep = 0;
+        if (p >= 0.975) targetStep = 2;
+        else if (p >= 0.955) targetStep = 1;
+
+        if (targetStep !== lastScrollStep) {
+          lastScrollStep = targetStep;
+          _animateToStep(targetStep);
+        }
+      },
+      onLeave: () => {
+        scrollControlledRef.current = false;
+        startAutoCycle();
+      },
+      onEnterBack: () => {
+        stopAutoCycle();
+        scrollControlledRef.current = true;
+      },
+    });
+  });
+
+  // ── Expose imperative methods for HeroSection ──
+  // animateToStep is a no-op while scroll-controlled (MissionStats owns the timing)
   useImperativeHandle(ref, () => ({
-    animateToStep,
+    animateToStep: (step) => {
+      if (!scrollControlledRef.current) _animateToStep(step);
+    },
     startAutoCycle,
     stopAutoCycle,
   }));
 
   return (
-    <div className="relative w-full overflow-visible">
+    <div ref={wrapperRef} className="relative w-full overflow-visible" style={{ minHeight: "100dvh" }}>
 
       {/* Grid lines */}
       <div className="pointer-events-none absolute top-0 left-[105px] w-px h-full bg-white/20 z-30" aria-hidden="true" />
       <div className="pointer-events-none absolute top-0 right-[105px] w-px h-full bg-white/20 z-30" aria-hidden="true" />
       <div className="pointer-events-none absolute top-0 left-[105px] right-[105px] h-px bg-white/20 z-30" aria-hidden="true" />
-      <div className="pointer-events-none absolute bottom-0 left-[105px] right-[105px] h-px bg-white/20 z-30" aria-hidden="true" />
+      {/* <div className="pointer-events-none absolute bottom-0 left-[105px] right-[105px] h-px bg-white/20 z-30" aria-hidden="true" /> */}
 
       <CornerLeft className="pointer-events-none absolute -top-0.5 left-[105px] z-30" />
       <CornerRight className="pointer-events-none absolute -top-0.5 right-[105px] z-30" />
@@ -298,7 +351,7 @@ export default forwardRef(function MissionStats(props, ref) {
           <FrameCorner className="frame-corner absolute -bottom-5 -left-5 z-10 opacity-0" style={{ transform: "scaleY(-1)" }} />
           <FrameCorner className="frame-corner absolute -bottom-5 -right-5 z-10 opacity-0" style={{ transform: "scale(-1, -1)" }} />
 
-          <div className="relative overflow-hidden py-6">
+          <div className="relative overflow-hidden py-15">
             <div
               className="marquee-fade absolute inset-y-0 left-0 w-40 z-10 pointer-events-none opacity-0"
               style={{ background: "linear-gradient(to right, #121212 0%, transparent 100%)" }}
@@ -309,26 +362,18 @@ export default forwardRef(function MissionStats(props, ref) {
             />
 
             <div ref={trackRef} className="flex w-max items-center">
-              <div className="marquee-set flex gap-20 shrink-0 pr-20 items-center">
-                {LOGOS.map((logo, i) => (
-                  <img
-                    key={`a-${i}`}
-                    src={logo.src}
-                    alt={logo.alt}
-                    className="screen-card h-10 w-auto object-contain opacity-0 translate-y-5"
-                  />
-                ))}
-              </div>
-              <div className="marquee-set flex gap-20 shrink-0 pr-20 items-center">
-                {LOGOS.map((logo, i) => (
-                  <img
-                    key={`b-${i}`}
-                    src={logo.src}
-                    alt={logo.alt}
-                    className="screen-card h-10 w-auto object-contain opacity-0 translate-y-5"
-                  />
-                ))}
-              </div>
+              {["a", "b", "c", "d"].map((setKey) => (
+                <div key={setKey} className="marquee-set flex gap-20 shrink-0 pr-20 items-center">
+                  {LOGOS.map((logo, i) => (
+                    <img
+                      key={`${setKey}-${i}`}
+                      src={logo.src}
+                      alt={logo.alt}
+                      className="screen-card h-18 w-auto object-contain"
+                    />
+                  ))}
+                </div>
+              ))}
             </div>
           </div>
         </div>
