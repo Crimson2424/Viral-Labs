@@ -48,21 +48,6 @@ const CARD_ANIM = {
   borderGlowDelay: 0.4,
 };
 
-/* ═══════════════════════════════════════════════════
-   CARD HOVER CONFIG — tweak these for easy tuning
-   ═══════════════════════════════════════════════════ */
-const CARD_HOVER = {
-  scale: 1.03,
-  y: -4,                                      // subtle lift
-  duration: 0.35,
-  ease: "power2.out",
-  leaveEase: "power2.inOut",
-  leaveDuration: 0.4,
-  shadow: "0 8px 32px 0 rgba(0,0,0,0.45), 0 0 20px 0 rgba(255,111,33,0.08)",
-  shadowReset: "0 0 0px 0 rgba(0,0,0,0), 0 0 0px 0 rgba(255,111,33,0)",
-  borderColor: "rgba(255,111,33,0.25)",        // warm orange tint on border
-  borderReset: "rgba(56,56,56,1)",             // #383838 default
-};
 
 export default function PlaybookSection() {
   const sectionRef = useRef(null);
@@ -189,7 +174,7 @@ export default function PlaybookSection() {
           }, pos + CARD_ANIM.borderGlowDelay);
 
           tl.to(card, {
-            boxShadow: CARD_HOVER.shadowReset,
+            boxShadow: "0 0 0px 0 rgba(0,0,0,0), 0 0 0px 0 rgba(255,111,33,0)",
             duration: 0.8,
             ease: "power2.inOut",
           }, pos + CARD_ANIM.borderGlowDelay + 0.4);
@@ -225,66 +210,6 @@ export default function PlaybookSection() {
         buildCardEntrance(tl, row2);
       }
 
-      /* ── Card hover interactions ──
-         Each card gets its own enter/leave handlers.
-         Uses a per-card tween ref so rapid hover in/out
-         doesn't stack or conflict. The entrance animation
-         sets final state to scale:1, y:0 etc — hover
-         layers on top with overwrite:"auto" so GSAP
-         resolves any overlap gracefully.
-      */
-      const hoverTweens = new Map();
-
-      cards.forEach((card) => {
-        const handleEnter = () => {
-          // Kill any running leave tween for this card
-          const prev = hoverTweens.get(card);
-          if (prev) prev.kill();
-
-          const tween = gsap.to(card, {
-            scale: CARD_HOVER.scale,
-            y: CARD_HOVER.y,
-            boxShadow: CARD_HOVER.shadow,
-            borderColor: CARD_HOVER.borderColor,
-            duration: CARD_HOVER.duration,
-            ease: CARD_HOVER.ease,
-            overwrite: "auto",
-          });
-
-          hoverTweens.set(card, tween);
-        };
-
-        const handleLeave = () => {
-          const prev = hoverTweens.get(card);
-          if (prev) prev.kill();
-
-          const tween = gsap.to(card, {
-            scale: 1,
-            y: 0,
-            boxShadow: CARD_HOVER.shadowReset,
-            borderColor: CARD_HOVER.borderReset,
-            duration: CARD_HOVER.leaveDuration,
-            ease: CARD_HOVER.leaveEase,
-            overwrite: "auto",
-          });
-
-          hoverTweens.set(card, tween);
-        };
-
-        card.addEventListener("mouseenter", handleEnter);
-        card.addEventListener("mouseleave", handleLeave);
-
-        // Store handlers for cleanup
-        card._pbHoverEnter = handleEnter;
-        card._pbHoverLeave = handleLeave;
-      });
-
-      return () => {
-        cards.forEach((card) => {
-          if (card._pbHoverEnter) card.removeEventListener("mouseenter", card._pbHoverEnter);
-          if (card._pbHoverLeave) card.removeEventListener("mouseleave", card._pbHoverLeave);
-        });
-      };
     },
     { scope: sectionRef }
   );
@@ -525,7 +450,7 @@ export default function PlaybookSection() {
       <div className="pb-card-grid relative z-40 max-w-[95.5rem] mx-auto grid grid-cols-12 gap-6 px-0">
 
         {/* ━━━ RECON CARD ━━━ */}
-        <div className="pb-card col-span-7 relative isolate h-96 rounded overflow-hidden border border-solid border-[#383838] shadow-lg shadow-black/30 bg-[#171717] cursor-pointer transition-[border-color] duration-300">
+        <div className="pb-card col-span-7 relative isolate h-96 rounded overflow-hidden border border-solid border-[#383838] shadow-lg shadow-black/30 bg-[#171717] ">
           <img src="/images/light ray 1 recon.webp" alt="" className="absolute top-0 left-0 h-full w-auto object-contain pointer-events-none" />
           <img src="/images/light ray 2 recon.png" alt="" className="absolute top-0 right-0 h-3/5 w-auto object-contain pointer-events-none" />
           <GridLinesReconSvg className="absolute top-0 right-0 h-full w-auto opacity-70 pointer-events-none" />
@@ -548,7 +473,7 @@ export default function PlaybookSection() {
         </div>
 
         {/* ━━━ BLUEPRINT CARD ━━━ */}
-        <div ref={blueprintRef} className="pb-card col-span-5 relative isolate h-96 rounded overflow-hidden border border-solid border-[#383838] bg-[#171717] cursor-pointer transition-[border-color] duration-300">
+        <div ref={blueprintRef} className="pb-card col-span-5 relative isolate h-96 rounded overflow-hidden border border-solid border-[#383838] bg-[#171717] ">
           <EllipseBlueprintSvg className="absolute top-0 left-0 h-full w-auto pointer-events-none z-[6]" />
           <img src="/images/light ray 1 blueprint.webp" alt="" className="absolute bottom-0 -left-20 w-4/5 h-14 object-contain pointer-events-none z-7" />
           <img src="/images/light ray 2 blueprint.webp" alt="" className="absolute top-0 -right-1 w-3/5 h-full object-contain pointer-events-none z-6" />
@@ -656,7 +581,7 @@ export default function PlaybookSection() {
         </div>
 
         {/* ━━━ DEPLOY CARD ━━━ */}
-        <div className="pb-card col-span-5 relative isolate h-96 rounded overflow-hidden border border-solid border-[#383838] bg-[#171717] cursor-pointer transition-[border-color] duration-300">
+        <div className="pb-card col-span-5 relative isolate h-96 rounded overflow-hidden border border-solid border-[#383838] bg-[#171717] ">
           <img
             src="/images/lines.png"
             alt=""
@@ -704,7 +629,7 @@ export default function PlaybookSection() {
         </div>
 
         {/* ━━━ OPTIMIZE CARD ━━━ */}
-        <div className="pb-card col-span-7 relative isolate h-96 rounded overflow-hidden border border-solid border-[#383838] bg-[#171717] cursor-pointer transition-[border-color] duration-300">
+        <div className="pb-card col-span-7 relative isolate h-96 rounded overflow-hidden border border-solid border-[#383838] bg-[#171717] ">
           <img src="/images/light ray 1 optimize.webp" alt="" className="absolute top-0 left-0 h-full w-auto object-contain pointer-events-none" />
           <GridLinesOptimizeSvg className="absolute top-0 left-1/3 h-full w-auto opacity-70 pointer-events-none" />
           <img
