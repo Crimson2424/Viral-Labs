@@ -2,7 +2,7 @@
  * MissionStats — "Operational Impact at Scale"
  *
  * MARQUEE:
- *   GSAP-driven infinite scroll via gsap.to(track, { x: -halfWidth }).
+ *   GSAP-driven infinite scroll via gsap.to(track, { x: -setWidth }).
  *
  * DASHED ARC:
  *   Animated via strokeDashoffset — dashes march anti-clockwise.
@@ -96,6 +96,9 @@ export default forwardRef(function MissionStats(props, ref) {
   const scrollControlledRef = useRef(true);
 
   // ── GSAP marquee ──
+  // Each .marquee-set has a fixed CSS width (calc(100vw - 210px)),
+  // so we measure synchronously — no need to wait for images.
+  // getBoundingClientRect gives sub-pixel accuracy to prevent drift.
   useGSAP(() => {
     const track = trackRef.current;
     if (!track) return;
@@ -103,10 +106,12 @@ export default forwardRef(function MissionStats(props, ref) {
     const firstSet = track.querySelector(".marquee-set");
     if (!firstSet) return;
 
-    const halfWidth = firstSet.offsetWidth;
+    const setWidth = firstSet.getBoundingClientRect().width;
+    if (setWidth <= 0) return;
+
     gsap.set(track, { x: 0 });
-    gsap.to(track, { x: -halfWidth, duration: 20, ease: "none", repeat: -1 });
-  }, { scope: trackRef });
+    gsap.to(track, { x: -setWidth, duration: 20, ease: "none", repeat: -1 });
+  }, { scope: wrapperRef });
 
   // ── GSAP dashed arc rotation ──
   useGSAP(() => {
@@ -279,12 +284,12 @@ export default forwardRef(function MissionStats(props, ref) {
       onUpdate: (self) => {
         const p = self.progress;
 
-        // Only control steps after entrance is complete (~0.93)
-        if (p < 0.93) return;
+        // Only control steps after stat-number entrance begins (~0.87)
+        if (p < 0.87) return;
 
         let targetStep = 0;
-        if (p >= 0.975) targetStep = 2;
-        else if (p >= 0.955) targetStep = 1;
+        if (p >= 0.95) targetStep = 2;
+        else if (p >= 0.91) targetStep = 1;
 
         if (targetStep !== lastScrollStep) {
           lastScrollStep = targetStep;
@@ -319,7 +324,6 @@ export default forwardRef(function MissionStats(props, ref) {
       <div className="pointer-events-none absolute top-0 left-[105px] w-px h-full bg-white/20 z-30" aria-hidden="true" />
       <div className="pointer-events-none absolute top-0 right-[105px] w-px h-full bg-white/20 z-30" aria-hidden="true" />
       <div className="pointer-events-none absolute top-0 left-[105px] right-[105px] h-px bg-white/20 z-30" aria-hidden="true" />
-      {/* <div className="pointer-events-none absolute bottom-0 left-[105px] right-[105px] h-px bg-white/20 z-30" aria-hidden="true" /> */}
 
       <CornerLeft className="pointer-events-none absolute -top-0.5 left-[105px] z-30" />
       <CornerRight className="pointer-events-none absolute -top-0.5 right-[105px] z-30" />
@@ -363,13 +367,13 @@ export default forwardRef(function MissionStats(props, ref) {
 
             <div ref={trackRef} className="flex w-max items-center">
               {["a", "b", "c", "d"].map((setKey) => (
-                <div key={setKey} className="marquee-set flex gap-20 shrink-0 pr-20 items-center">
+                <div key={setKey} className="marquee-set flex shrink-0 items-center justify-around" style={{ width: "calc(100vw - 210px)" }}>
                   {LOGOS.map((logo, i) => (
                     <img
                       key={`${setKey}-${i}`}
                       src={logo.src}
                       alt={logo.alt}
-                      className="screen-card h-18 w-auto object-contain"
+                      className="screen-card h-28 w-auto object-contain opacity-0 grayscale brightness-75"
                     />
                   ))}
                 </div>
@@ -397,10 +401,7 @@ export default forwardRef(function MissionStats(props, ref) {
                   Views
                 </span>
 
-                {/* ══ ODOMETER NUMBER ══
-                    3 digit columns, each a strip of 0–9 clipped to 1 digit.
-                    GSAP rolls yPercent to show target digit.
-                    "M+" suffix is static. */}
+                {/* ══ ODOMETER NUMBER ══ */}
                 <div
                   className="stat-number flex items-center font-bricolage font-normal text-[88px] text-white tracking-[-5.28px] leading-none whitespace-nowrap opacity-0 translate-y-8"
                   style={{ fontVariationSettings: "'opsz' 14, 'wdth' 100" }}
@@ -427,10 +428,7 @@ export default forwardRef(function MissionStats(props, ref) {
                   <span>M+</span>
                 </div>
 
-                {/* ══ CYCLING LABEL ══
-                    Outer span: .stat-sub for entrance (opacity + y).
-                    Inner wrapper: overflow-hidden clip for slide animation.
-                    Innermost span: ref target for yPercent slide. */}
+                {/* ══ CYCLING LABEL ══ */}
                 <span className="stat-sub font-host font-medium text-lg text-white tracking-tight leading-none opacity-0 translate-y-4">
                   <span className="block overflow-hidden" style={{ height: "1.4em" }}>
                     <span ref={statLabelRef} className="block">
