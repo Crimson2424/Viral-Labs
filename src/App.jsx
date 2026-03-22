@@ -17,6 +17,8 @@ import ViralEngineSection from "./components/ViralEngineSection";
 import GlobalGrid from "./components/Globalgrid";
 import { loadingState } from "./components/loadingState";
 import { entranceState } from "./components/entranceState";
+import RocketLaunchSection from "./components/Rocketlaunchsection";
+import CreatorGlobeOffsetGroup from "./components/Creatorglobeoffsetgroup";
 
 function DummySection() {
   return (
@@ -68,11 +70,11 @@ const App = () => {
 
   useEffect(() => {
     const lenis = new Lenis({
-      lerp: 0.08,
-      duration: 1.4,
+      lerp: 0.1,
+      duration: 1.2,
       smoothWheel: true,
-      wheelMultiplier: 0.9,
-      touchMultiplier: 1.5,
+      wheelMultiplier: 1.0,
+      touchMultiplier: 1.8,
     });
     lenisRef.current = lenis;
 
@@ -137,17 +139,20 @@ const App = () => {
         {/* Creator Network — tracks the container div inside CreatorNetwork */}
         <View track={creatorViewRef}>
           <PerspectiveCamera makeDefault position={[0, 0, 2.8]} fov={45} />
-          <group position={[-1.05, -0.25, 0.73]} rotation={[-0.2, 0.64, 1.23]}>
-            <CreatorGlobe containerRef={creatorViewRef} />
-          </group>
+          <CreatorGlobeOffsetGroup>
+            <group position={[-1.05, -0.25, 0.73]} rotation={[-0.2, 0.64, 1.23]}>
+              <CreatorGlobe containerRef={creatorViewRef} />
+            </group>
+          </CreatorGlobeOffsetGroup>
         </View>
       </Canvas>
 
       <HeroSection />
       <ViralitySection globeContainerRef={globeContainerRef} />
       <PlaybookSection />
-      <ViralEngineSection />
-      <CreatorNetwork viewRef={creatorViewRef} />
+      {/* <ViralEngineSection />
+      <CreatorNetwork viewRef={creatorViewRef} /> */}
+      <RocketLaunchSection viewRef={creatorViewRef} />
       <DummySection />
       <GlobalTexture />
     </main>

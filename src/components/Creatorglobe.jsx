@@ -1,34 +1,10 @@
 /**
  * CreatorGlobe — R3F conversion of the vanilla Three.js creator network globe.
  *
- * Converted from standalone WebGLRenderer to R3F scene content for use
- * inside a <View> in App.jsx's shared Canvas.
- *
- * FEATURES:
- *  - Inner dark sphere + fresnel edge glow
- *  - Earth map land particles (loaded from specular image)
- *  - 20 network hubs with pulsing orange rings
- *  - Constellation network mesh
- *  - Hover trajectory bezier paths (hub → hub)
- *  - Autonomous ambient trajectory paths
- *  - Drag-to-rotate globe interaction
- *  - Hub hover detection → tooltip data via creatorGlobeState
- *
- * POINTER MATH:
- *  Uses containerRef (the View's tracked DOM element) for NDC calculation,
- *  same pattern as the GPGPU particle globe in GlobeScene.jsx.
- *
- * TOOLTIP BRIDGE:
- *  Writes to creatorGlobeState.hoveredData (on enter/leave) and
- *  creatorGlobeState.tooltipX/Y (every frame) so the DOM tooltip in
- *  CreatorNetwork can read position without React re-renders.
- *  Calls onHoverChange(data|null) for React state updates on enter/leave only.
- *
- * USAGE (inside App.jsx Canvas):
- *  <View track={creatorViewRef}>
- *    <PerspectiveCamera makeDefault position={[0, 0, 2.8]} fov={45} />
- *    <CreatorGlobe containerRef={creatorViewRef} />
- *  </View>
+ * POINTER GATE:
+ *  All pointer interactions (drag, hover, tooltip) are gated by
+ *  creatorGlobeState.interactive. RocketLaunchSection sets this to
+ *  false during rocket phases and true when CN content is active.
  */
 
 import { useRef, useMemo, useEffect, useCallback } from "react";
@@ -79,7 +55,7 @@ const constellationFragmentShader = `
 `;
 
 // ============================================================================
-// CONSTELLATION NETWORK GENERATOR (dense lat/lon rectangular grid)
+// CONSTELLATION NETWORK GENERATOR
 // ============================================================================
 
 function generateConstellationNetwork(latDivisions = 36, lonDivisions = 56, radius = 1.2) {
@@ -154,7 +130,7 @@ function generateConstellationNetwork(latDivisions = 36, lonDivisions = 56, radi
 }
 
 // ============================================================================
-// INDIA FIXED POINT (center of India ~20.5°N, 78.9°E on unit sphere)
+// INDIA FIXED POINT
 // ============================================================================
 
 const INDIA_POINT = (() => {
@@ -402,13 +378,16 @@ export default function CreatorGlobe({ containerRef }) {
   }, []);
 
   // ════════════════════════════════════════════════
-  // POINTER EVENTS
+  // POINTER EVENTS — gated by creatorGlobeState.interactive
   // ════════════════════════════════════════════════
 
   useEffect(() => {
     const getEl = () => containerRef?.current;
 
     const onMove = (e) => {
+      // ★ GATE: skip all pointer processing when not interactive
+      if (!creatorGlobeState.interactive) return;
+
       const el = getEl();
       if (!el) return;
       const rect = el.getBoundingClientRect();
@@ -436,6 +415,9 @@ export default function CreatorGlobe({ containerRef }) {
     };
 
     const onDown = (e) => {
+      // ★ GATE: skip drag start when not interactive
+      if (!creatorGlobeState.interactive) return;
+
       const el = getEl();
       if (!el) return;
       const rect = el.getBoundingClientRect();
@@ -505,9 +487,11 @@ export default function CreatorGlobe({ containerRef }) {
     const targetQuat = _parentInvQuat.copy(_tiltQuat).multiply(s.dragQuaternion).multiply(autoQuat);
     globe.quaternion.slerp(targetQuat, 0.1);
 
+    // ★ GATE: skip hover detection when not interactive
+    const isInteractive = creatorGlobeState.interactive;
     const pointerInBounds = pointer.x >= -1 && pointer.x <= 1 && pointer.y >= -1 && pointer.y <= 1;
 
-    if (!s.isDragging && s.initialized && pointerInBounds) {
+    if (!s.isDragging && s.initialized && pointerInBounds && isInteractive) {
       raycaster.setFromCamera(pointer, camera);
 
       const hubHits = raycaster.intersectObjects(s.networkHitboxes);
@@ -526,7 +510,8 @@ export default function CreatorGlobe({ containerRef }) {
         s.activeHoverHub = null;
         creatorGlobeState.hoveredData = null;
       }
-    } else if (!pointerInBounds && s.activeHoverHub) {
+    } else if ((!pointerInBounds || !isInteractive) && s.activeHoverHub) {
+      // Clear hover when pointer leaves or interaction is disabled
       s.activeHoverHub = null;
       creatorGlobeState.hoveredData = null;
     }
@@ -630,7 +615,7 @@ export default function CreatorGlobe({ containerRef }) {
   });
 
   const { lineGeo: constellationLineGeo, dotGeo: constellationDotGeo, shimmerDotGeo } = useMemo(
-    () => generateConstellationNetwork(36, 56, 1.2),
+    () => generateConstellationNetwork(36, 56, 1.08),
     []
   );
 

@@ -324,8 +324,7 @@ export default function CreatorNetwork({ viewRef }) {
       y: 0,
       duration: 0.6,
       stagger: {
-        amount: 0.5,
-        grid: [3, 2],
+        amount: 0.4,
         from: "start",
       },
       ease: "back.out(1.4)",
@@ -493,34 +492,23 @@ export default function CreatorNetwork({ viewRef }) {
             {/* ══ DESCRIPTION ══ */}
             <div className="flex flex-col items-end gap-4 max-w-sm -mt-4">
               <p ref={desc1Ref} className="cn-desc font-host font-thin text-md text-right leading-tight">
-                We don't "find influencers." We operate a
-                <br />
-                distributed performance network.
+              We operate a coordinated network of 300+ creators, executing at a scale of 8,000+ monthly videos to meet specific category and audience objectives. Supported by proprietary amplification systems.
               </p>
               <p ref={desc2Ref} className="cn-desc font-host font-thin text-md text-right leading-relaxed">
-                Our vetted creator operators execute
-                <br />
-                structured content missions across
-                <br />
-                platforms, enabling controlled virality and
-                <br />
-                scalable distribution.
+              Our distribution model cumulatively reaches 1B+ views per month, ensuring consistent output and high-impact performance across all major platforms.
               </p>
             </div>
 
             {/* ══ STATS GRID ══ */}
-            <div ref={statsGridRef} className="grid grid-cols-2 gap-x-3 gap-y-4 w-full max-w-sm mt-4">
+            <div ref={statsGridRef} className="grid grid-cols-1 gap-y-4 w-full max-w-[260px] mt-4">
               {[
-                { label: "Demo Text Here", value: "25,000+" },
-                { label: "Demo Text Here", value: "25,000+" },
-                { label: "Demo Text Here", value: "25,000+" },
-                { label: "Demo Text Here", value: "25,000+" },
-                { label: "Demo Text Here", value: "25,000+" },
-                { label: "Demo Text Here", value: "25,000+" },
+                { value: "1BN+", label: "Views per month through our engagement network" },
+                { value: "8,000+", label: "Views per month uploaded" },
+                { value: "300+", label: "Creators" },
               ].map((stat, i) => (
                 <div
                   key={i}
-                  className="cn-stat relative flex flex-col gap-0.5 px-6 py-4"
+                  className="cn-stat relative flex flex-col gap-0.5 px-4 py-5"
                 >
                   {/* Corner brackets — cn-corner-path class for DrawSVG targeting */}
                   {/* Top-left */}
@@ -540,15 +528,15 @@ export default function CreatorNetwork({ viewRef }) {
                     <path className="cn-corner-path" d="M9.36328 0.5H0.5V9.45225" stroke="#FF6F21" />
                   </svg>
 
-                  <span className="cn-stat-label font-host font-thin text-sm text-white/40 tracking-wide">
-                    {stat.label}
+                  <span className="cn-stat-value font-host text-3xl tracking-tight ">
+                    {stat.value}
                   </span>
                   {/* Separator line */}
                   <svg width="100%" height="1" viewBox="0 0 134 1" fill="none" preserveAspectRatio="none" className="cn-separator">
                     <line y1="0.5" x2="134" y2="0.5" stroke="#A1A1A1" />
                   </svg>
-                  <span className="cn-stat-value font-host text-xl tracking-tight">
-                    {stat.value}
+                  <span className="cn-stat-label font-host font-thin text-sm text-white/50 ">
+                    {stat.label}
                   </span>
                 </div>
               ))}
