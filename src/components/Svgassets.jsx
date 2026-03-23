@@ -1742,6 +1742,11 @@ export const Line744Svg = forwardRef(({ className = "" }, ref) => (
   <img ref={ref} src="/svgs/Line 744.svg" alt="" className={className} />
 ));
 
+// ── Shift Line (763×31) — curved orange gradient line for BridgeTestimonial ──
+export const ShiftLineSvg = forwardRef(({ className = "" }, ref) => (
+  <img ref={ref} src="/svgs/shift line.svg" alt="" className={className} />
+));
+
 // ── Corner bracket (10×10) — orange L-shaped corner marker ──
 export const CornerVectorRocketSvg = forwardRef(({ className = "", style = {} }, ref) => (
   <img ref={ref} src="/svgs/corner Vector rocket.svg" alt="" className={className} style={style} />

@@ -10,6 +10,19 @@ import {
   EllipseBlueprintSvg,
 } from "./Svgassets";
 
+// ── Orange corner marker SVGs ──
+const CornerLeft = ({ className = "", ...props }) => (
+  <svg width="5" height="9" viewBox="0 0 5 9" fill="none" className={className} {...props}>
+    <path d="M0.5 0L0.5 8M0.5 4L4.5 4" stroke="#FF6F21" strokeLinecap="round" />
+  </svg>
+);
+
+const CornerRight = ({ className = "", ...props }) => (
+  <svg width="5" height="9" viewBox="0 0 5 9" fill="none" className={className} {...props}>
+    <path d="M4.5 0L4.5 8M0.5 4H4.5" stroke="#FF6F21" strokeLinecap="round" />
+  </svg>
+);
+
 /* Grid icon */
 const BlueprintGridIcon = () => (
   <svg
@@ -426,6 +439,16 @@ export default function PlaybookSection() {
       <div className="pointer-events-none absolute top-0 left-[105px] w-px h-full bg-white/20 z-30" aria-hidden="true" />
       <div className="pointer-events-none absolute top-0 right-[105px] w-px h-full bg-white/20 z-30" aria-hidden="true" />
       <div className="pointer-events-none absolute bottom-0 left-[105px] right-[105px] h-px bg-white/20 z-30" aria-hidden="true" />
+
+      {/* ── Orange corner markers — top-left & top-right (z-30) ── */}
+      <CornerLeft
+        className="pointer-events-none absolute -top-1 left-[5%] xl:left-[4.1%] z-30"
+        aria-hidden="true"
+      />
+      <CornerRight
+        className="pointer-events-none absolute -top-1 right-[5%] xl:right-[4.1%] z-30"
+        aria-hidden="true"
+      />
 
       {/* Header */}
       <div className="relative z-40 max-w-[95.5rem] mx-auto flex flex-col lg:flex-row justify-between items-start gap-8 lg:gap-16 mb-16 md:mb-24">
