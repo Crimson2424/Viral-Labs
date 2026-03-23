@@ -9,19 +9,19 @@ import GlobalCanvas from "./components/GlobalCanvas";
 import GlobalTexture from "./components/Globaltexture";
 import LoadingScreen from "./components/LoadingScreen";
 import GlobeContent from "./components/GlobeScene";
-import CreatorGlobe from "./components/CreatorGlobe";
+import GlobeCanvas from "./components/GlobeCanvas";
 import ViralitySection from "./components/Viralitysection";
-import CreatorNetwork from "./components/CreatorNetwork";
 import PlaybookSection from "./components/PlaybookSection";
 import ViralEngineSection from "./components/ViralEngineSection";
 import GlobalGrid from "./components/Globalgrid";
 import { loadingState } from "./components/loadingState";
 import { entranceState } from "./components/entranceState";
+import RocketLaunchSection from "./components/Rocketlaunchsection";
+import CreatorNetworkSection from "./components/CreatorNetworkSection";
 
 function DummySection() {
   return (
     <section className="dummy-section relative z-[1] w-full py-40 px-38 overflow-hidden">
-      {/* Each section gets its own grid instance — scrolls naturally */}
       <GlobalGrid />
 
       <div className="pointer-events-none absolute top-0 left-[105px] w-px h-full bg-white/20 z-30" aria-hidden="true" />
@@ -62,17 +62,16 @@ const App = () => {
   const lenisRef = useRef(null);
   const containerRef = useRef(null);
 
-  // View tracking refs — created here, passed down to sections
+  // View tracking ref — only the GPGPU globe uses the shared Canvas now
   const globeContainerRef = useRef(null);
-  const creatorViewRef = useRef(null);
 
   useEffect(() => {
     const lenis = new Lenis({
-      lerp: 0.08,
-      duration: 1.4,
+      lerp: 0.1,
+      duration: 1.2,
       smoothWheel: true,
-      wheelMultiplier: 0.9,
-      touchMultiplier: 1.5,
+      wheelMultiplier: 1.0,
+      touchMultiplier: 1.8,
     });
     lenisRef.current = lenis;
 
@@ -107,7 +106,7 @@ const App = () => {
       <LoadingScreen videoSrc="/videos/loader.webm" />
       <GlobalCanvas />
 
-      {/* Shared Canvas — all Views live inside here */}
+      {/* Shared Canvas — only GPGPU globe View remains here */}
       <Canvas
         eventSource={containerRef}
         eventPrefix="client"
@@ -128,26 +127,22 @@ const App = () => {
           zIndex: 5,
         }}
       >
-        {/* Globe — tracks the container div inside ViralitySection */}
+        {/* GPGPU particle globe — tracks ViralitySection container */}
         <View track={globeContainerRef}>
           <PerspectiveCamera makeDefault position={[0, 0, 3.5]} fov={45} />
           <GlobeContent containerRef={globeContainerRef} />
         </View>
-
-        {/* Creator Network — tracks the container div inside CreatorNetwork */}
-        <View track={creatorViewRef}>
-          <PerspectiveCamera makeDefault position={[0, 0, 2.8]} fov={45} />
-          <group position={[-1.05, -0.25, 0.73]} rotation={[-0.2, 0.64, 1.23]}>
-            <CreatorGlobe containerRef={creatorViewRef} />
-          </group>
-        </View>
       </Canvas>
+
+      {/* Creator Globe — standalone fixed Canvas (3rd WebGL context) */}
+      <GlobeCanvas />
 
       <HeroSection />
       <ViralitySection globeContainerRef={globeContainerRef} />
       <PlaybookSection />
-      <ViralEngineSection />
-      <CreatorNetwork viewRef={creatorViewRef} />
+      {/* <ViralEngineSection /> */}
+      <RocketLaunchSection />
+      <CreatorNetworkSection />
       <DummySection />
       <GlobalTexture />
     </main>

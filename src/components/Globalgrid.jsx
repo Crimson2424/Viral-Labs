@@ -4,6 +4,11 @@
  * Drop an instance inside any section. Since it's position:absolute,
  * it fills the section and scrolls naturally with it.
  *
+ * CELL_SIZE controls grid density. Fixed px = always square on any screen.
+ *   40px → dense grid, lots of cells
+ *   60px → moderate density
+ *   80px → sparse
+ *
  * Props:
  *   animated (default: false)
  *     true  → starts hidden, entrance triggered via entranceState.playGlobalGrid()
@@ -12,10 +17,6 @@
  *   navOffset (default: false)
  *     true  → top-11 (44px offset for navbar, used in HeroSection)
  *     false → top-0 (flush with section top, used everywhere else)
- *
- * All initial states via gsap.set().
- * All tweens use .to() only.
- * useGSAP hook for cleanup.
  */
 
 import { useRef } from "react";
@@ -23,9 +24,13 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { entranceState } from "./entranceState";
 
+// Fixed cell size in px — square on every screen size.
+// Lower = smaller cells, more of them. Tune to taste.
+const CELL_SIZE = 55;
+
 export default function GlobalGrid({ animated = false, navOffset = false }) {
   const gridRef = useRef();
-  const lineColor = "rgba(255, 255, 255, 0.06)";
+  const lineColor = "rgba(255, 255, 255, 0.035)";
 
   useGSAP(() => {
     const el = gridRef.current;
@@ -62,7 +67,7 @@ export default function GlobalGrid({ animated = false, navOffset = false }) {
           linear-gradient(to right, ${lineColor} 1px, transparent 1px),
           linear-gradient(to bottom, ${lineColor} 1px, transparent 1px)
         `,
-        backgroundSize: `calc(100% / 19) calc((100vw - 210px) / 19)`,
+        backgroundSize: `${CELL_SIZE}px ${CELL_SIZE}px`,
       }}
     />
   );

@@ -54,10 +54,53 @@ export default function ViralitySection({ globeContainerRef }) {
 
   useGSAP(
     () => {
+      // ═══════════════════════════════════════
+      // SPLITTEXT — LABEL + HEADING (mask lines)
+      // ═══════════════════════════════════════
+
+      const labelSplit = SplitText.create(".v-label", {
+        type: "lines", mask: "lines", linesClass: "v-label-line",
+      });
+      labelSplit.lines.forEach((line) => {
+        if (line.parentElement) line.parentElement.style.paddingBottom = "0.1em";
+      });
+
+      const headingSplit = SplitText.create(".v-heading", {
+        type: "lines", mask: "lines", linesClass: "v-heading-line",
+      });
+      headingSplit.lines.forEach((line) => {
+        if (line.parentElement) line.parentElement.style.paddingBottom = "0.1em";
+      });
+
+      // ═══════════════════════════════════════
+      // INITIAL STATES
+      // ═══════════════════════════════════════
+
       gsap.set(viralityState, { globeProgress: 0 });
-      gsap.set(".v-label", { opacity: 0, y: 20, filter: "blur(6px)" });
+
+      // Label lines — hidden below mask with blur + invisible
+      gsap.set(labelSplit.lines, {
+        yPercent: 110, filter: "blur(6px)", opacity: 0,
+      });
+
+      // Heading lines — hidden below mask with blur + invisible
+      gsap.set(headingSplit.lines, {
+        yPercent: 110, filter: "blur(8px)", opacity: 0,
+      });
+
+      // Dynamically center the header on screen
+      const sectionRect = sectionRef.current.getBoundingClientRect();
+      const headerRect = headerRef.current.getBoundingClientRect();
+      const headerTopInSection = headerRect.top - sectionRect.top;
+      const headerCenterInSection = headerTopInSection + headerRect.height / 2;
+      const viewportCenter = window.innerHeight / 2;
+      const centerOffset = viewportCenter - headerCenterInSection;
+      gsap.set(headerRef.current, { y: centerOffset });
+
+      // Globe glow — hidden
       gsap.set(glowRef.current, { opacity: 0, scale: 0.6 });
 
+      // Cards — hidden, offset from their final positions
       gsap.set(".v-card-tl", {
         xPercent: -40, y: -30, opacity: 0, rotation: -4, scale: 0.92, filter: "blur(8px)",
       });
@@ -71,23 +114,13 @@ export default function ViralitySection({ globeContainerRef }) {
         xPercent: 40, y: 30, opacity: 0, rotation: 4, scale: 0.92, filter: "blur(8px)",
       });
 
+      // Glow lines + cubes — hidden
       gsap.set(".v-glow-v", { clipPath: "inset(0 0 100% 0)" });
       gsap.set(".v-glow-h", { clipPath: "inset(0 100% 0 0)" });
       gsap.set(".v-cubes", { opacity: 0, scale: 0, transformOrigin: "center center" });
 
-      // ═══════════════════════════════════════
-      // SPLITTEXT — HEADING
-      // ═══════════════════════════════════════
-
-      const headingSplit = SplitText.create(".v-heading", {
-        type: "lines", mask: "lines", linesClass: "v-heading-line",
-      });
-      headingSplit.lines.forEach((line) => {
-        if (line.parentElement) line.parentElement.style.paddingBottom = "0.1em";
-      });
-      gsap.set(headingSplit.lines, {
-        yPercent: 110, filter: "blur(6px)", rotationX: 40, transformOrigin: "left bottom",
-      });
+      // Bottom text — hidden until pin releases
+      gsap.set(bottomTextRef.current, { opacity: 0 });
 
       // ═══════════════════════════════════════
       // SPLITTEXT — BOTTOM LEFT PARAGRAPH
@@ -126,34 +159,16 @@ export default function ViralitySection({ globeContainerRef }) {
       });
 
       // ═══════════════════════════════════════
-      // PHASE 1 — HEADER (non-pinned scrub)
-      // ═══════════════════════════════════════
-
-      const headerTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: headerRef.current, start: "top 85%", end: "top 25%", scrub: 1.5,
-        },
-        defaults: { ease: "none" },
-      });
-
-      headerTl.to(".v-label", {
-        opacity: 1, y: 0, filter: "blur(0px)", duration: 4, ease: "power4.out",
-      }, 0);
-
-      headerTl.to(headingSplit.lines, {
-        yPercent: 0, filter: "blur(0px)", rotationX: 0, stagger: 2, duration: 6, ease: "power4.out",
-      }, 1);
-
-      // ═══════════════════════════════════════
-      // PHASE 3 — BOTTOM TEXT (paused, fired when pin ends)
-      // Plays once when the pinned section releases.
-      // Cannot use ScrollTrigger on elements inside a pin
-      // because positions get distorted.
+      // BOTTOM TEXT TIMELINE (paused)
+      // Plays once when the pin releases.
       // ═══════════════════════════════════════
 
       const bottomTl = gsap.timeline({ paused: true });
 
-      // Left paragraph — lines mask reveal with blur
+      bottomTl.to(bottomTextRef.current, {
+        opacity: 1, duration: 0.4, ease: "power2.out",
+      }, 0);
+
       bottomTl.to(bottomLeftSplit.lines, {
         yPercent: 0,
         filter: "blur(0px)",
@@ -162,7 +177,6 @@ export default function ViralitySection({ globeContainerRef }) {
         ease: "power4.out",
       }, 0);
 
-      // Right column tags — staggered slide + blur
       bottomTl.to(".v-bottom-tag", {
         opacity: 1,
         y: 0,
@@ -172,7 +186,6 @@ export default function ViralitySection({ globeContainerRef }) {
         ease: "power4.out",
       }, 0.15);
 
-      // "Most brands" text — lines mask reveal with blur
       bottomTl.to(bottomMostSplit.lines, {
         yPercent: 0,
         filter: "blur(0px)",
@@ -182,20 +195,20 @@ export default function ViralitySection({ globeContainerRef }) {
       }, 0.5);
 
       // ═══════════════════════════════════════
-      // PHASE 2 — PINNED SCRUB TIMELINE
-      // onLeave fires the bottom text animation
-      // when the pin releases.
+      // PINNED SCRUB TIMELINE
       // ═══════════════════════════════════════
 
       let bottomPlayed = false;
 
       const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: sectionRef.current, start: "top -35%", end: "+=250%",
-          pin: true, scrub: 2, pinSpacing: true, anticipatePin: 1,
+          trigger: sectionRef.current,
+          start: "top top",
+          end: "+=400%",
+          pin: true,
+          scrub: 2,
+          pinSpacing: true,
           onLeave: () => {
-            // Pin is done — positions are accurate now.
-            // Create a fresh ScrollTrigger on the bottom text.
             if (!bottomPlayed) {
               bottomPlayed = true;
               ScrollTrigger.create({
@@ -210,43 +223,77 @@ export default function ViralitySection({ globeContainerRef }) {
         defaults: { ease: "none" },
       });
 
-      tl.to(viralityState, { globeProgress: 1, duration: 40, ease: "power3.inOut" }, 0);
-      tl.to(glowRef.current, { opacity: 1, scale: 1, duration: 20, ease: "power4.out" }, 28);
+      // ── PHASE 0 — TEXT ENTRANCE (mask reveal + blur) ──
+      tl.set(labelSplit.lines, { opacity: 1 }, 1);
+      tl.to(labelSplit.lines, {
+        yPercent: 0, filter: "blur(0px)", duration: 8, ease: "power4.out",
+      }, 1);
 
-      tl.to(".v-card-tl", {
-        xPercent: 0, y: 0, opacity: 1, rotation: 0, scale: 1, filter: "blur(0px)", duration: 16, ease: "power3.out",
+      tl.set(headingSplit.lines, { opacity: 1, stagger: 3 }, 4);
+      tl.to(headingSplit.lines, {
+        yPercent: 0, filter: "blur(0px)", stagger: 3, duration: 10, ease: "power4.out",
+      }, 4);
+
+      // ── PHASE A — HEADING UP + GLOBE SLIDES IN ──
+      tl.to(headerRef.current, {
+        y: 0,
+        duration: 20,
+        ease: "power2.inOut",
+      }, 18);
+
+      tl.to(viralityState, {
+        globeProgress: 1,
+        duration: 30,
+        ease: "power3.inOut",
+      }, 22);
+
+      // ── PHASE B — GLOBE GLOW ──
+      tl.to(glowRef.current, {
+        opacity: 1,
+        scale: 1,
+        duration: 15,
+        ease: "power4.out",
       }, 45);
-      tl.to(".v-card-tr", {
-        xPercent: 0, y: 0, opacity: 1, rotation: 0, scale: 1, filter: "blur(0px)", duration: 16, ease: "power3.out",
-      }, 47);
-      tl.to(".v-card-bl", {
-        xPercent: 0, y: 0, opacity: 1, rotation: 0, scale: 1, filter: "blur(0px)", duration: 16, ease: "power3.out",
-      }, 51);
-      tl.to(".v-card-br", {
-        xPercent: 0, y: 0, opacity: 1, rotation: 0, scale: 1, filter: "blur(0px)", duration: 16, ease: "power3.out",
-      }, 53);
 
+      // ── PHASE C — CARDS ANIMATE IN ──
+      tl.to(".v-card-tl", {
+        xPercent: 0, y: 0, opacity: 1, rotation: 0, scale: 1, filter: "blur(0px)",
+        duration: 16, ease: "power3.out",
+      }, 60);
+      tl.to(".v-card-tr", {
+        xPercent: 0, y: 0, opacity: 1, rotation: 0, scale: 1, filter: "blur(0px)",
+        duration: 16, ease: "power3.out",
+      }, 62);
+      tl.to(".v-card-bl", {
+        xPercent: 0, y: 0, opacity: 1, rotation: 0, scale: 1, filter: "blur(0px)",
+        duration: 16, ease: "power3.out",
+      }, 66);
+      tl.to(".v-card-br", {
+        xPercent: 0, y: 0, opacity: 1, rotation: 0, scale: 1, filter: "blur(0px)",
+        duration: 16, ease: "power3.out",
+      }, 68);
+
+      // ── PHASE D — GLOW LINES + CUBES ──
       tl.to(".v-glow-v", {
         clipPath: "inset(0 0 0% 0)", stagger: 1.5, duration: 8, ease: "power3.out",
-      }, 65);
+      }, 80);
       tl.to(".v-glow-h", {
         clipPath: "inset(0 0% 0 0)", stagger: 1.5, duration: 7, ease: "power3.out",
-      }, 68);
+      }, 83);
       tl.to(".v-cubes", {
         opacity: 1, scale: 1, transformOrigin: "center center", stagger: 1, duration: 5, ease: "back.out(1.7)",
-      }, 72);
-
+      }, 87);
 
     },
     { scope: sectionRef }
   );
 
   return (
-    <section ref={sectionRef} className="virality-section relative w-full overflow-hidden">
+    <section ref={sectionRef} className="virality-section relative w-full min-h-screen overflow-hidden">
 
       <div
         ref={glowRef}
-        className="pointer-events-none absolute left-1/2 top-[45%] -translate-x-1/2 -translate-y-[45%] z-[8]"
+        className="pointer-events-none absolute left-1/2 top-[32%] -translate-x-1/2 -translate-y-[35%] z-[8]"
         aria-hidden="true"
         style={{
           width: "1100px", height: "1100px", borderRadius: "50%",
@@ -255,7 +302,10 @@ export default function ViralitySection({ globeContainerRef }) {
         }}
       />
 
-      <div ref={globeContainerRef} className="absolute -top-40 bottom-0 w-full z-10 translate-y-12" />
+      {/* Clip wrapper — clips globe at section bounds, prevents bleed into section above */}
+      <div className="absolute inset-0 overflow-hidden z-10">
+        <div ref={globeContainerRef} className="absolute -top-40 bottom-0 w-full -translate-y-12" />
+      </div>
 
       <GlobalGrid />
 
@@ -264,9 +314,10 @@ export default function ViralitySection({ globeContainerRef }) {
       <div className="pointer-events-none absolute top-0 left-[105px] right-[105px] h-px bg-white/20 z-30" aria-hidden="true" />
       <div className="pointer-events-none absolute bottom-0 left-[105px] right-[105px] h-px bg-white/20 z-30" aria-hidden="true" />
 
-      <div className="relative z-40 px-38 pt-24 pb-40 pointer-events-none">
+      {/* ═══ Main viewport content — heading + cards fit within 100vh ═══ */}
+      <div className="relative z-40 px-38 pt-8 pointer-events-none h-screen">
 
-        <div ref={headerRef} className="flex flex-col items-center gap-1 mb-32" style={{ perspective: "600px" }}>
+        <div ref={headerRef} className="flex flex-col items-center gap-1 mb-12" style={{ perspective: "600px" }}>
           <p className="v-label virality-label font-host text-base text-[#ff6f21] text-center leading-none">
             WHY VIRALITY CAN BE ENGINEERED
           </p>
@@ -277,10 +328,10 @@ export default function ViralitySection({ globeContainerRef }) {
           </h2>
         </div>
 
-        <div className="relative mx-auto max-w-6xl min-h-[600px] mb-20">
+        <div className="relative mx-auto max-w-6xl min-h-[500px] h-[calc(100vh-200px)] max-h-[700px]">
 
           {/* ── Distribution Architecture (top-left) ── */}
-          <div className="v-card-tl absolute left-10 -top-1 z-30 pointer-events-auto overflow-visible">
+          <div className="v-card-tl absolute left-26 top-3 z-30 pointer-events-auto overflow-visible">
             <div className="relative w-48 flex flex-col overflow-visible">
               <div className="relative px-5 py-2 bg-[#1d1d1d]/70">
                 <div className="font-bricolage text-xl text-white tracking-tight leading-5 text-right">
@@ -301,7 +352,7 @@ export default function ViralitySection({ globeContainerRef }) {
           </div>
 
           {/* ── Attention Dynamics (top-right) ── */}
-          <div className="v-card-tr absolute right-5 top-20 z-30 pointer-events-auto overflow-visible">
+          <div className="v-card-tr absolute right-15 top-20 z-30 pointer-events-auto overflow-visible">
             <div className="relative w-48 flex flex-col overflow-visible">
               <div className="relative px-5 py-2 bg-[#1d1d1d]/70">
                 <div className="font-bricolage text-xl text-white tracking-tight leading-5 text-left">
@@ -322,7 +373,7 @@ export default function ViralitySection({ globeContainerRef }) {
           </div>
 
           {/* ── Creative Methodology (bottom-left) ── */}
-          <div className="v-card-bl absolute left-10 -bottom-28 z-30 pointer-events-auto overflow-visible">
+          <div className="v-card-bl absolute left-20 bottom-0 z-30 pointer-events-auto overflow-visible">
             <div className="relative w-56 flex flex-col overflow-visible">
               <div className="relative px-5 py-2 bg-[#1d1d1d]/70">
                 <div className="font-bricolage text-xl text-white tracking-tight leading-5 text-right">
@@ -343,7 +394,7 @@ export default function ViralitySection({ globeContainerRef }) {
           </div>
 
           {/* ── Performance Outcomes (bottom-right) ── */}
-          <div className="v-card-br absolute right-12 -bottom-38 z-30 pointer-events-auto overflow-visible">
+          <div className="v-card-br absolute right-6 -bottom-3 z-30 pointer-events-auto overflow-visible">
             <div className="relative w-69 flex flex-col overflow-visible">
               <div className="relative px-5 py-2 bg-[#1d1d1d]/70">
                 <div className="font-bricolage text-xl text-white tracking-tight leading-5 text-left">
@@ -364,9 +415,11 @@ export default function ViralitySection({ globeContainerRef }) {
           </div>
 
         </div>
+      </div>
 
-        {/* ══ BOTTOM TEXT — plays once when scrolled into view, stays visible ══ */}
-        <div ref={bottomTextRef} className="flex items-start justify-between max-w-6xl mx-auto gap-16 mt-68">
+      {/* ══ BOTTOM TEXT — lives outside the h-screen block, scrolled to after pin ══ */}
+      <div ref={bottomTextRef} className="relative z-40 px-38 pb-40 pointer-events-none">
+        <div className="flex items-start justify-between max-w-6xl mx-auto gap-16 pt-24">
 
           {/* Left column */}
           <div className="max-w-md">
