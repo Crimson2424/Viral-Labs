@@ -1,34 +1,16 @@
 /**
  * CreatorGlobe — R3F conversion of the vanilla Three.js creator network globe.
  *
- * Converted from standalone WebGLRenderer to R3F scene content for use
- * inside a <View> in App.jsx's shared Canvas.
+ * POINTER GATE:
+ *  All pointer interactions (drag, hover, tooltip) are gated by
+ *  creatorGlobeState.interactive. RocketLaunchSection sets this to
+ *  false during rocket phases and true when CN content is active.
  *
- * FEATURES:
- *  - Inner dark sphere + fresnel edge glow
- *  - Earth map land particles (loaded from specular image)
- *  - 20 network hubs with pulsing orange rings
- *  - Constellation network mesh
- *  - Hover trajectory bezier paths (hub → hub)
- *  - Autonomous ambient trajectory paths
- *  - Drag-to-rotate globe interaction
- *  - Hub hover detection → tooltip data via creatorGlobeState
- *
- * POINTER MATH:
- *  Uses containerRef (the View's tracked DOM element) for NDC calculation,
- *  same pattern as the GPGPU particle globe in GlobeScene.jsx.
- *
- * TOOLTIP BRIDGE:
- *  Writes to creatorGlobeState.hoveredData (on enter/leave) and
- *  creatorGlobeState.tooltipX/Y (every frame) so the DOM tooltip in
- *  CreatorNetwork can read position without React re-renders.
- *  Calls onHoverChange(data|null) for React state updates on enter/leave only.
- *
- * USAGE (inside App.jsx Canvas):
- *  <View track={creatorViewRef}>
- *    <PerspectiveCamera makeDefault position={[0, 0, 2.8]} fov={45} />
- *    <CreatorGlobe containerRef={creatorViewRef} />
- *  </View>
+ * CONSTELLATION FADE:
+ *  The wireframe grid, dots, and shimmer dots start invisible.
+ *  creatorGlobeState.constellationOpacity (0→1) is driven by
+ *  CreatorNetworkSection during the CN settle phase.
+ *  useFrame reads it every frame and applies to materials.
  */
 
 import { useRef, useMemo, useEffect, useCallback } from "react";
@@ -72,14 +54,15 @@ const constellationVertexShader = `
 `;
 
 const constellationFragmentShader = `
+  uniform float uFade;
   varying float vOpacity;
   void main() {
-    gl_FragColor = vec4(1.0, 1.0, 1.0, vOpacity);
+    gl_FragColor = vec4(1.0, 1.0, 1.0, vOpacity * uFade);
   }
 `;
 
 // ============================================================================
-// CONSTELLATION NETWORK GENERATOR (dense lat/lon rectangular grid)
+// CONSTELLATION NETWORK GENERATOR
 // ============================================================================
 
 function generateConstellationNetwork(latDivisions = 36, lonDivisions = 56, radius = 1.2) {
@@ -154,7 +137,7 @@ function generateConstellationNetwork(latDivisions = 36, lonDivisions = 56, radi
 }
 
 // ============================================================================
-// INDIA FIXED POINT (center of India ~20.5°N, 78.9°E on unit sphere)
+// INDIA FIXED POINT
 // ============================================================================
 
 const INDIA_POINT = (() => {
@@ -222,6 +205,7 @@ export default function CreatorGlobe({ containerRef }) {
     networkHubs: [],
     networkRings: [],
     networkHitboxes: [],
+    networkDots: [],
   });
 
   const pointer = useMemo(() => new THREE.Vector2(-9999, -9999), []);
@@ -239,6 +223,8 @@ export default function CreatorGlobe({ containerRef }) {
   const pointsMeshRef = useRef();
   const webMeshRef = useRef();
   const webDotsRef = useRef();
+  const webDotMatRef = useRef();
+  const shimmerDotMatRef = useRef();
   const innerSphereRef = useRef();
 
   const trajectoryGroupRef = useRef();
@@ -265,6 +251,7 @@ export default function CreatorGlobe({ containerRef }) {
     transparent: true,
     depthWrite: false,
     blending: THREE.AdditiveBlending,
+    uniforms: { uFade: { value: 0 } },
     vertexShader: constellationVertexShader,
     fragmentShader: constellationFragmentShader,
   }), []);
@@ -378,12 +365,15 @@ export default function CreatorGlobe({ containerRef }) {
           new THREE.CircleGeometry(0.01, 16),
           new THREE.MeshBasicMaterial({
             color: 0xFF6F21,
+            transparent: true,
+            opacity: 0,
             depthWrite: false,
             side: THREE.DoubleSide,
           })
         );
         dot.renderOrder = 12;
         hubGroup.add(dot);
+        s.networkDots.push(dot);
 
         const hitbox = new THREE.Mesh(
           new THREE.SphereGeometry(0.035, 16, 16),
@@ -402,13 +392,15 @@ export default function CreatorGlobe({ containerRef }) {
   }, []);
 
   // ════════════════════════════════════════════════
-  // POINTER EVENTS
+  // POINTER EVENTS — gated by creatorGlobeState.interactive
   // ════════════════════════════════════════════════
 
   useEffect(() => {
     const getEl = () => containerRef?.current;
 
     const onMove = (e) => {
+      if (!creatorGlobeState.interactive) return;
+
       const el = getEl();
       if (!el) return;
       const rect = el.getBoundingClientRect();
@@ -436,6 +428,8 @@ export default function CreatorGlobe({ containerRef }) {
     };
 
     const onDown = (e) => {
+      if (!creatorGlobeState.interactive) return;
+
       const el = getEl();
       if (!el) return;
       const rect = el.getBoundingClientRect();
@@ -497,6 +491,12 @@ export default function CreatorGlobe({ containerRef }) {
 
     globe.scale.lerp(new THREE.Vector3(1, 1, 1), 0.03);
 
+    // ── Constellation fade ──
+    const cAlpha = creatorGlobeState.constellationOpacity;
+    constellationLineMat.uniforms.uFade.value = cAlpha;
+    if (webDotMatRef.current) webDotMatRef.current.opacity = 0.2 * cAlpha;
+    if (shimmerDotMatRef.current) shimmerDotMatRef.current.opacity = 0.4 * cAlpha;
+
     if (!s.isDragging) {
       s.autoRotY -= s.activeHoverHub ? 0.0002 : 0.001;
     }
@@ -505,9 +505,10 @@ export default function CreatorGlobe({ containerRef }) {
     const targetQuat = _parentInvQuat.copy(_tiltQuat).multiply(s.dragQuaternion).multiply(autoQuat);
     globe.quaternion.slerp(targetQuat, 0.1);
 
+    const isInteractive = creatorGlobeState.interactive;
     const pointerInBounds = pointer.x >= -1 && pointer.x <= 1 && pointer.y >= -1 && pointer.y <= 1;
 
-    if (!s.isDragging && s.initialized && pointerInBounds) {
+    if (!s.isDragging && s.initialized && pointerInBounds && isInteractive) {
       raycaster.setFromCamera(pointer, camera);
 
       const hubHits = raycaster.intersectObjects(s.networkHitboxes);
@@ -526,7 +527,7 @@ export default function CreatorGlobe({ containerRef }) {
         s.activeHoverHub = null;
         creatorGlobeState.hoveredData = null;
       }
-    } else if (!pointerInBounds && s.activeHoverHub) {
+    } else if ((!pointerInBounds || !isInteractive) && s.activeHoverHub) {
       s.activeHoverHub = null;
       creatorGlobeState.hoveredData = null;
     }
@@ -542,6 +543,7 @@ export default function CreatorGlobe({ containerRef }) {
     }
 
     s.networkRings.forEach((ring) => {
+      if (cAlpha <= 0) { ring.visible = false; return; }
       const t = (time - ring.userData.delay) % 3;
       if (t < 0) {
         ring.visible = false;
@@ -549,8 +551,13 @@ export default function CreatorGlobe({ containerRef }) {
         ring.visible = true;
         const scale = 1 + t * 3;
         ring.scale.set(scale, scale, scale);
-        ring.material.opacity = Math.max(0, 0.6 - t / 2);
+        ring.material.opacity = Math.max(0, 0.6 - t / 2) * cAlpha;
       }
+    });
+
+    // Hub center dots
+    s.networkDots.forEach((dot) => {
+      dot.material.opacity = cAlpha;
     });
 
     if (s.activeHoverHub) {
@@ -630,7 +637,7 @@ export default function CreatorGlobe({ containerRef }) {
   });
 
   const { lineGeo: constellationLineGeo, dotGeo: constellationDotGeo, shimmerDotGeo } = useMemo(
-    () => generateConstellationNetwork(36, 56, 1.2),
+    () => generateConstellationNetwork(36, 56, 1.08),
     []
   );
 
@@ -670,11 +677,12 @@ export default function CreatorGlobe({ containerRef }) {
       <points ref={webDotsRef}>
         <primitive object={constellationDotGeo} attach="geometry" />
         <pointsMaterial
+          ref={webDotMatRef}
           size={0.008}
           map={dotTexture}
           color="#ffffff"
           transparent
-          opacity={0.2}
+          opacity={0}
           sizeAttenuation
           depthWrite={false}
           blending={THREE.AdditiveBlending}
@@ -684,11 +692,12 @@ export default function CreatorGlobe({ containerRef }) {
       <points renderOrder={6}>
         <primitive object={shimmerDotGeo} attach="geometry" />
         <pointsMaterial
+          ref={shimmerDotMatRef}
           size={0.02}
           map={dotTexture}
           color="#ffffff"
           transparent
-          opacity={0.4}
+          opacity={0}
           sizeAttenuation
           depthWrite={false}
           blending={THREE.AdditiveBlending}

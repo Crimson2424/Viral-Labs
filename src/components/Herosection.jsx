@@ -57,20 +57,24 @@ export default function HeroSection() {
         charsClass: "hero-char",
       });
 
-      // Per-char gradient that spans each line seamlessly
-      heroHeadingSplit.lines.forEach((line) => {
-        const lineWidth = line.offsetWidth;
-        line.querySelectorAll(".hero-char").forEach((char) => {
-          const charLeft = char.offsetLeft;
-          Object.assign(char.style, {
-            backgroundImage:
-              "linear-gradient(92.7deg, rgb(255,255,255) 21.4%, rgb(151,151,151) 49.6%, rgb(255,255,255) 79.1%)",
-            backgroundSize: `${lineWidth}px 100%`,
-            backgroundPosition: `-${charLeft}px 0`,
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
-          });
+      // Per-char gradient that spans the FULL heading (not per-line)
+      // so the metallic sweep runs seamlessly across both lines
+      const headingEl = headingRef.current;
+      const headingWidth = headingEl.offsetWidth;
+      const headingRect = headingEl.getBoundingClientRect();
+
+      heroHeadingSplit.chars.forEach((char) => {
+        const charRect = char.getBoundingClientRect();
+        const charLeft = charRect.left - headingRect.left;
+
+        Object.assign(char.style, {
+          backgroundImage:
+            "linear-gradient(92.7deg, rgb(255,255,255) 21.4%, rgb(151,151,151) 49.6%, rgb(255,255,255) 79.1%)",
+          backgroundSize: `${headingWidth}px 100%`,
+          backgroundPosition: `-${charLeft}px 0`,
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          backgroundClip: "text",
         });
       });
 
@@ -453,18 +457,16 @@ export default function HeroSection() {
 
             <h1
               ref={headingRef}
-              className="hero-heading font-bricolage font-medium text-center mb-8"
+              className="hero-heading font-bricolage font-medium text-center mb-6 tracking-normal"
               style={{
-                fontSize: "clamp(75px, 4.2vw, 85px)",
-                lineHeight: 0.96,
-                letterSpacing: "-2.5px",
+                fontSize: "clamp(90px, 6.5vw, 130px)",
+                lineHeight: 0.83,
+                // letterSpacing: "-2.5px",
               }}
             >
-              <span className="hw-eng">Engineering</span>
+              <span className="hw-eng">We </span><span className="hw-solve">Solve</span>
               <br />
-              Predictable <span className="hw-vir">Virality</span> For
-              <br />
-              Consumer Apps
+              <span className="hw-vir">Distribution.</span>
             </h1>
 
             <p
@@ -487,7 +489,7 @@ export default function HeroSection() {
 
             <p
               ref={subheadingRef}
-              className="hero-subheading font-host text-base text-[#a1a1aa] text-center tracking-[-0.32px] leading-normal max-w-[540px] mb-5"
+              className="hero-subheading font-host text-base text-[#a1a1aa] text-center tracking-[-0.32px] leading-tight max-w-[540px] mb-5"
             >
               We build short-form content systems that turn attention into
               installs consistently, at scale, without relying on luck.

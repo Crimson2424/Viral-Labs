@@ -1,24 +1,28 @@
 /**
  * creatorGlobeState — Shared mutable state for the Creator Network globe.
  *
- * Same pattern as viralityState.js — mutable object that GSAP/useFrame
- * can write to without triggering React re-renders.
- *
- * Used for:
- *  - tooltipX / tooltipY: screen-space position of hovered hub,
- *    updated every frame in useFrame, read by DOM tooltip via RAF poll.
- *  - hoveredData: the full hub data object, set on hover enter, cleared on leave.
- *  - isDragging: true when user is dragging the globe.
+ * globeYOffset / globeXOffset ownership:
+ *  - Rocket section pinned → RocketLaunchSection timeline (scrubbed)
+ *  - Between sections (scroll approach) → GlobeCanvas RAF
+ *  - CN section pinned → CreatorNetworkSection onUpdate
+ *  These are mutually exclusive, so no conflicts.
  */
 
 export const creatorGlobeState = {
-    // Tooltip screen position (relative to the tracked container)
-    tooltipX: 0,
-    tooltipY: 0,
-  
-    // Hub data (set on hover enter, null on leave)
-    hoveredData: null,
-  
-    // Interaction flags
-    isDragging: false,
-  };
+  tooltipX: 0,
+  tooltipY: 0,
+  hoveredData: null,
+  isDragging: false,
+
+  globeYOffset: 1.3,
+  globeXOffset: 1.05,
+  globeOpacity: 0,
+  interactive: false,
+
+  // Constellation wireframe + dots opacity.
+  // 0 during rocket phase, fades to 1 during CN settle.
+  constellationOpacity: 0,
+
+  // CN section DOM element — for exit tracking (translateY follows CN off-screen).
+  cnSectionEl: null,
+};
