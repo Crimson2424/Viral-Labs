@@ -15,6 +15,7 @@ import CreatorNetwork from "./components/CreatorNetwork";
 import PlaybookSection from "./components/PlaybookSection";
 import ViralEngineSection from "./components/ViralEngineSection";
 import BridgeTestimonial from "./components/BridgeTestimonial";
+import CoreOperations from "./components/CoreOperations";
 import GlobalGrid from "./components/Globalgrid";
 import { loadingState } from "./components/loadingState";
 import { entranceState } from "./components/entranceState";
@@ -148,6 +149,7 @@ const App = () => {
       <ViralitySection globeContainerRef={globeContainerRef} />
       <PlaybookSection />
       <BridgeTestimonial />
+      <CoreOperations />
       <ViralEngineSection />
       <CreatorNetwork viewRef={creatorViewRef} />
       <DummySection />
