@@ -16,7 +16,7 @@ import ViralEngineSection from "./components/ViralEngineSection";
 import BridgeTestimonial from "./components/BridgeTestimonial";
 import CoreOperations from "./components/CoreOperations";
 import GlobalGrid from "./components/Globalgrid";
-import { loadingState } from "./components/loadingState";
+// import { loadingState } from "./components/loadingState";
 import { entranceState } from "./components/entranceState";
 import RocketLaunchSection from "./components/Rocketlaunchsection";
 import CreatorNetworkSection from "./components/CreatorNetworkSection";
