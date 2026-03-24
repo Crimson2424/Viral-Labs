@@ -17,7 +17,7 @@ import PlaybookSection from "./components/PlaybookSection";
 import CoreOperations from "./components/CoreOperations";
 import GlobalGrid from "./components/Globalgrid";
 // import { loadingState } from "./components/loadingState";
-import { entranceState } from "./components/entranceState";
+import { entranceState } from "./components/Entrancestate";
 import RocketLaunchSection from "./components/Rocketlaunchsection";
 import CreatorNetworkSection from "./components/Creatornetworksection";
 
