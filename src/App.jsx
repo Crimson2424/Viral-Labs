@@ -140,10 +140,10 @@ const App = () => {
       <GlobeCanvas />
 
       <HeroSection />
+      <CoreOperations />
       <ViralitySection globeContainerRef={globeContainerRef} />
       <PlaybookSection />
-      <BridgeTestimonial />
-      <CoreOperations />
+      {/* <BridgeTestimonial /> */}
       {/* <ViralEngineSection /> */}
       {/* <CreatorNetwork viewRef={creatorViewRef} /> */}
       <RocketLaunchSection />

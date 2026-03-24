@@ -1,5 +1,11 @@
 /**
- * MissionStats — "Operational Impact at Scale"
+ * MissionStats — "Proven Impact"
+ *
+ * SPACING STRATEGY:
+ *   All vertical gaps use clamp(min, vhScale, max) so the layout:
+ *   - Fits on 1080p (min values total ~890px)
+ *   - Breathes on 1440p+ (max values total ~1074px, matches original design)
+ *   - Scales smoothly in between
  *
  * MARQUEE:
  *   GSAP-driven infinite scroll via gsap.to(track, { x: -setWidth }).
@@ -13,7 +19,11 @@
  *   Label: slides up/out, text swaps, new label slides in from below.
  *   Dots: color crossfade between steps.
  *
- *   Scroll-driven: 100M+ → 200M+ → 900M+ (own ScrollTrigger, ignores HeroSection calls)
+ *   Scroll thresholds (on +=600% = ~36000px total scroll):
+ *     0.76 → step 0 (100M+)    ~27360px
+ *     0.84 → step 1 (200M+)    ~30240px  (~2880px gap)
+ *     0.92 → step 2 (900M+)    ~33120px  (~2880px gap)
+ *
  *   After unpin: resumes auto-cycling from current step (repeat: -1)
  *
  * GSAP class targets (for HeroSection scroll entrance):
@@ -29,7 +39,6 @@ import { gsap, ScrollTrigger, useGSAP } from "./Gsapconfig";
 // SVGs
 // ════════════════════════════════════════════════
 
-
 const CornerLeft = forwardRef(({ className = "", ...props }, ref) => (
   <svg ref={ref} width="5" height="9" viewBox="0 0 5 9" fill="none" className={className} {...props}>
     <path d="M0.5 0L0.5 8M0.5 4L4.5 4" stroke="#FF6F21" strokeLinecap="round" />
@@ -43,8 +52,8 @@ const CornerRight = forwardRef(({ className = "", ...props }, ref) => (
 ));
 
 const FrameCorner = ({ className = "", ...props }) => (
-  <svg width="40" height="40" viewBox="0 0 40 40" fill="none" className={className} {...props}>
-    <path d="M0.5 39.5V0.5H39.5" stroke="#FF6F21" strokeLinecap="round" />
+  <svg width="20" height="20" viewBox="0 0 40 40" fill="none" className={className} {...props}>
+    <path d="M0.5 39.5V0.5H39.5" stroke="#FF6F21" strokeWidth="6" strokeLinecap="round" />
   </svg>
 );
 
@@ -96,9 +105,6 @@ export default forwardRef(function MissionStats(props, ref) {
   const scrollControlledRef = useRef(true);
 
   // ── GSAP marquee ──
-  // Each .marquee-set has a fixed CSS width (calc(100vw - 210px)),
-  // so we measure synchronously — no need to wait for images.
-  // getBoundingClientRect gives sub-pixel accuracy to prevent drift.
   useGSAP(() => {
     const track = trackRef.current;
     if (!track) return;
@@ -125,7 +131,7 @@ export default forwardRef(function MissionStats(props, ref) {
     gsap.to(dashes, { strokeDashoffset: circumference, duration: 60, ease: "none", repeat: -1 });
   }, { scope: arcRef });
 
-  // ── Stat cycling: odometer + label slide + dot swap ──
+  // ── Stat cycling: odometer initial state ──
   useGSAP(() => {
     const cols = digitCols.current.filter(Boolean);
     const labelEl = statLabelRef.current;
@@ -135,7 +141,6 @@ export default forwardRef(function MissionStats(props, ref) {
     const orange = "#FF6F21";
     const white = "#FFFFFF";
 
-    // ── Set initial state: first step ──
     const initialDigits = String(STAT_STEPS[0].value).padStart(3, "0").split("").map(Number);
     initialDigits.forEach((d, i) => {
       gsap.set(cols[i], { yPercent: -(d * 10) });
@@ -153,13 +158,16 @@ export default forwardRef(function MissionStats(props, ref) {
     if (cols.length < 3 || !labelEl || dots.length < 3) return;
     if (targetStep === currentStepRef.current) return;
 
-    // Kill any in-progress step animation and snap to its end state
+    // Kill without snapping — new tween picks up from current position
     if (activeStepTlRef.current) {
-      activeStepTlRef.current.progress(1).kill();
+      activeStepTlRef.current.kill();
       activeStepTlRef.current = null;
     }
 
     const fromStep = currentStepRef.current;
+    // Update step immediately so next call knows where we're headed
+    currentStepRef.current = targetStep;
+
     const orange = "#FF6F21";
     const white = "#FFFFFF";
     const nextStep = STAT_STEPS[targetStep];
@@ -167,7 +175,6 @@ export default forwardRef(function MissionStats(props, ref) {
 
     const tl = gsap.timeline({
       onComplete: () => {
-        currentStepRef.current = targetStep;
         activeStepTlRef.current = null;
       },
     });
@@ -208,7 +215,7 @@ export default forwardRef(function MissionStats(props, ref) {
     }, 0.25);
   }
 
-  // ── Auto-cycling: builds repeat:-1 timeline from current step ──
+  // ── Auto-cycling ──
   function startAutoCycle() {
     if (autoCycleTlRef.current) return;
 
@@ -268,7 +275,8 @@ export default forwardRef(function MissionStats(props, ref) {
     }
   }
 
-  // ── Own ScrollTrigger for step control (overrides HeroSection's calls) ──
+  // ── ScrollTrigger: stat cycling ──
+  // Thresholds spread across 0.76–0.92 (~2880px between each step)
   useGSAP(() => {
     const wrapper = wrapperRef.current;
     if (!wrapper) return;
@@ -284,12 +292,11 @@ export default forwardRef(function MissionStats(props, ref) {
       onUpdate: (self) => {
         const p = self.progress;
 
-        // Only control steps after stat-number entrance begins (~0.87)
-        if (p < 0.87) return;
+        if (p < 0.76) return;
 
         let targetStep = 0;
-        if (p >= 0.95) targetStep = 2;
-        else if (p >= 0.91) targetStep = 1;
+        if (p >= 0.92) targetStep = 2;
+        else if (p >= 0.84) targetStep = 1;
 
         if (targetStep !== lastScrollStep) {
           lastScrollStep = targetStep;
@@ -308,7 +315,6 @@ export default forwardRef(function MissionStats(props, ref) {
   });
 
   // ── Expose imperative methods for HeroSection ──
-  // animateToStep is a no-op while scroll-controlled (MissionStats owns the timing)
   useImperativeHandle(ref, () => ({
     animateToStep: (step) => {
       if (!scrollControlledRef.current) _animateToStep(step);
@@ -318,11 +324,11 @@ export default forwardRef(function MissionStats(props, ref) {
   }));
 
   return (
-    <div ref={wrapperRef} className="relative w-full overflow-visible" style={{ minHeight: "100dvh" }}>
+    <div ref={wrapperRef} className="relative w-full min-h-screen overflow-visible">
 
       {/* Grid lines */}
-      <div className="pointer-events-none absolute top-0 left-[105px] w-px h-full bg-white/20 z-30" aria-hidden="true" />
-      <div className="pointer-events-none absolute top-0 right-[105px] w-px h-full bg-white/20 z-30" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-y-0 left-[105px] w-px bg-white/20 z-30" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-y-0 right-[105px] w-px bg-white/20 z-30" aria-hidden="true" />
       <div className="pointer-events-none absolute top-0 left-[105px] right-[105px] h-px bg-white/20 z-30" aria-hidden="true" />
 
       <CornerLeft className="pointer-events-none absolute -top-0.5 left-[105px] z-30" />
@@ -330,16 +336,22 @@ export default forwardRef(function MissionStats(props, ref) {
       <CornerLeft className="pointer-events-none absolute -bottom-1 left-[105px] z-30" style={{ transform: "scaleY(-1)" }} />
       <CornerRight className="pointer-events-none absolute -bottom-1 right-[105px] z-30" style={{ transform: "scaleY(-1)" }} />
 
-      <div className="relative z-40 px-38 pt-20 pb-10">
-        {/* Header */}
-        <div className="impact-header flex justify-between items-start mb-34">
+      {/* ── Header ── */}
+      <div
+        className="relative z-40 px-38"
+        style={{ paddingTop: "clamp(3rem, 5.5vh, 5rem)" }}
+      >
+        <div
+          className="impact-header flex justify-between items-start"
+          style={{ marginBottom: "clamp(4rem, 9.5vh, 8.5rem)" }}
+        >
           <div className="flex flex-col gap-1 w-90">
             <p className="impact-label font-bricolage font-normal text-base text-[#ff6f21] uppercase leading-normal"
               style={{ fontVariationSettings: "'opsz' 14, 'wdth' 100" }}>
-              Impact Stats
+              Performance deployed at scale
             </p>
             <h2 className="impact-heading font-host font-medium text-[54px] text-[#f1f1f1] tracking-[-2.16px] leading-14">
-              Operational Impact at Scale
+              Proven Impact
             </h2>
           </div>
           <p className="impact-desc font-host font-light text-base text-white tracking-tight leading-5 w-73 mt-12">
@@ -347,61 +359,66 @@ export default forwardRef(function MissionStats(props, ref) {
             Ipsum has been the industry's standard dummy text.
           </p>
         </div>
+      </div>
 
-        {/* Screens Marquee */}
-        <div className="relative mb-20">
-          <FrameCorner className="frame-corner absolute -top-5 -left-5 z-10 opacity-0" />
-          <FrameCorner className="frame-corner absolute -top-5 -right-5 z-10 opacity-0" style={{ transform: "scaleX(-1)" }} />
-          <FrameCorner className="frame-corner absolute -bottom-5 -left-5 z-10 opacity-0" style={{ transform: "scaleY(-1)" }} />
-          <FrameCorner className="frame-corner absolute -bottom-5 -right-5 z-10 opacity-0" style={{ transform: "scale(-1, -1)" }} />
+      {/* ── Marquee ── */}
+      <div
+        className="relative z-40 mx-26"
+        style={{ marginBottom: "clamp(2.5rem, 5.5vh, 5rem)" }}
+      >
+        <FrameCorner className="frame-corner absolute -top-5 -left-5 z-10 opacity-0" />
+        <FrameCorner className="frame-corner absolute -top-5 -right-5 z-10 opacity-0" style={{ transform: "scaleX(-1)" }} />
+        <FrameCorner className="frame-corner absolute -bottom-5 -left-5 z-10 opacity-0" style={{ transform: "scaleY(-1)" }} />
+        <FrameCorner className="frame-corner absolute -bottom-5 -right-5 z-10 opacity-0" style={{ transform: "scale(-1, -1)" }} />
 
-          <div className="relative overflow-hidden py-15">
-            <div
-              className="marquee-fade absolute inset-y-0 left-0 w-40 z-10 pointer-events-none opacity-0"
-              style={{ background: "linear-gradient(to right, #121212 0%, transparent 100%)" }}
-            />
-            <div
-              className="marquee-fade absolute inset-y-0 right-0 w-40 z-10 pointer-events-none opacity-0"
-              style={{ background: "linear-gradient(to left, #121212 0%, transparent 100%)" }}
-            />
+        <div className="relative overflow-hidden py-10">
+          <div
+            className="marquee-fade absolute inset-y-0 left-0 w-40 z-10 pointer-events-none opacity-0"
+            style={{ background: "linear-gradient(to right, #121212 0%, transparent 100%)" }}
+          />
+          <div
+            className="marquee-fade absolute inset-y-0 right-0 w-40 z-10 pointer-events-none opacity-0"
+            style={{ background: "linear-gradient(to left, #121212 0%, transparent 100%)" }}
+          />
 
-            <div ref={trackRef} className="flex w-max items-center">
-              {["a", "b", "c", "d"].map((setKey) => (
-                <div key={setKey} className="marquee-set flex shrink-0 items-center justify-around" style={{ width: "calc(100vw - 210px)" }}>
-                  {LOGOS.map((logo, i) => (
-                    <img
-                      key={`${setKey}-${i}`}
-                      src={logo.src}
-                      alt={logo.alt}
-                      className="screen-card h-28 w-auto object-contain opacity-0 grayscale brightness-75"
-                    />
-                  ))}
-                </div>
-              ))}
-            </div>
+          <div ref={trackRef} className="flex w-max items-center">
+            {["a", "b", "c", "d"].map((setKey) => (
+              <div key={setKey} className="marquee-set flex shrink-0 items-center justify-around gap-14" style={{ width: "calc(100vw - 210px)" }}>
+                {LOGOS.map((logo, i) => (
+                  <img
+                    key={`${setKey}-${i}`}
+                    src={logo.src}
+                    alt={logo.alt}
+                    className="screen-card h-15 w-auto object-contain opacity-0 grayscale brightness-75 transition-all duration-300 ease-out hover:brightness-150 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]"
+                  />
+                ))}
+              </div>
+            ))}
           </div>
         </div>
+      </div>
 
-        {/* Quote */}
-        <div className="flex justify-center mb-20">
+      {/* ── Quote + Stats ── */}
+      <div className="relative z-40 px-38 pb-10">
+        <div
+          className="flex justify-center"
+          style={{ marginBottom: "clamp(2.5rem, 5.5vh, 5rem)" }}
+        >
           <p className="impact-quote font-host text-[40px] text-[#f1f1f1] text-center tracking-[-1.6px] leading-10 w-[419px]">
             Performance isn't accidental. It's deployed.
           </p>
         </div>
 
-        {/* Stats Circle Area */}
         <div className="stats-arc relative flex flex-col items-center opacity-0 scale-90">
           <div className="relative w-[1064px] h-[346px] overflow-hidden">
             <DashedArc ref={arcRef} className="absolute left-0 top-1.5" />
             <div className="absolute inset-0 flex flex-col items-center justify-center pt-14">
               <div className="flex flex-col items-center gap-0 text-center">
 
-                {/* "Views" — static, entrance only */}
                 <span className="stat-sub font-host font-medium text-sm text-[#ff6f21] tracking-tight leading-none opacity-0 translate-y-4">
                   Views
                 </span>
 
-                {/* ══ ODOMETER NUMBER ══ */}
                 <div
                   className="stat-number flex items-center font-bricolage font-normal text-[88px] text-white tracking-[-5.28px] leading-none whitespace-nowrap opacity-0 translate-y-8"
                   style={{ fontVariationSettings: "'opsz' 14, 'wdth' 100" }}
@@ -428,7 +445,6 @@ export default forwardRef(function MissionStats(props, ref) {
                   <span>M+</span>
                 </div>
 
-                {/* ══ CYCLING LABEL ══ */}
                 <span className="stat-sub font-host font-medium text-lg text-white tracking-tight leading-none opacity-0 translate-y-4">
                   <span className="block overflow-hidden" style={{ height: "1.4em" }}>
                     <span ref={statLabelRef} className="block">
@@ -439,7 +455,6 @@ export default forwardRef(function MissionStats(props, ref) {
 
               </div>
 
-              {/* Indicator dots */}
               <div className="flex gap-2 items-center mt-12">
                 <div ref={(el) => (dotsRef.current[0] = el)} className="stat-dot size-1.5 bg-[#ff6f21] opacity-0 scale-0" />
                 <div ref={(el) => (dotsRef.current[1] = el)} className="stat-dot size-1.5 bg-white opacity-0 scale-0" />

@@ -7,9 +7,11 @@
  *    Globe nudges UP in 3D space (globeYOffset decreases).
  *    NO CSS translateY — the movement is in 3D, so no clipping.
  *    Container stays at position: fixed, top: 0, height: 100vh.
+ *    Uses a 2px threshold to prevent sub-pixel interference
+ *    from overwriting GSAP values during CN pin.
  *
  *  Phase 2 — CN pinned (cnRect.top <= 0, cnRect.bottom >= vh):
- *    CN's onUpdate takes over globeYOffset and drives it to 0.
+ *    CN's timeline takes over globeYOffset and drives it to final.
  *    Starts at the nudged value = continuous, no snap.
  *
  *  Phase 3 — CN exit (cnRect.bottom < vh):
@@ -145,8 +147,10 @@ export default function GlobeCanvas() {
       if (cnEl) {
         const cnRect = cnEl.getBoundingClientRect();
 
-        if (cnRect.top > 0) {
+        if (cnRect.top > 2) {
           // Phase 1: CN approaching — nudge globe UP in 3D.
+          // Threshold of 2px prevents sub-pixel rounding from
+          // triggering this during CN pin and overwriting GSAP values.
           // approach: 0 (CN at bottom of viewport) → 1 (CN at top, about to pin)
           const approach = Math.max(0, 1 - cnRect.top / vh);
           creatorGlobeState.globeYOffset = GLOBE_ENTRY_Y - (NUDGE_3D * approach);
@@ -156,7 +160,7 @@ export default function GlobeCanvas() {
           // Phase 3: CN scrolling away — follow it off-screen
           offsetY = cnRect.bottom - vh;
         } else {
-          // Phase 2: CN pinned — CN's onUpdate handles 3D offsets
+          // Phase 2: CN pinned — CN's timeline handles 3D offsets
           offsetY = 0;
         }
       }
