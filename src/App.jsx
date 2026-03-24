@@ -7,7 +7,7 @@ import "lenis/dist/lenis.css";
 import HeroSection from "./components/Herosection";
 import GlobalCanvas from "./components/GlobalCanvas";
 import GlobalTexture from "./components/Globaltexture";
-import LoadingScreen from "./components/LoadingScreen";
+import LoadingScreen from "./components/Loadingscreen";
 import GlobeContent from "./components/GlobeScene";
 import GlobeCanvas from "./components/GlobeCanvas";
 import ViralitySection from "./components/Viralitysection";
