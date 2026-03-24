@@ -25,9 +25,9 @@
 
 import { useRef, useState, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
-import CreatorGlobe from "./CreatorGlobe";
-import CreatorGlobeOffsetGroup from "./CreatorGlobeOffsetGroup";
-import { creatorGlobeState } from "./creatorGlobeState";
+import CreatorGlobe from "./Creatorglobe";
+import CreatorGlobeOffsetGroup from "./Creatorglobeoffsetgroup";
+import { creatorGlobeState } from "./Creatorglobestate";
 
 // How much the globe rises in 3D units during the approach scroll.
 // globeYOffset goes from ENTRY_Y → (ENTRY_Y - NUDGE_3D).

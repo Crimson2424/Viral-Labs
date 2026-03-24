@@ -11,9 +11,9 @@ import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { KernelSize } from "postprocessing";
 import * as THREE from "three";
 import { Suspense } from "react";
-import HeroParticles from "./HeroParticles";
-import { transitionState } from "./transitionState";
-import { entranceState } from "./entranceState";
+import HeroParticles from "./Heroparticles";
+import { transitionState } from "./Transitionstate";
+import { entranceState } from "./Entrancestate";
 
 // ============================================
 // VERTEX SHADER (shared by main + bake)

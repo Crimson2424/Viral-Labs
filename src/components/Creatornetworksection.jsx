@@ -13,10 +13,10 @@
  */
 
 import { useRef, useEffect } from "react";
-import { gsap, ScrollTrigger, SplitText, useGSAP } from "./gsapConfig";
+import { gsap, ScrollTrigger, SplitText, useGSAP } from "./Gsapconfig";
 import GlobalGrid from "./Globalgrid";
-import { creatorGlobeState } from "./creatorGlobeState";
-import { NUDGE_3D, GLOBE_ENTRY_Y, GLOBE_ENTRY_X } from "./GlobeCanvas";
+import { creatorGlobeState } from "./Creatorglobestate";
+import { NUDGE_3D, GLOBE_ENTRY_Y, GLOBE_ENTRY_X } from "./Globecanvas";
 
 /* ══════════════════════════════════════════════════════
    CONSTANTS

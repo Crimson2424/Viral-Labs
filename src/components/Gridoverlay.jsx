@@ -23,7 +23,7 @@ import {
   GridLineLeft,
   GridLineRight,
   GridCrosshair,
-} from "./SvgAssets";
+} from "./Svgassets";
 
 const GridOverlay = forwardRef(function GridOverlay({ children, showTexture = true }, ref) {
   const overlayRef = useRef();

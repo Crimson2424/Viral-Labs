@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { useFrame, useThree, extend } from "@react-three/fiber";
 import { shaderMaterial } from "@react-three/drei";
 import * as THREE from "three";
-import { transitionState } from "./transitionState";
+import { transitionState } from "./Transitionstate";
 
 const noiseRevealVertex = /* glsl */ `
 varying vec2 vUv;

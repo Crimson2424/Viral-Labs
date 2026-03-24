@@ -3,7 +3,7 @@ import { Canvas, useFrame, useThree, extend, useLoader } from "@react-three/fibe
 import { shaderMaterial, useAspect } from "@react-three/drei";
 import * as THREE from "three";
 import { Suspense } from "react";
-import HeroParticles from "./HeroParticles";
+import HeroParticles from "./Heroparticles";
 
 // ============================================
 // VERTEX SHADER

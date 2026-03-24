@@ -7,10 +7,10 @@
  */
 
 import { useRef } from "react";
-import { gsap, ScrollTrigger, SplitText, useGSAP } from "./gsapConfig";
+import { gsap, ScrollTrigger, SplitText, useGSAP } from "./Gsapconfig";
 import GlobalGrid from "./Globalgrid";
-import { CubesSvg, GlowLineSvg, RocketThrustersSvg } from "./SvgAssets";
-import { creatorGlobeState } from "./creatorGlobeState";
+import { CubesSvg, GlowLineSvg, RocketThrustersSvg } from "./Svgassets";
+import { creatorGlobeState } from "./Creatorglobestate";
 
 /* ══════════════════════════════════════════════════════
    CONSTANTS

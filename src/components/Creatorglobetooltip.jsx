@@ -17,7 +17,7 @@
  */
 
 import { useRef, useEffect, useState } from "react";
-import { creatorGlobeState } from "./creatorGlobeState";
+import { creatorGlobeState } from "./Creatorglobestate";
 
 // ── Platform SVG icons ──
 const PlatformIcon = ({ platform }) => {

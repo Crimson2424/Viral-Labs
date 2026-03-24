@@ -1,8 +1,8 @@
 import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { transitionState } from "./transitionState";
-import { entranceState } from "./entranceState";
+import { transitionState } from "./Transitionstate";
+import { entranceState } from "./Entrancestate";
 
 const GOLD_COUNT = 1200;
 const WHITE_COUNT = 3000;

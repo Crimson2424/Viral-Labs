@@ -28,8 +28,8 @@
 
 import { useRef, useState } from "react";
 import { gsap, SplitText, DrawSVGPlugin, useGSAP } from "./Gsapconfig";
-import { ViralLabsLogo, ArrowIcon, NavGlowLine } from "./SvgAssets";
-import { entranceState } from "./entranceState";
+import { ViralLabsLogo, ArrowIcon, NavGlowLine } from "./Svgassets";
+import { entranceState } from "./Entrancestate";
 
 /* ─── Config ─── */
 const NAV_ITEMS = [

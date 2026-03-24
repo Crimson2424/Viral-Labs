@@ -22,7 +22,7 @@
 import { useRef, useEffect, useState, useCallback } from "react";
 import { gsap, useGSAP } from "./Gsapconfig";
 import * as THREE from "three";
-import { loadingState } from "./loadingState";
+import { loadingState } from "./Loadingstate";
 
 /* ── Inline SVG components ── */
 const WhiteLine = () => (

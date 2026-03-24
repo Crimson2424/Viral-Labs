@@ -22,7 +22,7 @@ import React, { useRef, useMemo, useEffect, useCallback, Suspense } from "react"
 import { useFrame, useThree } from "@react-three/fiber";
 import { useFBO } from "@react-three/drei";
 import * as THREE from "three";
-import { viralityState } from "./viralityState";
+import { viralityState } from "./Viralitystate";
 
 // ============================================================================
 // CONFIGURATION

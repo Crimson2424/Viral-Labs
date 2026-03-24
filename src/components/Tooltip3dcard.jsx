@@ -20,7 +20,7 @@ import { useRef, useState, useMemo } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Html, MeshTransmissionMaterial, RoundedBox } from "@react-three/drei";
 import * as THREE from "three";
-import { creatorGlobeState } from "./creatorGlobeState";
+import { creatorGlobeState } from "./Creatorglobestate";
 
 // ── Reusable vectors (allocated once) ──
 const _worldPos = new THREE.Vector3();

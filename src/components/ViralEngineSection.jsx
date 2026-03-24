@@ -16,7 +16,7 @@ import {
   GlowLineSvg,
   Line744Svg,
   CornerVectorRocketSvg,
-} from "./SvgAssets";
+} from "./Svgassets";
 
 /* ── Corner markers — identical to MissionStats ── */
 const CornerLeft = ({ className = "", ...props }) => (

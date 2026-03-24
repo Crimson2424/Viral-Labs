@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import GlobalGrid from "./Globalgrid";
 import { gsap, ScrollTrigger, SplitText, useGSAP } from "../components/Gsapconfig";
-import { viralityState } from "./viralityState";
+import { viralityState } from "./Viralitystate";
 
 const LINE_BLURS = [0.5, 0.5, 3, 3, 5.5];
 const CUBE_BLURS = [0, 5, 5];

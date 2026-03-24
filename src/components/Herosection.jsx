@@ -20,14 +20,14 @@
 
 import { useRef } from "react";
 import { gsap, ScrollTrigger, SplitText, DrawSVGPlugin, useGSAP } from "./Gsapconfig";
-import GridOverlay from "./GridOverlay";
+import GridOverlay from "./Gridoverlay";
 import GlobalGrid from "./Globalgrid";
 import Navbar from "./Navbar";
-import { CtaGlowLine } from "./SvgAssets";
-import { transitionState } from "./transitionState";
-import { entranceState } from "./entranceState";
+import { CtaGlowLine } from "./Svgassets";
+import { transitionState } from "./Transitionstate";
+import { entranceState } from "./Entrancestate";
 import MissionStats from "./Missionstats";
-import { loadingState } from "./loadingState";
+import { loadingState } from "./Loadingstate";
 
 export default function HeroSection() {
   const sectionRef = useRef();

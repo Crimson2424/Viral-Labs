@@ -25,7 +25,7 @@
 
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { creatorGlobeState } from "./creatorGlobeState";
+import { creatorGlobeState } from "./Creatorglobestate";
 
 export default function CreatorGlobeOffsetGroup({ children }) {
   const groupRef = useRef();

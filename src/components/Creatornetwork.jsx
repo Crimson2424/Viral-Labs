@@ -13,9 +13,9 @@
  */
 
 import { useRef, useState } from "react";
-import { gsap, ScrollTrigger, SplitText, useGSAP } from "./gsapConfig";
+import { gsap, ScrollTrigger, SplitText, useGSAP } from "./Gsapconfig";
 import GlobalGrid from "./Globalgrid";
-import { creatorGlobeState } from "./creatorGlobeState";
+import { creatorGlobeState } from "./Creatorglobestate";
 
 // ════════════════════════════════════════════════
 // TOOLTIP CARD (frosted glass)

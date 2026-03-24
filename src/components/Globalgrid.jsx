@@ -22,7 +22,7 @@
 import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { entranceState } from "./entranceState";
+import { entranceState } from "./Entrancestate";
 
 // Fixed cell size in px — square on every screen size.
 // Lower = smaller cells, more of them. Tune to taste.

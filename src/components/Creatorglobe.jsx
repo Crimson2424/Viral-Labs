@@ -16,7 +16,7 @@
 import { useRef, useMemo, useEffect, useCallback } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import { creatorGlobeState } from "./creatorGlobeState";
+import { creatorGlobeState } from "./Creatorglobestate";
 
 // ============================================================================
 // SHADER SOURCES
