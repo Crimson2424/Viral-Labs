@@ -61,6 +61,7 @@ function DummySection() {
 }
 
 const App = () => {
+  
   const lenisRef = useRef(null);
   const containerRef = useRef(null);
 
