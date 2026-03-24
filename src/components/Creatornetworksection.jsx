@@ -5,9 +5,11 @@
  *  globeYOffset = GLOBE_ENTRY_Y - NUDGE_3D (e.g. 1.2 - 0.4 = 0.8)
  *  globeXOffset = GLOBE_ENTRY_X (0.525)
  *
- * This section scrubs both to 0 (final CN position).
- * The transition from approach → CN pin is seamless because the
- * approach ends at the same values CN starts from.
+ * This section scrubs both to final CN position via GSAP timeline tweens.
+ * Globe settle lives inside the master timeline (not onUpdate) so it
+ * receives the same scrub: 1.8 smoothing — no snap on pin release.
+ *
+ * Tune CN_FINAL_Y / CN_FINAL_X at the top to position the globe.
  */
 
 import { useRef, useEffect } from "react";
@@ -27,8 +29,13 @@ const SCRUB_SMOOTHING = 1.8;
 const CN_START_Y = GLOBE_ENTRY_Y - NUDGE_3D;  // e.g. 1.2 - 0.4 = 0.8
 const CN_START_X = GLOBE_ENTRY_X;              // e.g. 0.525
 
-// Globe settles in the first portion of scroll
-const SETTLE_FRACTION = 0.25;
+// ┌─────────────────────────────────────────────────────┐
+// │  TUNE THESE — Globe final resting position in CN.   │
+// │  Y: more negative = higher on screen                │
+// │  X: 0 = left (child group's -1.05 takes effect)    │
+// └─────────────────────────────────────────────────────┘
+const CN_FINAL_Y = -0.1;
+const CN_FINAL_X = 0;
 
 const CN_STATS = [
   { value: "1BN+", label: "Views per month through our engagement network" },
@@ -105,26 +112,12 @@ export default function CreatorNetworkSection() {
         anticipatePin: 1,
 
         onUpdate: (self) => {
-          const p = self.progress;
-
-          /* ── Settle progress (power2.out easing) ── */
-          const settleProgress = Math.min(1, p / SETTLE_FRACTION);
-          const eased = 1 - Math.pow(1 - settleProgress, 2);
-
-          /* ── Globe 3D position: CN_START → 0 ── */
-          creatorGlobeState.globeXOffset = CN_START_X * (1 - eased);
-          creatorGlobeState.globeYOffset = CN_START_Y * (1 - eased);
-
-          /* ── Constellation wireframe + dots fade in ── */
-          creatorGlobeState.constellationOpacity = eased;
-
-          /* ── Interaction gate ── */
-          creatorGlobeState.interactive = settleProgress > 0.8;
+          /* Interactive gate only — globe offsets are timeline tweens */
+          const settleRatio = Math.min(1, self.progress / 0.25);
+          creatorGlobeState.interactive = settleRatio > 0.8;
         },
 
         onLeaveBack: () => {
-          // Scrolling back above CN — restore nudged position.
-          // GlobeCanvas approach tracking takes over from here.
           creatorGlobeState.globeXOffset = CN_START_X;
           creatorGlobeState.globeYOffset = CN_START_Y;
           creatorGlobeState.constellationOpacity = 0;
@@ -132,6 +125,27 @@ export default function CreatorNetworkSection() {
         },
       },
     });
+
+    /* ═══ GLOBE SETTLE — positions 0→2 (first ~25% of scroll) ═══
+       Inside the timeline so it gets scrub: 1.8 smoothing.
+       Tune CN_FINAL_Y / CN_FINAL_X at the top of this file. */
+    master.to(creatorGlobeState, {
+      globeXOffset: CN_FINAL_X,
+      duration: 2,
+      ease: "power2.out",
+    }, 0);
+
+    master.to(creatorGlobeState, {
+      globeYOffset: CN_FINAL_Y,
+      duration: 2,
+      ease: "power2.out",
+    }, 0);
+
+    master.to(creatorGlobeState, {
+      constellationOpacity: 1,
+      duration: 2,
+      ease: "power2.out",
+    }, 0);
 
     /* ═══ CN LABEL ═══ */
     master.to(cnLabelSplit.elements, {

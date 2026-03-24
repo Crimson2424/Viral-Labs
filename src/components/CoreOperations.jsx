@@ -1,19 +1,37 @@
 import { useRef } from "react";
-import { gsap, useGSAP } from "./Gsapconfig";
+import { gsap, SplitText, useGSAP } from "./Gsapconfig";
 import GlobalGrid from "./Globalgrid";
 
-// ── Orange corner marker SVGs (same pattern as MissionStats) ──
+// ── Orange corner marker SVGs ──
 
 const CornerLeft = ({ className = "", ...props }) => (
   <svg width="5" height="9" viewBox="0 0 5 9" fill="none" className={className} {...props}>
-    <path d="M0.5 0L0.5 8M0.5 4L4.5 4" stroke="#FF6F21" strokeLinecap="round" />
+    <path d="M0.5 0.5L0.5 8.5M0.5 4.5L4.5 4.5" stroke="#FF6F21" strokeLinecap="round" />
   </svg>
 );
 
 const CornerRight = ({ className = "", ...props }) => (
   <svg width="5" height="9" viewBox="0 0 5 9" fill="none" className={className} {...props}>
-    <path d="M4.5 0L4.5 8M0.5 4H4.5" stroke="#FF6F21" strokeLinecap="round" />
+    <path d="M4.5 0.5L4.5 8.5M0.5 4.5H4.5" stroke="#FF6F21" strokeLinecap="round" />
   </svg>
+);
+
+// ── CSS-only glow line ──
+
+const GlowLine = ({ className = "" }) => (
+  <div
+    className={`h-px rounded-full ${className}`}
+    style={{
+      backgroundColor: "#FF6F21",
+      mixBlendMode: "plus-lighter",
+      boxShadow:
+        "0 0 1px #FF6F21, " +
+        "0 0 2px #FF6F21, " +
+        "0 0 4px #FF6F21, " +
+        "0 0 6px #FF6F21, " +
+        "0 0 10px #FF6F21",
+    }}
+  />
 );
 
 // ── Card data ──
@@ -53,29 +71,164 @@ export default function CoreOperations() {
       const el = sectionRef.current;
       if (!el) return;
 
-      const targets = el.querySelectorAll(
-        ".co-label, .co-title, .co-tagline, .co-card"
-      );
-      gsap.set(targets, { opacity: 0, y: 30 });
+      // Factory — every tween gets its OWN fresh config object.
+      // GSAP mutates the scrollTrigger config internally, so
+      // sharing a single object across tweens breaks things.
+      const trigger = () => ({
+        trigger: el,
+        start: "clamp(top 80%)",
+        once: true,
+      });
 
-      gsap
-        .timeline({
-          scrollTrigger: {
-            trigger: el,
-            start: "top 80%",
-            toggleActions: "play none none none",
-          },
-        })
-        .to(".co-label", { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" })
-        .to(".co-title", { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, "-=0.3")
-        .to(".co-tagline", { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, "-=0.3")
-        .to(".co-card", {
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
+      // ─────────────────────────────────────────────
+      // Header text mask reveals
+      // ─────────────────────────────────────────────
+
+      SplitText.create(".co-label", {
+        type: "lines",
+        autoSplit: true,
+        mask: "lines",
+        onSplit(self) {
+          gsap.set(self.lines, { yPercent: 110 });
+          return gsap.to(self.lines, {
+            yPercent: 0,
+            duration: 0.8,
+            stagger: 0.08,
+            ease: "expo.out",
+            scrollTrigger: trigger(),
+          });
+        },
+      });
+
+      SplitText.create(".co-title", {
+        type: "lines",
+        autoSplit: true,
+        mask: "lines",
+        onSplit(self) {
+          gsap.set(self.lines, { yPercent: 110 });
+          return gsap.to(self.lines, {
+            yPercent: 0,
+            duration: 0.9,
+            stagger: 0.08,
+            ease: "expo.out",
+            delay: 0.1,
+            scrollTrigger: trigger(),
+          });
+        },
+      });
+
+      SplitText.create(".co-tagline-text", {
+        type: "lines",
+        autoSplit: true,
+        mask: "lines",
+        onSplit(self) {
+          gsap.set(self.lines, { yPercent: 110 });
+          return gsap.to(self.lines, {
+            yPercent: 0,
+            duration: 0.8,
+            stagger: 0.08,
+            ease: "expo.out",
+            delay: 0.25,
+            scrollTrigger: trigger(),
+          });
+        },
+      });
+
+      // ─────────────────────────────────────────────
+      // Header glow line
+      // ─────────────────────────────────────────────
+
+      gsap.set(".co-glow-line", { scaleX: 0, transformOrigin: "left center" });
+      gsap.to(".co-glow-line", {
+        scaleX: 1,
+        duration: 0.8,
+        delay: 0.2,
+        ease: "power3.inOut",
+        scrollTrigger: trigger(),
+      });
+
+      // ─────────────────────────────────────────────
+      // Per-card animations
+      // ─────────────────────────────────────────────
+
+      const cardEls = el.querySelectorAll(".co-card");
+      const CARD_OFFSET = 0.12;
+
+      cardEls.forEach((card, i) => {
+        const d = 0.3 + i * CARD_OFFSET;
+        const cardImg = card.querySelector(".co-card-img");
+        const cardGlow = card.querySelector(".co-card-glow");
+        const cardBadge = card.querySelector(".co-card-badge");
+        const cardTitle = card.querySelector(".co-card-title");
+        const cardDesc = card.querySelector(".co-card-desc");
+
+        // ── Image zoom settle ──
+        gsap.set(cardImg, { scale: 1.3 });
+        gsap.to(cardImg, {
+          scale: 1,
+          duration: 1.4,
+          delay: d,
           ease: "power3.out",
-          stagger: 0.15,
-        }, "-=0.2");
+          scrollTrigger: trigger(),
+        });
+
+        // ── Glow line wipe ──
+        gsap.set(cardGlow, { scaleX: 0, transformOrigin: "left center" });
+        gsap.to(cardGlow, {
+          scaleX: 1,
+          duration: 0.6,
+          delay: d + 0.2,
+          ease: "power3.inOut",
+          scrollTrigger: trigger(),
+        });
+
+        // ── Number badge ──
+        gsap.set(cardBadge, { yPercent: 100, opacity: 0 });
+        gsap.to(cardBadge, {
+          yPercent: 0,
+          opacity: 1,
+          duration: 0.5,
+          delay: d + 0.25,
+          ease: "power4.out",
+          scrollTrigger: trigger(),
+        });
+
+        // ── Card title: SplitText mask ──
+        SplitText.create(cardTitle, {
+          type: "lines",
+          autoSplit: true,
+          mask: "lines",
+          onSplit(self) {
+            gsap.set(self.lines, { yPercent: 110 });
+            return gsap.to(self.lines, {
+              yPercent: 0,
+              duration: 0.8,
+              stagger: 0.08,
+              delay: d + 0.15,
+              ease: "expo.out",
+              scrollTrigger: trigger(),
+            });
+          },
+        });
+
+        // ── Card desc: SplitText mask ──
+        SplitText.create(cardDesc, {
+          type: "lines",
+          autoSplit: true,
+          mask: "lines",
+          onSplit(self) {
+            gsap.set(self.lines, { yPercent: 110 });
+            return gsap.to(self.lines, {
+              yPercent: 0,
+              duration: 0.7,
+              stagger: 0.04,
+              delay: d + 0.3,
+              ease: "expo.out",
+              scrollTrigger: trigger(),
+            });
+          },
+        });
+      });
     },
     { scope: sectionRef }
   );
@@ -83,102 +236,123 @@ export default function CoreOperations() {
   return (
     <section
       ref={sectionRef}
-      className="relative z-25 w-full overflow-hidden pt-24 md:pt-32 lg:pt-40 pb-0"
+      className="relative z-25 w-full overflow-x-clip pb-0"
+      style={{ paddingTop: "clamp(3.2rem, 4vh, 4rem)" }}
     >
       {/* ── Background grid mesh ── */}
       <GlobalGrid />
 
-      {/* ── Grid lines (z-30) ── */}
-      <div className="pointer-events-none absolute top-0 left-[105px] w-px h-full bg-white/20 z-50" aria-hidden="true" />
-      <div className="pointer-events-none absolute top-0 right-[105px] w-px h-full bg-white/20 z-50" aria-hidden="true" />
+      {/* ── Grid lines ── */}
+      <div className="pointer-events-none absolute inset-y-0 left-[105px] w-px bg-white/20 z-50" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-y-0 right-[105px] w-px bg-white/20 z-50" aria-hidden="true" />
       <div className="pointer-events-none absolute top-0 left-[105px] right-[105px] h-px bg-white/20 z-30" aria-hidden="true" />
 
-      {/* ── Orange corner markers (z-30) ── */}
-      <CornerLeft className="pointer-events-none absolute -top-0.5 left-[105px] z-30" aria-hidden="true" />
-      <CornerRight className="pointer-events-none absolute -top-0.5 right-[105px] z-30" aria-hidden="true" />
-      <CornerLeft className="pointer-events-none absolute -bottom-1 left-[105px] z-30" style={{ transform: "scaleY(-1)" }} aria-hidden="true" />
-      <CornerRight className="pointer-events-none absolute -bottom-1 right-[105px] z-30" style={{ transform: "scale(-1, -1)" }} aria-hidden="true" />
+      {/* ── Section corner markers ── */}
+      <CornerLeft className="pointer-events-none absolute -top-1 left-[105px] z-30" aria-hidden="true" />
+      <CornerRight className="pointer-events-none absolute -top-1 right-[105px] z-30" aria-hidden="true" />
 
-      {/* ── Content (z-40) ── */}
-      <div className="relative z-40 max-w-[147rem] mx-auto px-8 md:px-16 lg:px-24 xl:px-25">
-        {/* ── Header ── */}
-        <div className="flex flex-col lg:flex-row justify-between w-full items-start gap-8 lg:gap-16 mb-16 md:mb-24">
-          {/* Left: label + heading */}
-          <div className="flex flex-col ">
-            <p className="co-label font-host font-normal text-2xl uppercase text-vl-orange mb-2">
+      {/* ── Header ── */}
+      <div
+        className="relative z-40 mx-[105px]"
+        style={{ marginBottom: "clamp(3.5rem, 8vh, 8rem)" }}
+      >
+        <div className="flex justify-between items-start px-18">
+          <div className="flex flex-col">
+            <p
+              className="co-label font-host font-normal uppercase text-vl-orange tracking-wide"
+              style={{ fontSize: "clamp(0.75rem, 0.9vw, 1rem)" }}
+            >
               What We Do
             </p>
-            <h2 className="co-title font-bricolage font-medium text-3xl sm:text-4xl md:text-5xl lg:text-[5.5rem] text-white tracking-tighter">
+            <h2
+              className="co-title font-bricolage text-white tracking-tighter leading-[1.1]"
+              style={{ fontSize: "clamp(1.85rem, 3vw, 3rem)" }}
+            >
               Core Operations
             </h2>
           </div>
 
-          {/* Right: glow line + tagline */}
-          <div className="co-tagline flex flex-col items-end lg:mt-10">
-            {/* CSS glow line */}
-            {/* <div className="relative w-40 md:w-56 h-1 mb-3">
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-vl-orange to-vl-orange rounded-full blur-sm opacity-80" />
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-vl-orange to-vl-orange rounded-full" />
-            </div> */}
-            <p className="font-host font-normal text-base sm:text-lg md:text-xl text-vl-muted text-right tracking-tight">
+          <div className="co-tagline flex flex-col items-start mt-6">
+            <GlowLine className="co-glow-line w-40 mb-1" />
+            <p
+              className="co-tagline-text font-host font-normal text-vl-muted text-right tracking-tight"
+              style={{ fontSize: "clamp(0.8rem, 1vw, 1rem)" }}
+            >
               Precision over noise.
             </p>
           </div>
         </div>
-
       </div>
 
-      {/* ── Cards grid — spans full width between grid lines, flush to section bottom ── */}
-      <div className="relative z-40 mx-[105px] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border-t border-[#383838]">
-        {cards.map((card, i) => {
-          const isFirst = i === 0;
-          const isLast = i === cards.length - 1;
+      {/* ── Cards grid ── */}
+      <div className="relative z-40 mx-[105px]">
+        <CornerLeft className="pointer-events-none absolute -top-1 left-0 z-50" aria-hidden="true" />
+        <CornerRight className="pointer-events-none absolute -top-1 right-0 z-50" aria-hidden="true" />
+        <CornerLeft
+          className="pointer-events-none absolute -bottom-1 left-0 z-50"
+          style={{ transform: "scaleY(-1)" }}
+          aria-hidden="true"
+        />
+        <CornerRight
+          className="pointer-events-none absolute -bottom-1 right-0 z-50"
+          style={{ transform: "scale(1)" }}
+          aria-hidden="true"
+        />
 
-          return (
-            <div
-              key={card.num}
-              className={`co-card relative flex flex-col ${
-                !isLast ? "lg:border-r border-[#383838]" : ""
-              }`}
-            >
-              {/* Image area */}
-              <div className="relative aspect-square bg-[#0a0a0a] overflow-hidden">
-                <img
-                  src={card.img}
-                  alt={card.title}
-                  className="w-full h-full object-cover mix-blend-lighten"
-                />
+        <div className="grid grid-cols-4 border-t border-[#383838]">
+          {cards.map((card, i) => {
+            const isLast = i === cards.length - 1;
 
-                {/* Number badge — bottom-left of image, flush to bottom */}
-                <div className="absolute bottom-0 left-0 z-10">
-                  <span className="inline-block font-host text-base md:text-lg text-white/90 bg-[#2a2a2a] px-3 py-1.5">
-                    {card.num}
-                  </span>
-                </div>
-              </div>
-
-              {/* Horizontal divider */}
-              <div className="h-px bg-white/20" />
-
-              {/* Content */}
+            return (
               <div
-                className={`relative p-6 md:p-8 lg:p-10 flex flex-col aspect-square ${
-                  isFirst ? "bg-[#1a1a1a]" : "bg-transparent"
+                key={card.num}
+                className={`co-card relative flex flex-col ${
+                  !isLast ? "border-r border-[#383838]" : ""
                 }`}
               >
-                <h3 className="font-alliance font-bold text-2xl md:text-3xl lg:text-[3.5rem] uppercase tracking-tighter leading-tight text-white">
-                  {card.title}
-                </h3>
-                <p
-                  className="absolute top-[50%] font-host text-base md:text-3xl tracking-tight leading-relaxed text-[hsla(0,0%,63%,1)] my-auto"
-                  
+                <div className="relative aspect-square bg-black overflow-hidden">
+                  <img
+                    src={card.img}
+                    alt={card.title}
+                    className="co-card-img w-full h-full object-cover mix-blend-lighten will-change-transform"
+                  />
+                  <div className="absolute bottom-0 left-0 z-10 overflow-hidden">
+                    <GlowLine className="co-card-glow w-full" />
+                    <span
+                      className="co-card-badge inline-block font-host text-white/90 bg-[#2a2a2a] px-2.5 py-2.5"
+                      style={{ fontSize: "clamp(0.75rem, 0.9vw, 0.9rem)" }}
+                    >
+                      {card.num}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="h-px bg-white/20" />
+
+                <div
+                  className="flex flex-col gap-4"
+                  style={{
+                    padding: "clamp(1rem, 2vw, 1.75rem)",
+                    paddingInline: "clamp(0.75rem, 1.5vw, 1.25rem)",
+                  }}
                 >
-                  {card.desc}
-                </p>
+                  <h3
+                    className="co-card-title font-host uppercase tracking-tighter leading-[1.1] text-white min-h-[2.8em]"
+                    style={{ fontSize: "clamp(1.1rem, 1.8vw, 1.75rem)" }}
+                  >
+                    {card.title}
+                  </h3>
+                  <p
+                    className="co-card-desc font-host tracking-tight leading-relaxed text-[hsla(0,0%,63%,1)]"
+                    style={{ fontSize: "clamp(0.85rem, 1.1vw, 1.15rem)" }}
+                  >
+                    {card.desc}
+                  </p>
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </section>
   );
