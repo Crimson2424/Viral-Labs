@@ -9,7 +9,7 @@ import GlobalCanvas from "./components/GlobalCanvas";
 import GlobalTexture from "./components/Globaltexture";
 import LoadingScreen from "./components/Loadingscreen";
 import GlobeContent from "./components/Globescene";
-import GlobeCanvas from "./components/GlobeCanvas";
+import GlobeCanvas from "./components/Globecanvas";
 import ViralitySection from "./components/Viralitysection";
 import PlaybookSection from "./components/PlaybookSection";
 // import ViralEngineSection from "./components/ViralEngineSection";
