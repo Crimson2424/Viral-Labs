@@ -8,18 +8,18 @@ import HeroSection from "./components/Herosection";
 import GlobalCanvas from "./components/GlobalCanvas";
 import GlobalTexture from "./components/Globaltexture";
 import LoadingScreen from "./components/Loadingscreen";
-import GlobeContent from "./components/GlobeScene";
+import GlobeContent from "./components/Globescene";
 import GlobeCanvas from "./components/GlobeCanvas";
 import ViralitySection from "./components/Viralitysection";
 import PlaybookSection from "./components/PlaybookSection";
-import ViralEngineSection from "./components/ViralEngineSection";
-import BridgeTestimonial from "./components/BridgeTestimonial";
+// import ViralEngineSection from "./components/ViralEngineSection";
+// import BridgeTestimonial from "./components/BridgeTestimonial";
 import CoreOperations from "./components/CoreOperations";
 import GlobalGrid from "./components/Globalgrid";
 // import { loadingState } from "./components/loadingState";
 import { entranceState } from "./components/entranceState";
 import RocketLaunchSection from "./components/Rocketlaunchsection";
-import CreatorNetworkSection from "./components/CreatorNetworkSection";
+import CreatorNetworkSection from "./components/Creatornetworksection";
 
 function DummySection() {
   return (
