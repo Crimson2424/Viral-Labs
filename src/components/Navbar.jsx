@@ -18,8 +18,8 @@
  * SOUND WAVE BUTTON:
  *   Continuous flowing sine wave generated via phase animation + path recalculation.
  *   Click toggles mute/unmute:
- *     Unmuted → amplitude at 12, wave flows actively.
- *     Muted   → amplitude tweens down to 1, wave becomes nearly flat but still flows.
+ *     Unmuted → amplitude at 12, wave flows actively. Audio plays.
+ *     Muted   → amplitude tweens down to 1, wave becomes nearly flat but still flows. Audio pauses.
  *
  * All initial states via gsap.set() or CSS.
  * All tweens use .to() only.
@@ -139,6 +139,9 @@ export default function Navbar({ entranceDelay = 0.3 }) {
     currentAmplitude: WAVE_MUTED_AMPLITUDE,
   });
 
+  /* Audio ref */
+  const audioRef = useRef(null);
+
   /* ─── Sine wave path generator ─── */
   const generateSineWavePath = () => {
     const { phase, currentAmplitude } = waveStateRef.current;
@@ -163,6 +166,14 @@ export default function Navbar({ entranceDelay = 0.3 }) {
 
   useGSAP(
     () => {
+      // ── Audio setup ──
+      if (!audioRef.current) {
+        const audio = new Audio("/audio/music.mp3.mpeg");
+        audio.loop = true;
+        audio.volume = 0.5;
+        audioRef.current = audio;
+      }
+
       // ── Initial states ──
       gsap.set(navRef.current, { yPercent: -120 });
       gsap.set(logoIconRef.current, { opacity: 0, scale: 0.8 });
@@ -193,9 +204,6 @@ export default function Navbar({ entranceDelay = 0.3 }) {
       // ═══════════════════════════════════════
       // CONTINUOUS SINE WAVE ANIMATION
       // ═══════════════════════════════════════
-      // Infinite timeline animates phase → onUpdate regenerates path.
-      // Wave always flows; amplitude controls whether it looks alive or flat.
-
       gsap.timeline({ repeat: -1, ease: "none" }).to(waveStateRef.current, {
         phase: Math.PI * 4,
         duration: 4,
@@ -209,8 +217,6 @@ export default function Navbar({ entranceDelay = 0.3 }) {
       // ═══════════════════════════════════════
       // HOVER TIMELINES (all paused)
       // ═══════════════════════════════════════
-
-      // ── Glow line hover: expand from center ──
       const glowTl = gsap.timeline({ paused: true });
       glowTl.to(glowLines, {
         drawSVG: "0% 100%",
@@ -229,7 +235,6 @@ export default function Navbar({ entranceDelay = 0.3 }) {
       // ═══════════════════════════════════════
       // ENTRANCE TIMELINE
       // ═══════════════════════════════════════
-
       const tl = gsap.timeline({ paused: true });
 
       // Phase 1 — Navbar slides down
@@ -280,10 +285,17 @@ export default function Navbar({ entranceDelay = 0.3 }) {
 
       entranceState.playNavbar = () => tl.play();
 
-      // ── Cleanup listeners ──
+      // ── Cleanup ──
       return () => {
         ctaEl.removeEventListener("mouseenter", onCtaEnter);
         ctaEl.removeEventListener("mouseleave", onCtaLeave);
+
+        // Audio cleanup
+        if (audioRef.current) {
+          audioRef.current.pause();
+          audioRef.current.src = "";
+          audioRef.current = null;
+        }
       };
     },
     { scope: headerRef }
@@ -294,8 +306,18 @@ export default function Navbar({ entranceDelay = 0.3 }) {
     const next = !isSoundPlaying;
     setIsSoundPlaying(next);
 
+    // ── Audio control ──
+    const audio = audioRef.current;
+    if (audio) {
+      if (next) {
+        audio.play().catch(() => {});
+      } else {
+        audio.pause();
+      }
+    }
+
+    // ── Wave amplitude ──
     if (next) {
-      // Unmute → smoothly grow amplitude
       gsap.to(waveStateRef.current, {
         currentAmplitude: WAVE_UNMUTED_AMPLITUDE,
         duration: 1.2,
@@ -303,7 +325,6 @@ export default function Navbar({ entranceDelay = 0.3 }) {
         overwrite: "auto",
       });
     } else {
-      // Mute → smoothly flatten
       gsap.to(waveStateRef.current, {
         currentAmplitude: WAVE_MUTED_AMPLITUDE,
         duration: 0.8,
@@ -328,7 +349,6 @@ export default function Navbar({ entranceDelay = 0.3 }) {
     fontVariationSettings: "'opsz' 14, 'wdth' 100",
   };
 
-  /* Height of text line — controls the overflow clip */
   const textClipHeight = "1em";
 
   return (
@@ -394,7 +414,7 @@ export default function Navbar({ entranceDelay = 0.3 }) {
         }
 
         /* ═══════════════════════════════════
-           TEXT CLIP WRAPPER — constrains height
+           TEXT CLIP WRAPPER
            ═══════════════════════════════════ */
         .text-clip {
           display: inline-block;
@@ -477,7 +497,6 @@ export default function Navbar({ entranceDelay = 0.3 }) {
               href="#go-viral"
               className="nav-cta-item inline-flex items-center justify-center gap-2"
             >
-              {/* CTA text — shifted right by default, slides left on hover */}
               <span className="cta-text-shift">
                 <span className="text-clip">
                   <span className="nav-cta-inner inline-block">
@@ -491,7 +510,6 @@ export default function Navbar({ entranceDelay = 0.3 }) {
                 </span>
               </span>
 
-              {/* Arrow — clip-masked, slides in from left on hover */}
               <span className="cta-arrow-clip">
                 <span className="cta-arrow-inner">
                   <ArrowIcon size={ARROW_SIZE} />
@@ -499,7 +517,6 @@ export default function Navbar({ entranceDelay = 0.3 }) {
               </span>
             </a>
 
-            {/* Glow line — DrawSVG animates from center outward on hover */}
             <NavGlowLine
               ref={glowLineRef}
               className="absolute bottom-0 -left-2 w-[calc(100%+16px)] pointer-events-none"

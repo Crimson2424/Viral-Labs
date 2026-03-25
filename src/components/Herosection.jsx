@@ -466,7 +466,7 @@ export default function HeroSection() {
             >
               <span className="hw-eng">We </span><span className="hw-solve">Solve</span>
               <br />
-              <span className="hw-vir">Distribution.</span>
+              <span className="hw-vir">Distribution</span>
             </h1>
 
             <p
