@@ -327,14 +327,14 @@ export default forwardRef(function MissionStats(props, ref) {
     <div ref={wrapperRef} className="relative w-full min-h-screen overflow-visible">
 
       {/* Grid lines */}
-      <div className="pointer-events-none absolute inset-y-0 left-[105px] w-px bg-white/20 z-30" aria-hidden="true" />
-      <div className="pointer-events-none absolute inset-y-0 right-[105px] w-px bg-white/20 z-30" aria-hidden="true" />
-      <div className="pointer-events-none absolute top-0 left-[105px] right-[105px] h-px bg-white/20 z-30" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-y-0 left-[105px] w-px bg-white/20 z-50" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-y-0 right-[105px] w-px bg-white/20 z-50" aria-hidden="true" />
+      <div className="pointer-events-none absolute top-0 left-[105px] right-[105px] h-px bg-white/20 z-50" aria-hidden="true" />
 
-      <CornerLeft className="pointer-events-none absolute -top-0.5 left-[105px] z-30" />
-      <CornerRight className="pointer-events-none absolute -top-0.5 right-[105px] z-30" />
-      <CornerLeft className="pointer-events-none absolute -bottom-1 left-[105px] z-30" style={{ transform: "scaleY(-1)" }} />
-      <CornerRight className="pointer-events-none absolute -bottom-1 right-[105px] z-30" style={{ transform: "scaleY(-1)" }} />
+      <CornerLeft className="pointer-events-none absolute -top-0.5 left-[105px] z-50" />
+      <CornerRight className="pointer-events-none absolute -top-0.5 right-[105px] z-50" />
+      <CornerLeft className="pointer-events-none absolute -bottom-1 left-[105px] z-50" style={{ transform: "scaleY(-1)" }} />
+      <CornerRight className="pointer-events-none absolute -bottom-1 right-[105px] z-50" style={{ transform: "scaleY(-1)" }} />
 
       {/* ── Header ── */}
       <div
@@ -374,13 +374,13 @@ export default forwardRef(function MissionStats(props, ref) {
         <FrameCorner className="frame-corner absolute -bottom-5 -right-5
         4xl:right-0 z-10 opacity-0" style={{ transform: "scale(-1, -1)" }} />
 
-        <div className="relative overflow-hidden py-10">
+        <div className="relative overflow-hidden py-10 w-[99.5%] mx-auto">
           <div
-            className="marquee-fade absolute inset-y-0 left-1 w-40 z-10 pointer-events-none opacity-0"
+            className="marquee-fade absolute inset-y-0 left-0 w-40 z-10 pointer-events-none opacity-0"
             style={{ background: "linear-gradient(to right, #121212 0%, transparent 100%)" }}
           />
           <div
-            className="marquee-fade absolute inset-y-0 right-1 w-40 z-10 pointer-events-none opacity-0"
+            className="marquee-fade absolute inset-y-0 right-0 w-40 z-10 pointer-events-none opacity-0"
             style={{ background: "linear-gradient(to left, #121212 0%, transparent 100%)" }}
           />
 
