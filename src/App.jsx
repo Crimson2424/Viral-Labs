@@ -20,6 +20,7 @@ import GlobalGrid from "./components/Globalgrid";
 import { entranceState } from "./components/Entrancestate";
 import RocketLaunchSection from "./components/Rocketlaunchsection";
 import CreatorNetworkSection from "./components/Creatornetworksection";
+import MissionReports from "./components/MissionReports";
 
 function DummySection() {
   return (
@@ -143,7 +144,8 @@ const App = () => {
       <HeroSection />
       <CoreOperations />
       <ViralitySection globeContainerRef={globeContainerRef} />
-      <PlaybookSection />
+      <MissionReports />
+      {/* <PlaybookSection /> */}
       {/* <BridgeTestimonial /> */}
       {/* <ViralEngineSection /> */}
       {/* <CreatorNetwork viewRef={creatorViewRef} /> */}
