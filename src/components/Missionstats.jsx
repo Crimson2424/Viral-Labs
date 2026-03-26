@@ -366,18 +366,21 @@ export default forwardRef(function MissionStats(props, ref) {
         className="relative z-40 mx-26"
         style={{ marginBottom: "clamp(2.5rem, 5.5vh, 5rem)" }}
       >
-        <FrameCorner className="frame-corner absolute -top-5 -left-5 z-10 opacity-0" />
-        <FrameCorner className="frame-corner absolute -top-5 -right-5 z-10 opacity-0" style={{ transform: "scaleX(-1)" }} />
-        <FrameCorner className="frame-corner absolute -bottom-5 -left-5 z-10 opacity-0" style={{ transform: "scaleY(-1)" }} />
-        <FrameCorner className="frame-corner absolute -bottom-5 -right-5 z-10 opacity-0" style={{ transform: "scale(-1, -1)" }} />
+        <FrameCorner className="frame-corner absolute -top-5 -left-5 4xl:left-0 z-10 opacity-0" />
+        <FrameCorner className="frame-corner absolute -top-5 -right-5
+        4xl:right-0 z-10 opacity-0" style={{ transform: "scaleX(-1)" }} />
+        <FrameCorner className="frame-corner absolute -bottom-5 -left-5
+        4xl:left-0 z-10 opacity-0" style={{ transform: "scaleY(-1)" }} />
+        <FrameCorner className="frame-corner absolute -bottom-5 -right-5
+        4xl:right-0 z-10 opacity-0" style={{ transform: "scale(-1, -1)" }} />
 
         <div className="relative overflow-hidden py-10">
           <div
-            className="marquee-fade absolute inset-y-0 left-0 w-40 z-10 pointer-events-none opacity-0"
+            className="marquee-fade absolute inset-y-0 left-1 w-40 z-10 pointer-events-none opacity-0"
             style={{ background: "linear-gradient(to right, #121212 0%, transparent 100%)" }}
           />
           <div
-            className="marquee-fade absolute inset-y-0 right-0 w-40 z-10 pointer-events-none opacity-0"
+            className="marquee-fade absolute inset-y-0 right-1 w-40 z-10 pointer-events-none opacity-0"
             style={{ background: "linear-gradient(to left, #121212 0%, transparent 100%)" }}
           />
 

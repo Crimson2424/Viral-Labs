@@ -231,7 +231,6 @@ const INNER_PAD = "clamp(1rem, 4vw, 3rem)";
 function AccordionItem({ data, isActive, onEnter, onLeave, onClick }) {
   const containerRef = useRef(null);
   const headerClipRef = useRef(null);
-  const headerWrapperRef = useRef(null);
   const contentWrapRef = useRef(null);
   const bgLayersRef = useRef(null);
   const contentInnerRef = useRef(null);
@@ -243,52 +242,15 @@ function AccordionItem({ data, isActive, onEnter, onLeave, onClick }) {
   const linkRef = useRef(null);
   const statsRef = useRef(null);
   const tlRef = useRef(null);
-  const lastMouseYRef = useRef(0);
-
-  const [rowH, setRowH] = useState(0);
 
   useEffect(() => {
-    if (!headerClipRef.current) return;
-    const firstRow = headerClipRef.current.querySelector(".header-row-default");
-    if (firstRow) setRowH(firstRow.offsetHeight);
-  }, []);
-
-  const POS_BOTTOM = 0;
-  const POS_MIDDLE = -rowH;
-  const POS_TOP = -rowH * 2;
-
-  const handleMouseMove = useCallback((e) => {
-    lastMouseYRef.current = e.clientY;
-  }, []);
-
-  useEffect(() => {
-    if (!headerWrapperRef.current || !rowH || !tlRef.current) return;
-
+    if (!tlRef.current) return;
     if (isActive) {
-      gsap.to(headerWrapperRef.current, {
-        y: POS_MIDDLE,
-        duration: 0.4,
-        ease: "power2.out",
-      });
       tlRef.current.timeScale(1).play();
     } else {
       tlRef.current.timeScale(2.5).reverse();
-
-      const reverseDuration = tlRef.current.totalDuration() / 2.5;
-
-      const rect = headerClipRef.current?.getBoundingClientRect();
-      const leavingFromTop = rect
-        ? lastMouseYRef.current < rect.top + rect.height / 2
-        : true;
-
-      gsap.to(headerWrapperRef.current, {
-        y: leavingFromTop ? POS_TOP : POS_BOTTOM,
-        duration: 0.4,
-        ease: "power2.out",
-        delay: reverseDuration * 0.6,
-      });
     }
-  }, [isActive, rowH, POS_MIDDLE, POS_TOP, POS_BOTTOM]);
+  }, [isActive]);
 
   useGSAP(
     () => {
@@ -309,8 +271,8 @@ function AccordionItem({ data, isActive, onEnter, onLeave, onClick }) {
         if (line.parentElement) line.parentElement.style.paddingBottom = "0.05em";
       });
 
-      gsap.set(contentWrapRef.current, { height: 0, overflow: "hidden" });
       gsap.set(bgLayers, { scaleY: 0, transformOrigin: "top" });
+      gsap.set(contentWrapRef.current, { height: 0, overflow: "hidden" });
       gsap.set(contentInnerRef.current, { clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)" });
       gsap.set(objSplit.lines, { yPercent: 110 });
       gsap.set(execSplit.lines, { yPercent: 110 });
@@ -322,8 +284,8 @@ function AccordionItem({ data, isActive, onEnter, onLeave, onClick }) {
 
       const tl = gsap.timeline({ paused: true });
 
-      tl.to(contentWrapRef.current, { height: "auto", duration: 0.65, ease: "power4.inOut" });
-      tl.to(bgLayers, { scaleY: 1, duration: 0.6, stagger: 0.08, ease: "power3.inOut" }, "<0.05");
+      tl.to(bgLayers, { scaleY: 1, duration: 0.6, stagger: 0.08, ease: "power3.inOut" });
+      tl.to(contentWrapRef.current, { height: "auto", duration: 0.65, ease: "power4.inOut" }, "<0.15");
       tl.to(contentInnerRef.current, { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)", duration: 0.65, ease: "power3.inOut" }, "-=0.45");
       tl.to(taglineRef.current, { opacity: 1, y: 0, duration: 0.5, ease: "power4.out" }, "-=0.3");
       tl.to(objLabelRef.current, { opacity: 1, y: 0, duration: 0.4, ease: "power4.out" }, "-=0.35");
@@ -341,36 +303,21 @@ function AccordionItem({ data, isActive, onEnter, onLeave, onClick }) {
   return (
     <div
       ref={containerRef}
+      className="relative"
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
-      onMouseMove={handleMouseMove}
     >
-      <div
-        ref={headerClipRef}
-        className="cursor-pointer"
-        style={{
-          height: rowH > 0 ? `${rowH}px` : "auto",
-          clipPath: "polygon(0 0, 100% 0, 100% 100%, 0% 100%)",
-        }}
-        onClick={onClick}
-      >
-        <div
-          ref={headerWrapperRef}
-          className="relative will-change-transform"
-          style={{ transform: `translateY(${POS_TOP}px)` }}
-        >
-          <HeaderRowContent data={data} bgClass="header-row-default border-t border-[#FF6F21]/70" textClass="text-white" />
-          <HeaderRowContent data={data} bgClass="bg-[#1a1a1a] border-t border-[#FF6F21]/70" textClass="text-white" />
-          <HeaderRowContent data={data} bgClass="header-row-default border-t border-[#FF6F21]/70" textClass="text-white" />
-        </div>
+      <div ref={bgLayersRef} className="absolute inset-0 z-0 pointer-events-none">
+        {BG_WIPE_COLORS.map((color, i) => (
+          <div key={i} className="bg-wipe-layer absolute inset-0" style={{ backgroundColor: color, zIndex: i }} />
+        ))}
       </div>
 
-      <div ref={contentWrapRef} className="relative -mt-px">
-        <div ref={bgLayersRef} className="absolute inset-0 z-0 pointer-events-none">
-          {BG_WIPE_COLORS.map((color, i) => (
-            <div key={i} className="bg-wipe-layer absolute inset-0" style={{ backgroundColor: color, zIndex: i }} />
-          ))}
-        </div>
+      <div ref={headerClipRef} className="cursor-pointer relative z-10" onClick={onClick}>
+        <HeaderRowContent data={data} bgClass="border-t border-[#FF6F21]/70" textClass="text-white" />
+      </div>
+
+      <div ref={contentWrapRef} className="relative z-10 -mt-px">
 
         <div ref={contentInnerRef} className="relative z-10" style={{ padding: `1.25rem ${INNER_PAD} 3rem` }}>
           <div className="grid grid-cols-12 gap-x-6 gap-y-6 mb-16 md:mb-20">
