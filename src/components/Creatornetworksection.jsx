@@ -118,9 +118,9 @@ export default function CreatorNetworkSection() {
         },
 
         onLeaveBack: () => {
-          creatorGlobeState.globeXOffset = CN_START_X;
-          creatorGlobeState.globeYOffset = CN_START_Y;
-          creatorGlobeState.constellationOpacity = 0;
+          // creatorGlobeState.globeXOffset = CN_START_X;
+          // creatorGlobeState.globeYOffset = CN_START_Y;
+          // creatorGlobeState.constellationOpacity = 0;
           creatorGlobeState.interactive = false;
         },
       },

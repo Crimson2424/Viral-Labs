@@ -452,6 +452,7 @@ function createBakeResources() {
 function Scene() {
   const { camera, gl, size, viewport } = useThree();
   const materialRef = useRef();
+  const meshRef = useRef();
   const rawTexture = useLoader(THREE.TextureLoader, "/images/bg-image.png");
   const texture = useMemo(() => {
     const t = rawTexture.clone();
@@ -556,6 +557,12 @@ function Scene() {
     const mat = materialRef.current;
     if (!mat) return;
 
+    // ── Hide mesh & skip all work when bg plane is fully dissolved ──
+    // revealProgress is scrub-driven so this re-enables when scrolling back
+    const revealed = transitionState.revealProgress >= 1;
+    if (meshRef.current) meshRef.current.visible = !revealed;
+    if (revealed) return;
+
     mat.uResolution.set(size.width, size.height, 1, 1);
     mat.uTime = state.clock.elapsedTime;
 
@@ -613,7 +620,7 @@ function Scene() {
 
   return (
     <>
-      <mesh scale={scale} renderOrder={0}>
+      <mesh ref={meshRef} scale={scale} renderOrder={0}>
         <planeGeometry />
         <etherealRgbMaterial
           ref={materialRef}
@@ -639,6 +646,14 @@ function BloomController({ bloomRef }) {
     if (!bloomRef.current) return;
 
     const p = transitionState.revealProgress;
+
+    // ── Disable bloom entirely when it contributes nothing ──
+    // Bloom fades to 0 by p=0.90, no need to run the pass after that
+    if (p >= 0.90) {
+      if (bloomRef.current.intensity !== 0) bloomRef.current.intensity = 0;
+      return;
+    }
+
     const fadeIn = Math.min(p / 0.05, 1.0);
     const fadeOut = Math.max(0, 1.0 - Math.max(0, (p - 0.55) / 0.35));
     bloomRef.current.intensity = fadeIn * fadeOut * 2.5;

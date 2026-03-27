@@ -35,10 +35,11 @@ import { creatorGlobeState } from "./Creatorglobestate";
 const NUDGE_3D = 0.4;
 
 // Rocket-phase end values — where the globe is when rocket section unpins.
+// Globe stays centered during rocket phase (no X shift).
 // Must match RocketLaunchSection: globeYOffset = GLOBE_3D_MID_Y (1.2),
-// globeXOffset = GLOBE_3D_MID_X * 0.5 (0.525).
+// globeXOffset stays at initial 1.05 (no tween moves it).
 const GLOBE_ENTRY_Y = 1.2;
-const GLOBE_ENTRY_X = 0.315;  // must match GLOBE_3D_MID_X * 0.3
+const GLOBE_ENTRY_X = 1.05;  // globe stays centered — no X shift during rocket phase
 
 // Export for CN section to compute its start values.
 export { NUDGE_3D, GLOBE_ENTRY_Y, GLOBE_ENTRY_X };
@@ -147,14 +148,15 @@ export default function GlobeCanvas() {
       if (cnEl) {
         const cnRect = cnEl.getBoundingClientRect();
 
-        if (cnRect.top > 2) {
+        if (cnRect.top > vh * 0.25) {
           // Phase 1: CN approaching — nudge globe UP in 3D.
           // Threshold of 2px prevents sub-pixel rounding from
           // triggering this during CN pin and overwriting GSAP values.
           // approach: 0 (CN at bottom of viewport) → 1 (CN at top, about to pin)
           const approach = Math.max(0, 1 - cnRect.top / vh);
-          creatorGlobeState.globeYOffset = GLOBE_ENTRY_Y - (NUDGE_3D * approach);
-          // No CSS movement — globe moves in 3D, no clipping
+          const targetY = GLOBE_ENTRY_Y - (NUDGE_3D * approach);
+          // Lerp instead of snap — lets scrubbed timeline hand off smoothly
+          creatorGlobeState.globeYOffset += (targetY - creatorGlobeState.globeYOffset) * 0.04;
           offsetY = 0;
         } else if (cnRect.bottom < vh) {
           // Phase 3: CN scrolling away — follow it off-screen
@@ -194,7 +196,7 @@ export default function GlobeCanvas() {
   return (
     <div
       ref={containerRef}
-      className="fixed top-0 bottom-0 left-[105px] right-[105px] z-[6]"
+      className="fixed top-0 bottom-0 left-[105px] right-[105px] z-22"
       style={{ opacity: 0, pointerEvents: "none" }}
     >
       <Canvas

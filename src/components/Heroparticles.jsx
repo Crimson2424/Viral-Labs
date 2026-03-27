@@ -1,5 +1,5 @@
 import { useRef, useMemo } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { transitionState } from "./Transitionstate";
 import { entranceState } from "./Entrancestate";
@@ -55,6 +55,7 @@ uniform float uMouseForce;
 uniform float uRevealProgress;
 uniform float uEntranceOpacity;
 uniform float uZoomProgress;
+uniform float uDpr;
 
 attribute float aSize;
 attribute float aOffset;
@@ -123,7 +124,7 @@ void main() {
   vOpacity = aOpacity * fadeFactor * uEntranceOpacity * zoomFade;
 
   vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
-  gl_PointSize = aSize * (1.0 / -mvPosition.z);
+  gl_PointSize = aSize * (1.0 / -mvPosition.z) * uDpr;
   gl_Position  = projectionMatrix * mvPosition;
 }
 `;
@@ -144,6 +145,7 @@ void main() {
 
 export default function HeroParticles({ mouseWorld }) {
   const materialRef = useRef();
+  const { gl } = useThree();
 
   const geometry = useMemo(() => {
     const geo = new THREE.BufferGeometry();
@@ -222,6 +224,7 @@ export default function HeroParticles({ mouseWorld }) {
       uRevealProgress: { value: 0 },
       uEntranceOpacity: { value: 0 },
       uZoomProgress: { value: 0 },
+      uDpr: { value: gl.getPixelRatio() },
     }),
     []
   );
@@ -229,11 +232,17 @@ export default function HeroParticles({ mouseWorld }) {
   useFrame((state) => {
     if (!materialRef.current) return;
 
+    // ── Skip work when particles are fully invisible ──
+    // After reveal completes, fadeFactor becomes 0 so nothing is visible.
+    // No point running uniform updates or letting the GPU shade invisible points.
+    if (transitionState.revealProgress >= 1) return;
+
     const u = materialRef.current.uniforms;
     u.uTime.value = state.clock.elapsedTime;
     u.uRevealProgress.value = transitionState.revealProgress;
     u.uEntranceOpacity.value = entranceState.particleOpacity;
     u.uZoomProgress.value = transitionState.zoomProgress;
+    u.uDpr.value = gl.getPixelRatio();
 
     if (mouseWorld?.current) {
       u.uMouse.value.copy(mouseWorld.current);

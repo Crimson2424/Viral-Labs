@@ -2,8 +2,9 @@
  * RocketLaunchSection — Rocket + Viral Engine only.
  *
  * Pin releases after label animations + reading hold.
- * Rocket, text, labels all scroll away naturally.
- * Globe stays fixed (GlobeCanvas handles its movement).
+ * Rocket stays centered + vertical (no tilt).
+ * Labels: top 2 right, bottom 2 left.
+ * Globe stays centered — no X shift during rocket phase.
  */
 
 import { useRef } from "react";
@@ -24,16 +25,13 @@ const TOTAL_HEIGHT = Object.values(FRAME_HEIGHTS).reduce((a, b) => a + b, 0);
 
 const ROCKET_START_TOP = "45%";
 const ROCKET_RISE_TOP = "35%";
-const ROCKET_TILT_TOP = "33%";
-const ROCKET_TILT_LEFT = "72%";
-const ROCKET_TILT_DEG = 45;
+const ROCKET_FINAL_TOP = "33%";
 const ROCKET_START_SCALE = 0.75;
-const ROCKET_FULL_SCALE = 1;
+const ROCKET_FULL_SCALE = 0.8;
 
 const GLOBE_3D_START_Y = 1.3;
 const GLOBE_3D_MID_Y = 1.2;
 const GLOBE_3D_START_X = 1.05;
-const GLOBE_3D_MID_X = 1.05;
 
 const SCROLL_LENGTH = "+=500%";
 const SCRUB_SMOOTHING = 1.8;
@@ -77,6 +75,7 @@ function splitAndMask(el, type = "lines") {
   return { split, elements };
 }
 
+/* Connector pointing LEFT → RIGHT (default direction) */
 const ConnectorLine = ({ className = "" }) => (
   <svg
     width="435" height="35" viewBox="0 0 435 35" fill="none"
@@ -138,7 +137,7 @@ export default function RocketLaunchSection() {
       left: "50%", top: ROCKET_START_TOP,
     });
     frames.forEach((frame) => gsap.set(frame, { y: 0 }));
-    gsap.set(veSubtitleSplit.elements, { yPercent: 110, filter: "blur(6px)" });
+    gsap.set(veSubtitleSplit.elements, { yPercent: 120, filter: "blur(6px)" });
     gsap.set(veHeadingSplit.split.chars, { yPercent: 120, opacity: 0, filter: "blur(6px)" });
     gsap.set(veGlow, { scaleX: 0, transformOrigin: "left center", opacity: 0 });
     gsap.set(veBody1Split.elements, { yPercent: 110, filter: "blur(5px)" });
@@ -233,12 +232,12 @@ export default function RocketLaunchSection() {
     master.to(creatorGlobeState, { globeOpacity: 1, duration: 1, ease: "none" }, 1.5);
     master.to(creatorGlobeState, { globeYOffset: GLOBE_3D_MID_Y, duration: 1.5, ease: "none" }, 1.5);
 
-    /* ═══ PHASE 1B — TILT + SHIFT ═══ */
+    /* ═══ PHASE 1B — SCALE UP (stays centered, no tilt) ═══ */
     master.to(rocketGroup, {
-      rotation: ROCKET_TILT_DEG, left: ROCKET_TILT_LEFT, top: ROCKET_TILT_TOP,
+      top: ROCKET_FINAL_TOP,
       scale: ROCKET_FULL_SCALE, duration: 1.5, ease: "none",
     }, 2.5);
-    master.to(creatorGlobeState, { globeXOffset: GLOBE_3D_MID_X * 0.3, duration: 2, ease: "none" }, 2.5);
+    /* Globe X stays at GLOBE_3D_START_X (1.05) — no shift */
 
     /* ═══ PHASE 2 — VE TEXT IN ═══ */
     master.to(veSubtitleSplit.elements, {
@@ -258,11 +257,13 @@ export default function RocketLaunchSection() {
     /* ═══ PHASE 3 — LABELS + SEPARATION ═══ */
     const GAP = 28;
 
+    /* Label 1 — Signal Input (RIGHT) */
     master.to(labels[0], { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.8, ease: "none" }, 6.5);
     [f3Ref, f4Ref, f5Ref, f6Ref, f7Ref, thrusterRef].forEach((ref) => {
       master.to(ref.current, { y: `+=${GAP}`, duration: 1.2, ease: "none" }, 6.7);
     });
 
+    /* Label 2 — Processing Layer (RIGHT) */
     master.to(labels[1], { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.8, ease: "none" }, 8);
     [f4Ref, f5Ref, f6Ref, f7Ref, thrusterRef].forEach((ref) => {
       master.to(ref.current, { y: `+=${GAP}`, duration: 0.8, ease: "none" }, 8.2);
@@ -271,11 +272,13 @@ export default function RocketLaunchSection() {
       master.to(ref.current, { y: `+=${GAP}`, duration: 0.8, ease: "none" }, 8.7);
     });
 
+    /* Label 3 — Distribution Layer (LEFT) */
     master.to(labels[2], { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.8, ease: "none" }, 9.5);
     [f6Ref, f7Ref, thrusterRef].forEach((ref) => {
       master.to(ref.current, { y: `+=${GAP}`, duration: 1, ease: "none" }, 9.7);
     });
 
+    /* Label 4 — Amplification Layer (LEFT) */
     master.to(labels[3], { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.8, ease: "none" }, 10.7);
     [f7Ref, thrusterRef].forEach((ref) => {
       master.to(ref.current, { y: `+=${GAP}`, duration: 0.8, ease: "none" }, 10.9);
@@ -304,7 +307,7 @@ export default function RocketLaunchSection() {
         <div className="pointer-events-none absolute top-0 right-[105px] w-px h-full bg-white/20 z-30" aria-hidden="true" />
         <div className="pointer-events-none absolute top-0 left-[105px] right-[105px] h-px bg-white/20 z-30" aria-hidden="true" />
 
-        {/* ROCKET ASSEMBLY */}
+        {/* ROCKET ASSEMBLY — stays centered */}
         <div
           ref={rocketGroupRef}
           className="absolute z-40 flex flex-col items-center"
@@ -327,8 +330,8 @@ export default function RocketLaunchSection() {
           />
         </div>
 
-        {/* VE LEFT-SIDE TEXT */}
-        <div className="absolute z-40 left-42 top-[5%] max-w-[460px] pointer-events-none flex flex-col">
+        {/* VE LEFT-SIDE TEXT — stays on the left */}
+        <div className="absolute z-40 left-40 top-[2%] max-w-[460px] pointer-events-none flex flex-col">
           <div className="flex flex-col gap-0">
             <p ref={veSubtitleRef} className="font-host text-sm text-vl-orange uppercase tracking-wide">
               STRUCTURED IN. VIRAL OUT.
@@ -337,58 +340,63 @@ export default function RocketLaunchSection() {
               Inside The<br />Viral Engine
             </h2>
           </div>
-          <div className="flex flex-col gap-0 mt-16">
+          <div className="flex flex-col gap-0 mt-4">
             <GlowLineSvg ref={veGlowRef} className="w-48 h-auto -ml-2.5" />
-            <p ref={veBody1Ref} className="font-host text-base text-white tracking-tighter leading-normal mt-2">
+            <p ref={veBody1Ref} className="font-host text-base font-light text-white tracking-tighter leading-snug mt-2">
               Behind every campaign is a structured growth system. The Viral Engine connects creator networks, content distribution pathways, and performance feedback loops into a single operating framework.
             </p>
-            <p ref={veBody2Ref} className="font-host text-base text-white tracking-tight leading-normal">
+            <p ref={veBody2Ref} className="font-host text-base font-light text-white tracking-tight leading-normal">
               It&apos;s designed to turn attention into installs. It&apos;s not a campaign. It&apos;s a machine.
             </p>
           </div>
         </div>
 
-        {/* STAGE LABELS */}
-        <div ref={label1Ref} className="absolute z-40 pointer-events-none right-[24%] top-[5%] w-[450px]">
-          <ConnectorLine className="w-full h-auto -mb-4" />
-          <div className="flex items-start gap-1 w-fit ml-2">
+        {/* ── STAGE LABELS ── */}
+
+        {/* LABEL 1 — Signal Input (RIGHT side) */}
+        <div ref={label1Ref} className="absolute z-40 pointer-events-none right-[24%] top-[5%] w-[420px]">
+          <ConnectorLine className="w-full h-auto -mb-4 scale-x-[-1]" />
+          <div className="flex items-start gap-1 w-fit ml-auto">
             <CubesSvg className="w-5 h-auto mt-0.5 shrink-0" />
             <div>
               <h4 className="font-bricolage text-lg text-white tracking-tighter leading-normal">{PIPELINE_STAGES[0].title}</h4>
-              <p className="font-host text-sm text-[#a1a1a1] tracking-tighter leading-tight mt-0 max-w-[220px]">{PIPELINE_STAGES[0].description}</p>
+              <p className="font-host text-sm text-[#a1a1a1] tracking-tighter leading-tight mt-0 max-w-[280px]">{PIPELINE_STAGES[0].description}</p>
             </div>
           </div>
         </div>
 
-        <div ref={label2Ref} className="absolute z-40 pointer-events-none right-[32%] top-[20%] w-[450px]">
+        {/* LABEL 2 — Processing Layer (RIGHT side) */}
+        <div ref={label2Ref} className="absolute z-40 pointer-events-none right-[24%] top-[22%] w-[420px]">
+          <ConnectorLine className="w-full h-auto -mb-4 scale-x-[-1]" />
+          <div className="flex items-start gap-1 w-fit ml-auto">
+            <CubesSvg className="w-5 h-auto mt-0.5 shrink-0" />
+            <div>
+              <h4 className="font-bricolage text-lg text-white tracking-tighter leading-normal">{PIPELINE_STAGES[1].title}</h4>
+              <p className="font-host text-sm text-[#a1a1a1] tracking-tighter leading-tight mt-1 max-w-[280px]">{PIPELINE_STAGES[1].description}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* LABEL 3 — Distribution Layer (LEFT side) */}
+        <div ref={label3Ref} className="absolute z-40 pointer-events-none left-[23%] top-[44%] w-[420px]">
+          <ConnectorLine className="w-full h-auto -mb-4 " />
+          <div className="flex items-start gap-1 w-fit ml-2">
+            <CubesSvg className="w-5 h-auto mt-0.5 shrink-0" />
+            <div>
+              <h4 className="font-bricolage text-lg text-white tracking-tighter leading-normal">{PIPELINE_STAGES[2].title}</h4>
+              <p className="font-host text-sm text-[#a1a1a1] tracking-tighter leading-tight mt-1 max-w-[280px]">{PIPELINE_STAGES[2].description}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* LABEL 4 — Amplification Layer (LEFT side) */}
+        <div ref={label4Ref} className="absolute z-40 pointer-events-none left-[23%] top-[62%] w-[420px]">
           <ConnectorLine className="w-full h-auto -mb-4" />
           <div className="flex items-start gap-1 w-fit ml-2">
             <CubesSvg className="w-5 h-auto mt-0.5 shrink-0" />
             <div>
-              <h4 className="font-bricolage text-lg text-white tracking-tighter leading-normal">{PIPELINE_STAGES[1].title}</h4>
-              <p className="font-host text-sm text-[#a1a1a1] tracking-tighter leading-tight mt-1 max-w-[220px]">{PIPELINE_STAGES[1].description}</p>
-            </div>
-          </div>
-        </div>
-
-        <div ref={label3Ref} className="absolute z-40 pointer-events-none right-[8%] top-[50%] w-[400px]">
-          <ConnectorLine className="w-full h-auto mb-2 scale-x-[-1] scale-y-[-1]" />
-          <div className="flex items-start gap-3 ml-auto w-fit">
-            <CubesSvg className="w-5 h-auto mt-0.5 shrink-0" />
-            <div>
-              <h4 className="font-bricolage text-lg text-white tracking-tighter leading-normal">{PIPELINE_STAGES[2].title}</h4>
-              <p className="font-host text-sm text-[#a1a1a1] tracking-tighter leading-tight mt-1 max-w-[220px]">{PIPELINE_STAGES[2].description}</p>
-            </div>
-          </div>
-        </div>
-
-        <div ref={label4Ref} className="absolute z-40 pointer-events-none right-[16%] top-[68%] w-[400px]">
-          <ConnectorLine className="w-full h-auto mb-2 scale-x-[-1] scale-y-[-1]" />
-          <div className="flex items-start gap-3 ml-auto w-fit">
-            <CubesSvg className="w-5 h-auto mt-0.5 shrink-0" />
-            <div>
               <h4 className="font-bricolage text-lg text-white tracking-tighter leading-normal">{PIPELINE_STAGES[3].title}</h4>
-              <p className="font-host text-sm text-[#a1a1a1] tracking-tighter leading-tight mt-1 max-w-[220px]">{PIPELINE_STAGES[3].description}</p>
+              <p className="font-host text-sm text-[#a1a1a1] tracking-tighter leading-tight mt-1 max-w-[280px]">{PIPELINE_STAGES[3].description}</p>
             </div>
           </div>
         </div>
