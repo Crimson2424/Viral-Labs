@@ -449,11 +449,13 @@ function createBakeResources() {
 // SCENE
 // ============================================
 
+const IS_MOBILE = typeof window !== 'undefined' && window.innerWidth < 768;
+
 function Scene() {
   const { camera, gl, size, viewport } = useThree();
   const materialRef = useRef();
   const meshRef = useRef();
-  const rawTexture = useLoader(THREE.TextureLoader, "/images/bg-image.png");
+  const rawTexture = useLoader(THREE.TextureLoader, IS_MOBILE ? "/images/hero-bg-sm.png" : "/images/bg-image.png");
   const texture = useMemo(() => {
     const t = rawTexture.clone();
     t.colorSpace = THREE.SRGBColorSpace;
@@ -531,6 +533,7 @@ function Scene() {
   }, [bakeNoise, size.width, size.height, gl]);
 
   useEffect(() => {
+    if (IS_MOBILE) return;
     const onMove = (e) => {
       const x = e.clientX ?? e.touches?.[0]?.clientX;
       const y = e.clientY ?? e.touches?.[0]?.clientY;
@@ -574,48 +577,59 @@ function Scene() {
       mat.uDissolveNoise = rtRef.current.texture;
     }
 
-    const prevX = smoothMouse.current.x;
-    const prevY = smoothMouse.current.y;
-    smoothMouse.current.x +=
-      (targetMouse.current.x - smoothMouse.current.x) * 0.1;
-    smoothMouse.current.y +=
-      (targetMouse.current.y - smoothMouse.current.y) * 0.1;
-    laggedMouse.current.x +=
-      (smoothMouse.current.x - laggedMouse.current.x) * SHADER_CONFIG.mouseLag;
-    laggedMouse.current.y +=
-      (smoothMouse.current.y - laggedMouse.current.y) * SHADER_CONFIG.mouseLag;
-    mat.uMouse.set(laggedMouse.current.x, laggedMouse.current.y);
+    if (!IS_MOBILE) {
+      const prevX = smoothMouse.current.x;
+      const prevY = smoothMouse.current.y;
+      smoothMouse.current.x +=
+        (targetMouse.current.x - smoothMouse.current.x) * 0.1;
+      smoothMouse.current.y +=
+        (targetMouse.current.y - smoothMouse.current.y) * 0.1;
+      laggedMouse.current.x +=
+        (smoothMouse.current.x - laggedMouse.current.x) * SHADER_CONFIG.mouseLag;
+      laggedMouse.current.y +=
+        (smoothMouse.current.y - laggedMouse.current.y) * SHADER_CONFIG.mouseLag;
+      mat.uMouse.set(laggedMouse.current.x, laggedMouse.current.y);
 
-    const rawVX = smoothMouse.current.x - prevX;
-    const rawVY = smoothMouse.current.y - prevY;
-    smoothVelocity.current.x =
-      smoothVelocity.current.x * SHADER_CONFIG.velocityDecay +
-      rawVX * SHADER_CONFIG.velocityScale;
-    smoothVelocity.current.y =
-      smoothVelocity.current.y * SHADER_CONFIG.velocityDecay +
-      rawVY * SHADER_CONFIG.velocityScale;
-    mat.uVelocity.set(smoothVelocity.current.x, smoothVelocity.current.y);
+      const rawVX = smoothMouse.current.x - prevX;
+      const rawVY = smoothMouse.current.y - prevY;
+      smoothVelocity.current.x =
+        smoothVelocity.current.x * SHADER_CONFIG.velocityDecay +
+        rawVX * SHADER_CONFIG.velocityScale;
+      smoothVelocity.current.y =
+        smoothVelocity.current.y * SHADER_CONFIG.velocityDecay +
+        rawVY * SHADER_CONFIG.velocityScale;
+      mat.uVelocity.set(smoothVelocity.current.x, smoothVelocity.current.y);
 
-    mat.uEtherealIntensity = SHADER_CONFIG.etherealIntensity;
-    mat.uRadius = SHADER_CONFIG.radius;
-    mat.uSoftness = SHADER_CONFIG.softness;
-    mat.uGlowStrength = SHADER_CONFIG.glowStrength;
-    mat.uBreathingSpeed = SHADER_CONFIG.breathingSpeed;
-    mat.uColorShift = SHADER_CONFIG.colorShift;
-    mat.uRgbIntensity = SHADER_CONFIG.rgbIntensity;
-    mat.uRgbRadius = SHADER_CONFIG.rgbRadius;
+      mat.uEtherealIntensity = SHADER_CONFIG.etherealIntensity;
+      mat.uRadius = SHADER_CONFIG.radius;
+      mat.uSoftness = SHADER_CONFIG.softness;
+      mat.uGlowStrength = SHADER_CONFIG.glowStrength;
+      mat.uBreathingSpeed = SHADER_CONFIG.breathingSpeed;
+      mat.uColorShift = SHADER_CONFIG.colorShift;
+      mat.uRgbIntensity = SHADER_CONFIG.rgbIntensity;
+      mat.uRgbRadius = SHADER_CONFIG.rgbRadius;
 
-    const ndcX = targetMouse.current.x * 2 - 1;
-    const ndcY = targetMouse.current.y * 2 - 1;
-    _ndcVec.set(ndcX, ndcY, 0.5).unproject(camera);
-    _camPos.copy(camera.position);
-    _ndcVec.sub(_camPos).normalize();
-    const t = -_camPos.z / _ndcVec.z;
-    rawMouseWorld.current.set(
-      _camPos.x + _ndcVec.x * t,
-      _camPos.y + _ndcVec.y * t,
-      0
-    );
+      const ndcX = targetMouse.current.x * 2 - 1;
+      const ndcY = targetMouse.current.y * 2 - 1;
+      _ndcVec.set(ndcX, ndcY, 0.5).unproject(camera);
+      _camPos.copy(camera.position);
+      _ndcVec.sub(_camPos).normalize();
+      const t = -_camPos.z / _ndcVec.z;
+      rawMouseWorld.current.set(
+        _camPos.x + _ndcVec.x * t,
+        _camPos.y + _ndcVec.y * t,
+        0
+      );
+    } else {
+      // On mobile: no mouse effect, zero out ethereal/glow uniforms
+      mat.uMouse.set(-10, -10);
+      mat.uVelocity.set(0, 0);
+      mat.uEtherealIntensity = 0;
+      mat.uRadius = 0;
+      mat.uGlowStrength = 0;
+      mat.uRgbIntensity = 0;
+      mat.uColorShift = 0;
+    }
   });
 
   return (
@@ -632,7 +646,7 @@ function Scene() {
         />
       </mesh>
 
-      <HeroParticles mouseWorld={rawMouseWorld} />
+      {!IS_MOBILE && <HeroParticles mouseWorld={rawMouseWorld} />}
     </>
   );
 }
