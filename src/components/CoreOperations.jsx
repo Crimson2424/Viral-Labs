@@ -242,22 +242,24 @@ export default function CoreOperations() {
       {/* ── Background grid mesh ── */}
       <GlobalGrid />
 
+      {/* ── Container ── */}
+      <div className="relative mx-auto w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem]">
+
       {/* ── Grid lines ── */}
-      <div className="pointer-events-none absolute inset-y-0 left-[105px] w-px bg-white/20 z-50" aria-hidden="true" />
-      <div className="pointer-events-none absolute inset-y-0 right-[105px] w-px bg-white/20 z-50" aria-hidden="true" />
-      <div className="pointer-events-none absolute top-0 left-[105px] right-[105px] h-px bg-white/20 z-30" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-px bg-white/20 z-50" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-px bg-white/20 z-50" aria-hidden="true" />
+      <div className="pointer-events-none absolute top-0 left-0 right-0 h-px bg-white/20 z-30" aria-hidden="true" />
 
       {/* ── Section corner markers ── */}
-      <CornerLeft className="pointer-events-none absolute -top-1 left-[105px] z-30" aria-hidden="true" />
-      <CornerRight className="pointer-events-none absolute -top-1 right-[105px] z-30" aria-hidden="true" />
+      <CornerLeft className="pointer-events-none absolute -top-1 left-0 z-30" aria-hidden="true" />
+      <CornerRight className="pointer-events-none absolute -top-1 right-0 z-30" aria-hidden="true" />
 
       {/* ── Header ── */}
       <div
-        className="relative z-40 mx-[105px]"
-        style={{ marginBottom: "clamp(3.5rem, 8vh, 8rem)" }}
+        className="relative z-40 flex flex-col gap-4 sm:flex-row sm:justify-between px-[clamp(0.75rem,3vw,4.5rem)]"
+        style={{ minHeight: "clamp(6.5rem, 15vh, 12rem)" }}
       >
-        <div className="flex justify-between items-start px-18">
-          <div className="flex flex-col">
+          <div className="flex flex-col sm:self-center">
             <p
               className="co-label font-host font-normal uppercase text-vl-orange tracking-wide"
               style={{ fontSize: "clamp(0.75rem, 0.9vw, 1rem)" }}
@@ -272,20 +274,19 @@ export default function CoreOperations() {
             </h2>
           </div>
 
-          <div className="co-tagline flex flex-col items-start mt-6">
-            <GlowLine className="co-glow-line w-40 mb-1" />
+          <div className="co-tagline flex flex-col items-start sm:items-start sm:self-center">
+            <GlowLine className="co-glow-line w-[clamp(5rem,12vw,10rem)] mb-1" />
             <p
-              className="co-tagline-text font-host font-normal text-vl-muted text-right tracking-tight"
+              className="co-tagline-text font-host font-normal text-vl-muted text-left sm:text-right tracking-tight"
               style={{ fontSize: "clamp(0.8rem, 1vw, 1rem)" }}
             >
               Precision over noise.
             </p>
           </div>
-        </div>
       </div>
 
       {/* ── Cards grid ── */}
-      <div className="relative z-40 mx-[105px]">
+      <div className="relative z-40">
         <CornerLeft className="pointer-events-none absolute -top-1 left-0 z-50" aria-hidden="true" />
         <CornerRight className="pointer-events-none absolute -top-1 right-0 z-50" aria-hidden="true" />
         <CornerLeft
@@ -299,18 +300,14 @@ export default function CoreOperations() {
           aria-hidden="true"
         />
 
-        <div className="grid grid-cols-4 border-t border-[#383838]">
-          {cards.map((card, i) => {
-            const isLast = i === cards.length - 1;
-
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border-t border-[#383838]">
+          {cards.map((card) => {
             return (
               <div
                 key={card.num}
-                className={`co-card relative flex flex-col ${
-                  !isLast ? "border-r border-[#383838]" : ""
-                }`}
+                className="co-card relative flex flex-col border-[#383838] border-b last:border-b-0 sm:border-r sm:[&:nth-child(2n)]:border-r-transparent sm:[&:nth-last-child(-n+2)]:border-b-0 lg:[&:nth-child(2n)]:border-r-[#383838] lg:border-b-0 lg:last:border-r-transparent"
               >
-                <div className="relative aspect-square bg-black overflow-hidden">
+                <div className="relative aspect-3/2 sm:aspect-square bg-black overflow-hidden">
                   <img
                     src={card.img}
                     alt={card.title}
@@ -337,7 +334,7 @@ export default function CoreOperations() {
                   }}
                 >
                   <h3
-                    className="co-card-title font-host uppercase tracking-tighter leading-[1.1] text-white min-h-[2.8em]"
+                    className="co-card-title font-host uppercase tracking-tighter leading-[1.1] text-white min-h-0 sm:min-h-[2.8em]"
                     style={{ fontSize: "clamp(1.1rem, 1.8vw, 1.75rem)" }}
                   >
                     {card.title}
@@ -353,6 +350,7 @@ export default function CoreOperations() {
             );
           })}
         </div>
+      </div>
       </div>
     </section>
   );
