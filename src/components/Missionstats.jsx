@@ -357,8 +357,8 @@ export default forwardRef(function MissionStats(props, ref) {
 
       <CornerLeft className="pointer-events-none absolute -top-0.5 left-0 z-50" />
       <CornerRight className="pointer-events-none absolute -top-0.5 right-0 z-50" />
-      <CornerLeft className="pointer-events-none absolute -bottom-1 left-0 z-50" style={{ transform: "scaleY(-1)" }} />
-      <CornerRight className="pointer-events-none absolute -bottom-1 right-0 z-50" style={{ transform: "scaleY(-1)" }} />
+      {/* <CornerLeft className="pointer-events-none absolute -bottom-1 left-0 z-50" style={{ transform: "scaleY(-1)" }} />
+      <CornerRight className="pointer-events-none absolute -bottom-1 right-0 z-50" style={{ transform: "scaleY(-1)" }} /> */}
 
       {/* ── Header ── */}
       <div

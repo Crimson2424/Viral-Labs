@@ -237,7 +237,6 @@ export default function CoreOperations() {
     <section
       ref={sectionRef}
       className="relative z-25 w-full overflow-x-clip pb-0"
-      style={{ paddingTop: "clamp(3.2rem, 4vh, 4rem)" }}
     >
       {/* ── Background grid mesh ── */}
       <GlobalGrid />
