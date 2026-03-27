@@ -348,7 +348,7 @@ export default forwardRef(function MissionStats(props, ref) {
 
   return (
     <div ref={wrapperRef} className="relative w-full min-h-screen overflow-visible">
-     <div className="relative mx-auto w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] h-svh flex flex-col">
+     <div className="relative mx-auto w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem] h-svh flex flex-col">
 
       {/* Grid lines */}
       <div className="pointer-events-none absolute inset-y-0 left-0 w-px bg-white/20 z-50" aria-hidden="true" />
