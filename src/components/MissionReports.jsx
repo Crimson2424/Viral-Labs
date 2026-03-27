@@ -170,14 +170,14 @@ function FloLogo({ className = "" }) {
 /* ─── Reusable header row content ─── */
 function HeaderRowContent({ data, bgClass = "", textClass = "text-white" }) {
   return (
-    <div className={`w-full grid grid-cols-12 items-center ${bgClass}`} style={{ padding: "1.75rem clamp(1rem, 4vw, 3rem)" }}>
-      <span className={`col-span-3 font-bricolage ${textClass}`} style={{ fontSize: "clamp(1.75rem, 2.8vw, 3.25rem)" }}>
+    <div className={`w-full grid grid-cols-[auto_1fr_auto] sm:grid-cols-12 items-center gap-x-3 sm:gap-x-0 ${bgClass}`} style={{ padding: "1.75rem clamp(1rem, 4vw, 3rem)" }}>
+      <span className={`sm:col-span-3 font-bricolage ${textClass}`} style={{ fontSize: "clamp(1.25rem, 2.8vw, 3.25rem)" }}>
         {data.id}
       </span>
-      <h3 className={`col-span-7 col-start-4 font-bricolage ${textClass}`} style={{ fontSize: "clamp(2rem, 3.2vw, 3.75rem)" }}>
+      <h3 className={`sm:col-span-7 sm:col-start-4 font-bricolage ${textClass}`} style={{ fontSize: "clamp(1.4rem, 3.2vw, 3.75rem)" }}>
         {data.brand}
       </h3>
-      <div className="col-span-2 flex justify-end">
+      <div className="sm:col-span-2 flex justify-end">
         {data.logo === "tnf" ? <TNFLogo className="h-10 md:h-13 w-auto" /> : <FloLogo className="h-9 md:h-12 w-auto" />}
       </div>
     </div>
@@ -338,7 +338,7 @@ function AccordionItem({ data, isActive, onEnter, onLeave, onClick }) {
                 View full case study <span className="text-xs">→</span>
               </a>
             </div>
-            <div ref={statsRef} className="col-span-12 md:col-span-7 md:col-start-6 grid grid-cols-3 gap-3 md:gap-4 pt-2">
+            <div ref={statsRef} className="col-span-12 md:col-span-7 md:col-start-6 grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 pt-2">
               {data.stats.map((stat, i) => (
                 <div key={i} className="stat-item">
                   <span className="block font-host text-[#FF6F21] leading-none mb-2" style={{ fontSize: "clamp(1.75rem, 2.8vw, 3rem)" }}>{stat.value}</span>
@@ -489,23 +489,24 @@ export default function MissionReports() {
 
   return (
     <section ref={sectionRef} className="mission-reports-section relative w-full" onTouchStart={handleTouchStart}>
-      <div className="pointer-events-none absolute top-0 left-[105px] w-px h-full bg-white/20 z-50" aria-hidden="true" />
-      <div className="pointer-events-none absolute top-0 right-[105px] w-px h-full bg-white/20 z-50" aria-hidden="true" />
-      <div className="pointer-events-none absolute top-0 left-[105px] right-[105px] h-px bg-white/20 z-50" aria-hidden="true" />
-      <div className="pointer-events-none absolute bottom-0 left-[105px] right-[105px] h-px bg-white/20 z-50" aria-hidden="true" />
+      <div className="relative mx-auto w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem]">
+      <div className="pointer-events-none absolute top-0 left-0 w-px h-full bg-white/20 z-50" aria-hidden="true" />
+      <div className="pointer-events-none absolute top-0 right-0 w-px h-full bg-white/20 z-50" aria-hidden="true" />
+      <div className="pointer-events-none absolute top-0 left-0 right-0 h-px bg-white/20 z-50" aria-hidden="true" />
+      <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-px bg-white/20 z-50" aria-hidden="true" />
 
-      <CornerLeft className="pointer-events-none absolute z-50 top-0 left-[105px] -translate-y-1/2" />
-      <CornerRight className="pointer-events-none absolute z-50 top-0 right-[105px] -translate-y-1/2" />
-      <CornerLeft className="pointer-events-none absolute z-50 bottom-0 left-[105px] translate-y-1/2" />
-      <CornerRight className="pointer-events-none absolute z-50 bottom-0 right-[105px] translate-y-1/2" />
+      <CornerLeft className="pointer-events-none absolute z-50 top-0 left-0 -translate-y-1/2" />
+      <CornerRight className="pointer-events-none absolute z-50 top-0 right-0 -translate-y-1/2" />
+      <CornerLeft className="pointer-events-none absolute z-50 bottom-0 left-0 translate-y-1/2" />
+      <CornerRight className="pointer-events-none absolute z-50 bottom-0 right-0 translate-y-1/2" />
 
-      <div ref={headerContentRef} className="relative z-40" style={{ padding: "clamp(4rem, 6vw, 6rem) clamp(1.5rem, 10.5vw, 11rem) 0" }}>
-        <div className="flex items-baseline justify-between mb-3">
+      <div ref={headerContentRef} className="relative z-40" style={{ padding: "clamp(4rem, 6vw, 6rem) clamp(0.75rem, 3vw, 3rem) 0" }}>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between mb-3">
           <h2 className="mr-heading font-host text-white leading-none tracking-tight" style={{ fontSize: "clamp(2.25rem, 3.2vw, 3.75rem)" }}>Mission Reports</h2>
-          <span className="mr-label font-host text-xs md:text-sm tracking-tight uppercase text-[#FF6F21] shrink-0 ml-4">CASE STUDIES</span>
+          <span className="mr-label font-host text-xs md:text-sm tracking-tight uppercase text-[#FF6F21] shrink-0 sm:ml-4">CASE STUDIES</span>
         </div>
         <GlowLine />
-        <div className="grid grid-cols-12 gap-x-10 gap-y-8 mt-8 md:mt-10 mb-20 md:mb-28">
+        <div className="grid grid-cols-12 gap-x-4 sm:gap-x-10 gap-y-8 mt-8 md:mt-10 mb-20 md:mb-28">
           <div className="col-span-12 md:col-span-5 flex flex-col">
             <div className="flex flex-wrap gap-x-8 gap-y-2 mb-auto justify-between">
               {["Real distribution", "Real operations", "Measurable outcomes"].map((tag) => (
@@ -524,14 +525,14 @@ export default function MissionReports() {
         </div>
       </div>
 
-      <div className="relative z-40 mx-[105px]">
+      <div className="relative z-40">
         {caseStudies.map((study, index) => (
           <AccordionItem key={study.id} data={study} isActive={activeIndex === index} onEnter={() => handleEnter(index)} onLeave={handleLeave} onClick={() => handleClick(index)} />
         ))}
         <div className="h-px bg-[#FF6F21]/70" />
       </div>
 
-      <div style={{ height: "clamp(4rem, 6vw, 6rem)" }} />
+      </div>
     </section>
   );
 }
