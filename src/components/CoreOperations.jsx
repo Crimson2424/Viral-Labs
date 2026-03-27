@@ -255,7 +255,7 @@ export default function CoreOperations() {
 
       {/* ── Header ── */}
       <div
-        className="relative z-40 flex flex-col gap-4 sm:flex-row sm:justify-between px-[clamp(0.75rem,3vw,4.5rem)]"
+        className="relative z-40 flex flex-col gap-4 sm:flex-row max-sm:justify-center sm:justify-between px-[clamp(0.75rem,3vw,4.5rem)]"
         style={{ minHeight: "clamp(6.5rem, 15vh, 12rem)" }}
       >
           <div className="flex flex-col sm:self-center">
