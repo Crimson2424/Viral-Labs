@@ -390,10 +390,10 @@ export default forwardRef(function MissionStats(props, ref) {
         className="relative z-40 mx-0"
         style={{ marginBottom: "clamp(2.5rem, 5.5vh, 5rem)" }}
       >
-        <FrameCorner className="frame-corner absolute -top-5 left-0 max-sm:left-2 max-sm:size-3.5 z-10 max-sm:z-51 opacity-0" />
-        <FrameCorner className="frame-corner absolute -top-5 right-0 max-sm:right-2 max-sm:size-3.5 z-10 max-sm:z-51 opacity-0" style={{ transform: "scaleX(-1)" }} />
-        <FrameCorner className="frame-corner absolute -bottom-5 left-0 max-sm:left-2 max-sm:size-3.5 z-10 max-sm:z-51 opacity-0" style={{ transform: "scaleY(-1)" }} />
-        <FrameCorner className="frame-corner absolute -bottom-5 right-0 max-sm:right-2 max-sm:size-3.5 z-10 max-sm:z-51 opacity-0" style={{ transform: "scale(-1, -1)" }} />
+        <FrameCorner className="frame-corner absolute -top-5 left-0 max-sm:size-3.5 z-10 max-sm:z-51 opacity-0" />
+        <FrameCorner className="frame-corner absolute -top-5 right-0 max-sm:size-3.5 z-10 max-sm:z-51 opacity-0" style={{ transform: "scaleX(-1)" }} />
+        <FrameCorner className="frame-corner absolute -bottom-5 left-0 max-sm:size-3.5 z-10 max-sm:z-51 opacity-0" style={{ transform: "scaleY(-1)" }} />
+        <FrameCorner className="frame-corner absolute -bottom-5 right-0 max-sm:size-3.5 z-10 max-sm:z-51 opacity-0" style={{ transform: "scale(-1, -1)" }} />
 
         <div className="relative overflow-hidden py-10 w-[99.5%] mx-auto">
           <div

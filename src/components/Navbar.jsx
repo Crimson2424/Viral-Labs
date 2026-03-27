@@ -26,7 +26,7 @@
  * useGSAP hook for cleanup.
  */
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { gsap, SplitText, DrawSVGPlugin, useGSAP } from "./Gsapconfig";
 import { ViralLabsLogo, ArrowIcon, NavGlowLine } from "./Svgassets";
 import { entranceState } from "./Entrancestate";
@@ -123,6 +123,7 @@ function SoundWaveButton({ onClick, isPlaying, wavePathRef }) {
 export default function Navbar({ entranceDelay = 0.3 }) {
   const [activeNav, setActiveNav] = useState("Home");
   const [isSoundPlaying, setIsSoundPlaying] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const headerRef = useRef();
   const navRef = useRef();
@@ -131,6 +132,8 @@ export default function Navbar({ entranceDelay = 0.3 }) {
   const logoTextRef = useRef();
   const glowLineRef = useRef();
   const ctaItemRef = useRef();
+  const mobileMenuRef = useRef();
+  const mobileMenuTlRef = useRef();
 
   /* Wave refs */
   const wavePathRef = useRef();
@@ -334,6 +337,73 @@ export default function Navbar({ entranceDelay = 0.3 }) {
     }
   };
 
+  /* ─── Mobile menu animation ─── */
+  useEffect(() => {
+    const el = mobileMenuRef.current;
+    if (!el) return;
+
+    const panel = el.querySelector(".mobile-menu-panel");
+    const links = el.querySelectorAll(".mobile-menu-link");
+
+    if (isMobileMenuOpen) {
+      // Kill any running close animation
+      if (mobileMenuTlRef.current) mobileMenuTlRef.current.kill();
+
+      el.style.pointerEvents = "auto";
+      gsap.set(el, { display: "block" });
+      gsap.set(panel, { clipPath: "inset(0 0 100% 0)" });
+      gsap.set(links, { yPercent: 110, opacity: 0 });
+
+      const tl = gsap.timeline();
+
+      // Panel drops down with clip-path reveal
+      tl.to(panel, {
+        clipPath: "inset(0 0 0% 0)",
+        duration: 0.45,
+        ease: "power3.inOut",
+      });
+
+      // Links stagger in with text mask effect (slide up from behind mask)
+      tl.to(links, {
+        yPercent: 0,
+        opacity: 1,
+        stagger: 0.06,
+        duration: 0.4,
+        ease: "expo.out",
+      }, "-=0.2");
+
+      mobileMenuTlRef.current = tl;
+    } else {
+      const links = el.querySelectorAll(".mobile-menu-link");
+      const panel = el.querySelector(".mobile-menu-panel");
+
+      const tl = gsap.timeline({
+        onComplete: () => {
+          gsap.set(el, { display: "none" });
+          el.style.pointerEvents = "none";
+        },
+      });
+
+      // Links slide back down behind mask
+      tl.to(links, {
+        yPercent: 110,
+        opacity: 0,
+        stagger: 0.03,
+        duration: 0.25,
+        ease: "power2.in",
+      });
+
+      // Panel clips back up
+      tl.to(panel, {
+        clipPath: "inset(0 0 100% 0)",
+        duration: 0.35,
+        ease: "power3.inOut",
+      }, "-=0.1");
+
+      mobileMenuTlRef.current = tl;
+    }
+  }, [isMobileMenuOpen]);
+
   /* ─── Styles ─── */
   const navStyle = {
     background: "rgba(255, 255, 255, 0.06)",
@@ -442,7 +512,7 @@ export default function Navbar({ entranceDelay = 0.3 }) {
       >
         <nav
           ref={navRef}
-          className="relative inline-flex items-center justify-center gap-9 px-5 py-1 overflow-hidden"
+          className="relative flex items-center justify-between md:inline-flex md:justify-center gap-4 md:gap-6 lg:gap-9 px-4 md:px-5 py-1 overflow-hidden w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] md:w-auto"
           style={navStyle}
         >
           {/* ── Logo ── */}
@@ -468,7 +538,7 @@ export default function Navbar({ entranceDelay = 0.3 }) {
           </a>
 
           {/* ── Nav Links ── */}
-          <div className="inline-flex items-center gap-4">
+          <div className="hidden md:inline-flex md:items-center md:gap-4">
             {NAV_ITEMS.map((item) => (
               <a
                 key={item.label}
@@ -491,7 +561,7 @@ export default function Navbar({ entranceDelay = 0.3 }) {
           </div>
 
           {/* ── CTA Button with Glow ── */}
-          <div className="relative inline-flex items-center justify-center py-0">
+          <div className="hidden md:relative md:inline-flex md:items-center md:justify-center md:py-0">
             <a
               ref={ctaItemRef}
               href="#go-viral"
@@ -523,25 +593,74 @@ export default function Navbar({ entranceDelay = 0.3 }) {
             />
           </div>
 
-          {/* ── Sound Wave Button ── */}
-          <SoundWaveButton
-            onClick={handleSoundToggle}
-            isPlaying={isSoundPlaying}
-            wavePathRef={wavePathRef}
-          />
+          {/* ── Sound Wave + Hamburger (grouped on mobile) ── */}
+          <div className="flex items-center gap-3">
+            <SoundWaveButton
+              onClick={handleSoundToggle}
+              isPlaying={isSoundPlaying}
+              wavePathRef={wavePathRef}
+            />
+
+            <button
+              className="md:hidden p-1"
+              aria-label="Menu"
+              onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+            >
+              <img src="/images/hamburger Menu.png" alt="Menu" className="w-6 h-6 object-contain" />
+            </button>
+          </div>
 
           {/* ── Glow lights ── */}
           <div
-            className="absolute top-0 -left-[35px] w-9 h-9 rounded-[18px] pointer-events-none"
+            className="hidden md:block absolute top-0 -left-[35px] w-9 h-9 rounded-[18px] pointer-events-none"
             style={{ background: "white", filter: "blur(17px)" }}
             aria-hidden="true"
           />
           <div
-            className="absolute -top-[15px] -right-9 w-9 h-9 rounded-[18px] pointer-events-none"
+            className="hidden md:block absolute -top-[15px] -right-9 w-9 h-9 rounded-[18px] pointer-events-none"
             style={{ background: "#fbe7d4", filter: "blur(17px)" }}
             aria-hidden="true"
           />
         </nav>
+
+        {/* ── Mobile Dropdown Menu ── */}
+        <div
+          ref={mobileMenuRef}
+          className="md:hidden absolute top-full left-0 w-full mt-1 z-40"
+          style={{ display: "none", pointerEvents: "none" }}
+        >
+          <div
+            className="mobile-menu-panel w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] mx-auto"
+            style={{
+              background: "rgba(255, 255, 255, 0.06)",
+              backdropFilter: "blur(9.5px)",
+              WebkitBackdropFilter: "blur(9.5px)",
+              borderWidth: "1px",
+              borderStyle: "solid",
+              borderImage:
+                "linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(102,102,102,0.7) 100%) 1",
+            }}
+          >
+            <div className="flex flex-col py-4 px-4 gap-3">
+              {NAV_ITEMS.map((item) => (
+                <div key={item.label} className="overflow-hidden">
+                  <a
+                    href={item.href}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setActiveNav(item.label);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="mobile-menu-link block font-bricolage font-light text-white text-sm tracking-[-0.56px] leading-none py-2"
+                    style={fontStyle}
+                  >
+                    {item.label}
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </header>
     </>
   );
