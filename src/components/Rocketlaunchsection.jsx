@@ -140,8 +140,8 @@ export default function RocketLaunchSection() {
     gsap.set(veSubtitleSplit.elements, { yPercent: 120, filter: "blur(6px)" });
     gsap.set(veHeadingSplit.split.chars, { yPercent: 120, opacity: 0, filter: "blur(6px)" });
     gsap.set(veGlow, { scaleX: 0, transformOrigin: "left center", opacity: 0 });
-    gsap.set(veBody1Split.elements, { yPercent: 110, filter: "blur(5px)" });
-    gsap.set(veBody2Split.elements, { yPercent: 110, filter: "blur(5px)" });
+    gsap.set(veBody1Split.elements, { yPercent: 120, filter: "blur(5px)" });
+    gsap.set(veBody2Split.elements, { yPercent: 120, filter: "blur(5px)" });
     labels.forEach((label) => gsap.set(label, { opacity: 0, scale: 0.85, filter: "blur(6px)" }));
 
     creatorGlobeState.globeOpacity = 0;
@@ -237,7 +237,6 @@ export default function RocketLaunchSection() {
       top: ROCKET_FINAL_TOP,
       scale: ROCKET_FULL_SCALE, duration: 1.5, ease: "none",
     }, 2.5);
-    /* Globe X stays at GLOBE_3D_START_X (1.05) — no shift */
 
     /* ═══ PHASE 2 — VE TEXT IN ═══ */
     master.to(veSubtitleSplit.elements, {
@@ -330,7 +329,7 @@ export default function RocketLaunchSection() {
           />
         </div>
 
-        {/* VE LEFT-SIDE TEXT — stays on the left */}
+        {/* VE LEFT-SIDE TEXT — title + subtitle only */}
         <div className="absolute z-40 left-40 top-[2%] max-w-[460px] pointer-events-none flex flex-col">
           <div className="flex flex-col gap-0">
             <p ref={veSubtitleRef} className="font-host text-sm text-vl-orange uppercase tracking-wide">
@@ -340,15 +339,15 @@ export default function RocketLaunchSection() {
               Inside The<br />Viral Engine
             </h2>
           </div>
-          <div className="flex flex-col gap-0 mt-4">
-            <GlowLineSvg ref={veGlowRef} className="w-48 h-auto -ml-2.5" />
-            <p ref={veBody1Ref} className="font-host text-base font-light text-white tracking-tighter leading-snug mt-2">
-              Behind every campaign is a structured growth system. The Viral Engine connects creator networks, content distribution pathways, and performance feedback loops into a single operating framework.
-            </p>
-            <p ref={veBody2Ref} className="font-host text-base font-light text-white tracking-tight leading-normal">
-              It&apos;s designed to turn attention into installs. It&apos;s not a campaign. It&apos;s a machine.
-            </p>
-          </div>
+        </div>
+
+        {/* VE BODY — right side, bottom of rocket */}
+        <div className="absolute z-40 right-[8%] top-[62%] bottom-[18%] max-w-[420px] pointer-events-none flex flex-col gap-0">
+          <GlowLineSvg ref={veGlowRef} className="w-48 h-auto -ml-2.5" />
+          <p ref={veBody1Ref} className="font-host text-sm font-thin text-white tracking-tighter leading-snug mt-0.5">
+            Behind every <span className="font-medium">Engagement</span> is a structured distribution system. It starts with <span className="font-medium">Audience</span> and <span className="font-medium">Market signals</span>, converts them into content and <span className="font-medium">Message systems</span>, and executes them through coordinated <span className="font-medium">Publishing</span> and <span className="font-medium">Amplification infrastructure</span>.
+          </p>
+
         </div>
 
         {/* ── STAGE LABELS ── */}
@@ -366,9 +365,9 @@ export default function RocketLaunchSection() {
         </div>
 
         {/* LABEL 2 — Processing Layer (RIGHT side) */}
-        <div ref={label2Ref} className="absolute z-40 pointer-events-none right-[24%] top-[22%] w-[420px]">
-          <ConnectorLine className="w-full h-auto -mb-4 scale-x-[-1]" />
-          <div className="flex items-start gap-1 w-fit ml-auto">
+        <div ref={label2Ref} className="absolute z-40 pointer-events-none left-[24%] top-[20%] w-[420px]">
+          <ConnectorLine className="w-full h-auto -mb-4" />
+          <div className="flex items-start gap-1 w-fit ml-2">
             <CubesSvg className="w-5 h-auto mt-0.5 shrink-0" />
             <div>
               <h4 className="font-bricolage text-lg text-white tracking-tighter leading-normal">{PIPELINE_STAGES[1].title}</h4>
@@ -378,9 +377,9 @@ export default function RocketLaunchSection() {
         </div>
 
         {/* LABEL 3 — Distribution Layer (LEFT side) */}
-        <div ref={label3Ref} className="absolute z-40 pointer-events-none left-[23%] top-[44%] w-[420px]">
-          <ConnectorLine className="w-full h-auto -mb-4 " />
-          <div className="flex items-start gap-1 w-fit ml-2">
+        <div ref={label3Ref} className="absolute z-40 pointer-events-none right-[23%] top-[44%] w-[420px]">
+          <ConnectorLine className="w-full h-auto -mb-4 scale-x-[-1]" />
+          <div className="flex items-start gap-1 w-fit ml-auto">
             <CubesSvg className="w-5 h-auto mt-0.5 shrink-0" />
             <div>
               <h4 className="font-bricolage text-lg text-white tracking-tighter leading-normal">{PIPELINE_STAGES[2].title}</h4>
