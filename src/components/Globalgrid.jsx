@@ -58,16 +58,15 @@ export default function GlobalGrid({ animated = false, navOffset = false }) {
   return (
     <div
       ref={gridRef}
-      className={`global-grid pointer-events-none absolute inset-0 ${navOffset ? "top-11" : "top-0"} z-[15]`}
+      className={`global-grid pointer-events-none absolute inset-0 ${navOffset ? "top-11" : "top-0"} left-[clamp(1.25rem,5vw,6.5625rem)] right-[clamp(1.25rem,5vw,6.5625rem)] z-[15]`}
       aria-hidden="true"
       style={{
-        left: "105px",
-        right: "105px",
         backgroundImage: `
           linear-gradient(to right, ${lineColor} 1px, transparent 1px),
           linear-gradient(to bottom, ${lineColor} 1px, transparent 1px)
         `,
         backgroundSize: `${CELL_SIZE}px ${CELL_SIZE}px`,
+        backgroundPosition: "center top",
       }}
     />
   );

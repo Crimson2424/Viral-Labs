@@ -19,9 +19,10 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
+import { Draggable } from "gsap/Draggable";
 import { useGSAP } from "@gsap/react";
 
 // Register all plugins once
-gsap.registerPlugin(ScrollTrigger, SplitText, DrawSVGPlugin);
+gsap.registerPlugin(ScrollTrigger, SplitText, DrawSVGPlugin, Draggable);
 
-export { gsap, ScrollTrigger, SplitText, DrawSVGPlugin, useGSAP };
+export { gsap, ScrollTrigger, SplitText, DrawSVGPlugin, Draggable, useGSAP };
