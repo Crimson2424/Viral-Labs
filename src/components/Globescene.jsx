@@ -161,7 +161,7 @@ const positionFragmentShader = `
 
 const pointVertexShader = `
   uniform sampler2D uPositions; uniform float uTextureSize; uniform float uPointSize;
-  uniform float uParticleCount; uniform float uSphereRadius;
+  uniform float uParticleCount; uniform float uSphereRadius; uniform float uDpr;
   uniform vec3 uColorCore; uniform vec3 uColorSurface; uniform vec3 uColorWisp; uniform float uBrightness;
   attribute float aIndex; varying vec3 vColor; varying float vAlpha;
   void main() {
@@ -174,10 +174,10 @@ const pointVertexShader = `
     else{float wf=clamp(nd-1.0,0.0,1.0); vColor=mix(uColorSurface,uColorWisp,wf*0.85); vColor=mix(vColor,uColorWisp,0.3); vAlpha=1.0-wf*0.5;}
     float ef=pow(1.0-abs(fc),2.5); vColor=mix(vColor,uColorWisp,ef*0.5*smoothstep(0.8,1.0,nd));
     vColor*=uBrightness;
-    gl_PointSize=uPointSize*(1.0/-mv.z)*100.0*(1.0+ef*0.4);
+    gl_PointSize=uPointSize*(1.0/-mv.z)*100.0*(1.0+ef*0.4)*uDpr;
     if(nd>0.9&&nd<=1.1) gl_PointSize*=1.15;
     if(nd>1.2) gl_PointSize*=max(1.0-(nd-1.2)*0.4,0.4);
-    gl_PointSize=clamp(gl_PointSize,0.5,50.0);
+    gl_PointSize=clamp(gl_PointSize,0.5*uDpr,50.0*uDpr);
     gl_Position=projectionMatrix*mv;
   }
 `;
@@ -230,6 +230,10 @@ function Simulation({ children, containerRef }) {
   const init = useRef(false);
   const mouse = useRef({ pos: new THREE.Vector3(), active: false });
   const ray = useRef({ origin: new THREE.Vector3(), direction: new THREE.Vector3(0, 0, -1), active: false });
+
+  // ── FIX 1: Hoisted per-frame objects — zero GC pressure ──
+  const hitSphere = useMemo(() => new THREE.Sphere(new THREE.Vector3(0, 0, 0), c.sphereRadius * 2), []);
+  const hitPoint = useMemo(() => new THREE.Vector3(), []);
 
   const scene = useMemo(() => new THREE.Scene(), []);
   const cam = useMemo(() => new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1), []);
@@ -284,6 +288,11 @@ function Simulation({ children, containerRef }) {
     gl.setRenderTarget(fbo2); gl.render(scene, cam);
     gl.setRenderTarget(origFbo); gl.render(scene, cam);
     gl.setRenderTarget(null);
+
+    // ── FIX 3: Dispose init-only resources — free GPU memory ──
+    initMat.dispose();
+    tex.dispose();
+
     quad.material = mat;
     init.current = true; pp.current = 0;
   }, [gl, scene, cam, quad, mat, fbo1, fbo2, origFbo]);
@@ -329,10 +338,9 @@ function Simulation({ children, containerRef }) {
     ray.current.direction.copy(raycaster.ray.direction);
     ray.current.active = interactable;
 
-    const sphere = new THREE.Sphere(new THREE.Vector3(0, 0, 0), c.sphereRadius * 2);
-    const intersection = new THREE.Vector3();
-    if (interactable && raycaster.ray.intersectSphere(sphere, intersection)) {
-      mouse.current.pos.copy(intersection);
+    // ── FIX 1: Reuse hoisted sphere & vector — no allocations per frame ──
+    if (interactable && raycaster.ray.intersectSphere(hitSphere, hitPoint)) {
+      mouse.current.pos.copy(hitPoint);
     }
 
     const rb = pp.current === 0 ? fbo1 : fbo2;
@@ -347,14 +355,18 @@ function Simulation({ children, containerRef }) {
     u.uHoverActive.value = interactable ? 1 : 0;
     u.uMousePos.value.copy(mouse.current.pos);
     u.uMouseActive.value = (interactable && mouse.current.active) ? 1 : 0;
-    quad.material = mat;
+
+    // ── FIX 2: Removed redundant `quad.material = mat` ──
+    // Material is already set to `mat` after initParticles, no need to reassign every frame
+
     gl.setRenderTarget(wb); gl.render(scene, cam); gl.setRenderTarget(null);
     pp.current = 1 - pp.current;
   });
 
+  // ── FIX 4: Stable ref-based getter — no closure recreation ──
   const getTextures = useCallback(() => ({
     positions: (pp.current === 0 ? fbo2 : fbo1).texture,
-  }), [fbo1, fbo2]);
+  }), []); // fbo1/fbo2 are stable from useFBO, pp is a ref — no deps needed
 
   return <>{React.Children.map(children, ch => React.cloneElement(ch, { getTextures }))}</>;
 }
@@ -366,6 +378,7 @@ function Simulation({ children, containerRef }) {
 function Points({ getTextures }) {
   const matRef = useRef();
   const c = CONFIG;
+  const { gl } = useThree();
 
   const geo = useMemo(() => {
     const count = TEXTURE_SIZE * TEXTURE_SIZE;
@@ -382,6 +395,7 @@ function Points({ getTextures }) {
     uniforms: {
       uPositions: { value: null }, uTextureSize: { value: TEXTURE_SIZE }, uPointSize: { value: c.pointSize },
       uParticleCount: { value: c.particleCount }, uSphereRadius: { value: c.sphereRadius },
+      uDpr: { value: gl.getPixelRatio() },
       uColorCore: { value: new THREE.Color(c.colorCore) }, uColorSurface: { value: new THREE.Color(c.colorSurface) },
       uColorWisp: { value: new THREE.Color(c.colorWisp) }, uBrightness: { value: c.brightness },
     },
@@ -392,6 +406,7 @@ function Points({ getTextures }) {
   useFrame(() => {
     if (getTextures && matRef.current) {
       matRef.current.uniforms.uPositions.value = getTextures().positions;
+      matRef.current.uniforms.uDpr.value = gl.getPixelRatio();
     }
   });
 

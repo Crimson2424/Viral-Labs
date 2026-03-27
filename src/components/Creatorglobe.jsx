@@ -649,7 +649,7 @@ export default function CreatorGlobe({ containerRef }) {
     <group ref={globeRef}>
       <mesh ref={innerSphereRef}>
         <sphereGeometry args={[0.96, 32, 32]} />
-        <meshBasicMaterial color="#242424" />
+        <meshBasicMaterial color="#121212" />
       </mesh>
 
       <mesh>
