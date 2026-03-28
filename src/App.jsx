@@ -21,6 +21,8 @@ import { entranceState } from "./components/Entrancestate";
 import RocketLaunchSection from "./components/Rocketlaunchsection";
 import CreatorNetworkSection from "./components/Creatornetworksection";
 import MissionReports from "./components/MissionReports";
+import SignalsSection from "./components/SignalsSection";
+import SignalsScene from "./components/SignalsScene";
 
 function DummySection() {
   return (
@@ -66,8 +68,9 @@ const App = () => {
   const lenisRef = useRef(null);
   const containerRef = useRef(null);
 
-  // View tracking ref — only the GPGPU globe uses the shared Canvas now
+  // View tracking refs
   const globeContainerRef = useRef(null);
+  const signalsContainerRef = useRef(null);
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -110,7 +113,7 @@ const App = () => {
       <LoadingScreen videoSrc="/videos/loader.webm" />
       <GlobalCanvas />
 
-      {/* Shared Canvas — only GPGPU globe View remains here */}
+      {/* Shared Canvas — GPGPU globe + Signals Views */}
       <Canvas
         eventSource={containerRef}
         eventPrefix="client"
@@ -136,6 +139,12 @@ const App = () => {
           <PerspectiveCamera makeDefault position={[0, 0, 3.5]} fov={45} />
           <GlobeContent containerRef={globeContainerRef} />
         </View>
+
+        {/* Signals visualization — tracks SignalsSection container */}
+        <View track={signalsContainerRef}>
+          <PerspectiveCamera makeDefault position={[0, 0, 95]} fov={45} />
+          <SignalsScene />
+        </View>
       </Canvas>
 
       {/* Creator Globe — standalone fixed Canvas (3rd WebGL context) */}
@@ -151,6 +160,7 @@ const App = () => {
       {/* <CreatorNetwork viewRef={creatorViewRef} /> */}
       <RocketLaunchSection />
       <CreatorNetworkSection />
+      <SignalsSection viewRef={signalsContainerRef} />
       <DummySection />
     </main>
   );

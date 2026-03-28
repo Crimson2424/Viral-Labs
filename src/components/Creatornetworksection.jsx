@@ -35,7 +35,7 @@ const CN_START_X = GLOBE_ENTRY_X;              // e.g. 1.18
 // │  Y: more negative = higher on screen                │
 // │  X: 0 = left (child group's -1.18 takes effect)    │
 // └─────────────────────────────────────────────────────┘
-const CN_FINAL_Y = -0.1;
+const CN_FINAL_Y = -0.35;
 const CN_FINAL_X = 0;
 
 const CN_STATS = [
@@ -187,14 +187,14 @@ export default function CreatorNetworkSection() {
   return (
     <section
       ref={sectionRef}
-      className="creator-network-section relative z-25 w-full h-screen"
+      className="creator-network-section relative z-25 w-full h-[140vh]"
     >
       {/* <GlobalGrid /> */}
       <GlobalTexture />
 
       <div className="absolute inset-0 overflow-hidden">
 
-        <div className="pointer-events-none absolute bottom-0 left-[105px] right-[105px] h-px bg-white/20 z-30" aria-hidden="true" />
+        {/* <div className="pointer-events-none absolute bottom-0 left-[105px] right-[105px] h-px bg-white/20 z-30" aria-hidden="true" /> */}
 
         {/* CN RIGHT-SIDE CONTENT */}
         <div className="absolute z-40 right-35 top-[4%] flex flex-col items-end max-w-[440px] pointer-events-none">

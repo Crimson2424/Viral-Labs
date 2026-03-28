@@ -30,8 +30,8 @@ const ROCKET_FINAL_TOP = "33%";
 const ROCKET_START_SCALE = 0.75;
 const ROCKET_FULL_SCALE = 0.8;
 
-const GLOBE_3D_START_Y = 1.3;
-const GLOBE_3D_MID_Y = 1.2;
+const GLOBE_3D_START_Y = 1.05;
+const GLOBE_3D_MID_Y = 1.0;
 const GLOBE_3D_START_X = 1.18;  // adjusted for full-width canvas (was 1.05)
 
 const SCROLL_LENGTH = "+=500%";

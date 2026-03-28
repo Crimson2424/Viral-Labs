@@ -38,7 +38,7 @@ const NUDGE_3D = 0.4;
 // Globe stays centered during rocket phase (no X shift).
 // Must match RocketLaunchSection: globeYOffset = GLOBE_3D_MID_Y (1.2),
 // globeXOffset stays at initial 1.18 (no tween moves it).
-const GLOBE_ENTRY_Y = 1.2;
+const GLOBE_ENTRY_Y = 1.0;
 const GLOBE_ENTRY_X = 1.18;  // adjusted for full-width canvas (was 1.05)
 
 // Export for CN section to compute its start values.
@@ -159,11 +159,11 @@ export default function GlobeCanvas() {
           creatorGlobeState.globeYOffset += (targetY - creatorGlobeState.globeYOffset) * 0.04;
           offsetY = 0;
         } else if (cnRect.bottom < vh) {
-          // Phase 3: CN scrolling away — follow it off-screen
-          offsetY = cnRect.bottom - vh;
+          // Phase 3: CN leaving — follow via top position
+          offsetY = cnRect.top;
         } else {
-          // Phase 2: CN pinned — CN's timeline handles 3D offsets
-          offsetY = 0;
+          // Phase 2: CN pinned or post-pin gap
+          offsetY = Math.min(0, cnRect.top);
         }
       }
 
@@ -196,11 +196,11 @@ export default function GlobeCanvas() {
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 z-27"
-      style={{ opacity: 0, pointerEvents: "none" }}
+      className="fixed top-0 left-0 right-0 z-30"
+      style={{ opacity: 0, pointerEvents: "none", height: "130vh" }}
     >
       <Canvas
-        camera={{ position: [0, 0, 2.8], fov: 45 }}
+        camera={{ position: [0, 0, 3.5], fov: 45 }}
         gl={{ antialias: false, alpha: true, powerPreference: "high-performance" }}
         dpr={[1, 2]}
         style={{ width: "100%", height: "100%", pointerEvents: "none" }}
