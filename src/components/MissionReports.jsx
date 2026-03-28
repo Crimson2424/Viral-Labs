@@ -170,7 +170,7 @@ function FloLogo({ className = "" }) {
 /* ─── Reusable header row content ─── */
 function HeaderRowContent({ data, bgClass = "", textClass = "text-white" }) {
   return (
-    <div className={`w-full grid grid-cols-[auto_1fr_auto] sm:grid-cols-12 items-center gap-x-3 sm:gap-x-0 ${bgClass}`} style={{ padding: "1.75rem clamp(1rem, 4vw, 3rem)" }}>
+    <div className={`mr-header-row w-full grid grid-cols-[auto_1fr_auto] sm:grid-cols-12 items-center gap-x-3 sm:gap-x-0 ${bgClass}`} style={{ padding: "1.75rem clamp(1rem, 4vw, 3rem)" }}>
       <span className={`sm:col-span-3 font-bricolage ${textClass}`} style={{ fontSize: "clamp(1.25rem, 2.8vw, 3.25rem)" }}>
         {data.id}
       </span>
@@ -178,7 +178,7 @@ function HeaderRowContent({ data, bgClass = "", textClass = "text-white" }) {
         {data.brand}
       </h3>
       <div className="sm:col-span-2 flex justify-end">
-        {data.logo === "tnf" ? <TNFLogo className="h-10 md:h-13 w-auto" /> : <FloLogo className="h-9 md:h-12 w-auto" />}
+        {data.logo === "tnf" ? <TNFLogo className="h-10 md:h-13 4xl:h-16 5xl:h-20 w-auto" /> : <FloLogo className="h-9 md:h-12 4xl:h-14 5xl:h-18 w-auto" />}
       </div>
     </div>
   );
@@ -322,18 +322,18 @@ function AccordionItem({ data, isActive, onEnter, onLeave, onClick }) {
         <div ref={contentInnerRef} className="relative z-10" style={{ padding: `1.25rem ${INNER_PAD} 3rem` }}>
           <div className="grid grid-cols-12 gap-x-6 gap-y-6 mb-16 md:mb-20">
             <div ref={taglineRef} className="col-span-12 md:col-span-3 pt-4">
-              <p className="font-host text-sm font-thin text-white/50 whitespace-pre-line leading-relaxed tracking-tight">{data.tagline}</p>
+              <p className="font-host text-sm 4xl:text-base 5xl:text-lg font-thin text-white/50 whitespace-pre-line leading-relaxed tracking-tight">{data.tagline}</p>
             </div>
             <div className="col-span-12 md:col-span-8 md:col-start-4">
-              <span ref={objLabelRef} className="inline-block font-host text-sm tracking-[0.15em] uppercase text-white mb-1.5">OBJECTIVE</span>
-              <p ref={objTextRef} className="font-host text-white/80 leading-snug" style={{ fontSize: "clamp(1.25rem, 1.9vw, 2rem)" }}>{data.objective}</p>
+              <span ref={objLabelRef} className="inline-block font-host text-sm 4xl:text-base 5xl:text-lg tracking-[0.15em] uppercase text-white mb-1.5">OBJECTIVE</span>
+              <p ref={objTextRef} className="mr-obj-text font-host text-white/80 leading-snug" style={{ fontSize: "clamp(1.25rem, 1.9vw, 2rem)" }}>{data.objective}</p>
             </div>
           </div>
 
           <div className="grid grid-cols-12 gap-x-6 gap-y-8">
             <div className="col-span-12 md:col-span-3">
-              <span ref={execLabelRef} className="inline-block font-host text-xs tracking-[0.15em] uppercase text-white mb-3">EXECUTION</span>
-              <p ref={execTextRef} className="font-host text-sm font-thin text-white/50 leading-relaxed tracking-tight mb-4">{data.execution}</p>
+              <span ref={execLabelRef} className="inline-block font-host text-xs 4xl:text-sm 5xl:text-base tracking-[0.15em] uppercase text-white mb-3">EXECUTION</span>
+              <p ref={execTextRef} className="font-host text-sm 4xl:text-base 5xl:text-lg font-thin text-white/50 leading-relaxed tracking-tight mb-4">{data.execution}</p>
               <a ref={linkRef} href="#" className="inline-flex items-center gap-1.5 font-host text-sm text-white/40 hover:text-[#FF6F21] transition-colors duration-300 underline underline-offset-4 decoration-white/15 hover:decoration-[#FF6F21]/50">
                 View full case study <span className="text-xs">→</span>
               </a>
@@ -341,8 +341,8 @@ function AccordionItem({ data, isActive, onEnter, onLeave, onClick }) {
             <div ref={statsRef} className="col-span-12 md:col-span-7 md:col-start-6 grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 pt-2">
               {data.stats.map((stat, i) => (
                 <div key={i} className="stat-item">
-                  <span className="block font-host text-[#FF6F21] leading-none mb-2" style={{ fontSize: "clamp(1.75rem, 2.8vw, 3rem)" }}>{stat.value}</span>
-                  <span className="block font-host text-xs md:text-sm text-white/40 leading-snug">{stat.label}</span>
+                  <span className="mr-stat-value block font-host text-[#FF6F21] leading-none mb-2" style={{ fontSize: "clamp(1.75rem, 2.8vw, 3rem)" }}>{stat.value}</span>
+                  <span className="block font-host text-xs md:text-sm 4xl:text-base 5xl:text-lg text-white/40 leading-snug">{stat.label}</span>
                 </div>
               ))}
             </div>
@@ -488,6 +488,27 @@ export default function MissionReports() {
   );
 
   return (
+    <>
+    <style>{`
+      @media (min-width: 160rem) {
+        .mr-heading { font-size: 4.5rem !important; }
+        .mr-stat-value { font-size: 3.5rem !important; }
+        .mr-header-row { padding-left: 4rem !important; padding-right: 4rem !important; }
+        .mr-header-row span:first-child { font-size: 4rem !important; }
+        .mr-header-row h3 { font-size: 4.5rem !important; }
+        .mr-header-content { padding-left: 4rem !important; padding-right: 4rem !important; }
+      }
+      @media (min-width: 240rem) {
+        .mr-heading { font-size: 5.5rem !important; }
+        .mr-para { font-size: 4rem !important; }
+        .mr-obj-text { font-size: 2.5rem !important; }
+        .mr-stat-value { font-size: 4.5rem !important; }
+        .mr-header-row { padding-left: 5rem !important; padding-right: 5rem !important; }
+        .mr-header-row span:first-child { font-size: 5rem !important; }
+        .mr-header-row h3 { font-size: 5.5rem !important; }
+        .mr-header-content { padding-left: 5rem !important; padding-right: 5rem !important; }
+      }
+    `}</style>
     <section ref={sectionRef} className="mission-reports-section relative w-full" onTouchStart={handleTouchStart}>
       <div className="relative mx-auto w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem]">
       <div className="pointer-events-none absolute top-0 left-0 w-px h-full bg-white/20 z-50" aria-hidden="true" />
@@ -500,17 +521,17 @@ export default function MissionReports() {
       <CornerLeft className="pointer-events-none absolute z-50 bottom-0 left-0 translate-y-1/2" />
       <CornerRight className="pointer-events-none absolute z-50 bottom-0 right-0 translate-y-1/2" />
 
-      <div ref={headerContentRef} className="relative z-40" style={{ padding: "clamp(4rem, 6vw, 6rem) clamp(0.75rem, 3vw, 3rem) 0" }}>
+      <div ref={headerContentRef} className="mr-header-content relative z-40" style={{ padding: "clamp(4rem, 6vw, 6rem) clamp(0.75rem, 3vw, 3rem) 0" }}>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between mb-3">
           <h2 className="mr-heading font-host text-white leading-none tracking-tight" style={{ fontSize: "clamp(2.25rem, 3.2vw, 3.75rem)" }}>Mission Reports</h2>
-          <span className="mr-label font-host text-xs md:text-sm tracking-tight uppercase text-[#FF6F21] shrink-0 sm:ml-4">CASE STUDIES</span>
+          <span className="mr-label font-host text-xs md:text-sm 4xl:text-base 5xl:text-lg tracking-tight uppercase text-[#FF6F21] shrink-0 sm:ml-4">CASE STUDIES</span>
         </div>
         <GlowLine />
         <div className="grid grid-cols-12 gap-x-4 sm:gap-x-10 gap-y-8 mt-8 md:mt-10 mb-20 md:mb-28">
           <div className="col-span-12 md:col-span-5 flex flex-col">
             <div className="flex flex-wrap gap-x-8 gap-y-2 mb-auto justify-between">
               {["Real distribution", "Real operations", "Measurable outcomes"].map((tag) => (
-                <span key={tag} className="mr-tag font-host text-sm font-thin text-white tracking-tight">{tag}</span>
+                <span key={tag} className="mr-tag font-host text-sm 4xl:text-base 5xl:text-lg font-thin text-white tracking-tight">{tag}</span>
               ))}
             </div>
             <div className="mr-cta self-start mt-12 md:mt-16">
@@ -534,5 +555,6 @@ export default function MissionReports() {
 
       </div>
     </section>
+    </>
   );
 }

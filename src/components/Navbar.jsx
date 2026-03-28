@@ -519,7 +519,7 @@ export default function Navbar({ entranceDelay = 0.3 }) {
       >
         <nav
           ref={navRef}
-          className="relative flex items-center justify-between gap-4 px-4 md:px-5 py-1 overflow-hidden w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] md:w-[95%] md:max-w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] xl:w-auto xl:max-w-none xl:inline-flex xl:justify-center xl:gap-9"
+          className="relative flex items-center justify-between gap-4 px-4 md:px-5 4xl:px-8 5xl:px-10 py-1 overflow-hidden w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] md:w-[95%] md:max-w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] xl:w-auto xl:max-w-none xl:inline-flex xl:justify-center xl:gap-9"
           style={navStyle}
         >
           {/* ── Logo ── */}
@@ -533,11 +533,11 @@ export default function Navbar({ entranceDelay = 0.3 }) {
               ref={logoIconRef}
               className="inline-flex items-center justify-center"
             >
-              <ViralLabsLogo className="w-[16px] h-[16px] translate-y-[1px]" />
+              <ViralLabsLogo className="w-[16px] h-[16px] 4xl:w-5 4xl:h-5 5xl:w-6 5xl:h-6 translate-y-[1px]" />
             </span>
             <span
               ref={logoTextRef}
-              className="font-bricolage font-normal text-white text-md leading-none pr-1"
+              className="font-bricolage font-normal text-white text-md 4xl:text-lg 5xl:text-xl leading-none pr-1"
               style={{ letterSpacing: "-1.1px", ...fontStyle }}
             >
               Viral Labs
@@ -545,7 +545,7 @@ export default function Navbar({ entranceDelay = 0.3 }) {
           </a>
 
           {/* ── Center Group: Nav Links + CTA (absolutely centered on md+) ── */}
-          <div className="hidden md:flex md:absolute md:left-1/2 md:-translate-x-1/2 md:items-center md:gap-4 lg:gap-6 xl:static xl:translate-x-0 xl:contents">
+          <div className="hidden md:flex md:absolute md:left-1/2 md:-translate-x-1/2 md:items-center md:gap-4 lg:gap-6 4xl:gap-8 5xl:gap-10 xl:static xl:translate-x-0 xl:contents">
             <div className="inline-flex items-center gap-4">
               {NAV_ITEMS.map((item) => (
                 <a
@@ -555,7 +555,7 @@ export default function Navbar({ entranceDelay = 0.3 }) {
                     e.preventDefault();
                     setActiveNav(item.label);
                   }}
-                  className="nav-link-item relative inline-flex items-center font-bricolage font-light text-white text-sm text-center tracking-[-0.56px] leading-none"
+                  className="nav-link-item relative inline-flex items-center font-bricolage font-light text-white text-sm 4xl:text-base 5xl:text-lg text-center tracking-[-0.56px] leading-none"
                   style={fontStyle}
                   aria-current={activeNav === item.label ? "page" : undefined}
                 >
@@ -579,7 +579,7 @@ export default function Navbar({ entranceDelay = 0.3 }) {
                 <span className="text-clip">
                   <span className="nav-cta-inner inline-block">
                     <span
-                      className="font-bricolage font-thin text-white text-sm text-center tracking-[-0.56px] leading-none"
+                      className="font-bricolage font-thin text-white text-sm 4xl:text-base 5xl:text-lg text-center tracking-[-0.56px] leading-none"
                       style={fontStyle}
                     >
                       <CharSpans text="Go Viral" />
@@ -604,11 +604,13 @@ export default function Navbar({ entranceDelay = 0.3 }) {
 
           {/* ── Sound Wave + Hamburger (grouped on mobile) ── */}
           <div className="flex items-center gap-3">
-            <SoundWaveButton
-              onClick={handleSoundToggle}
-              isPlaying={isSoundPlaying}
-              wavePathRef={wavePathRef}
-            />
+            <span className="4xl:scale-125 5xl:scale-150 origin-center">
+              <SoundWaveButton
+                onClick={handleSoundToggle}
+                isPlaying={isSoundPlaying}
+                wavePathRef={wavePathRef}
+              />
+            </span>
 
             <button
               className="md:hidden p-1"
