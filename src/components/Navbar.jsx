@@ -519,7 +519,7 @@ export default function Navbar({ entranceDelay = 0.3 }) {
       >
         <nav
           ref={navRef}
-          className="relative flex items-center justify-between gap-4 px-4 md:px-5 py-1 overflow-hidden w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] md:w-[95%] md:max-w-[calc(100%-clamp(2.5rem,10vw,13.125rem))]"
+          className="relative flex items-center justify-between gap-4 px-4 md:px-5 py-1 overflow-hidden w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] md:w-[95%] md:max-w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] xl:w-auto xl:max-w-none xl:inline-flex xl:justify-center xl:gap-9"
           style={navStyle}
         >
           {/* ── Logo ── */}
@@ -545,7 +545,7 @@ export default function Navbar({ entranceDelay = 0.3 }) {
           </a>
 
           {/* ── Center Group: Nav Links + CTA (absolutely centered on md+) ── */}
-          <div className="hidden md:flex md:absolute md:left-1/2 md:-translate-x-1/2 md:items-center md:gap-4 lg:gap-6">
+          <div className="hidden md:flex md:absolute md:left-1/2 md:-translate-x-1/2 md:items-center md:gap-4 lg:gap-6 xl:static xl:translate-x-0 xl:contents">
             <div className="inline-flex items-center gap-4">
               {NAV_ITEMS.map((item) => (
                 <a
