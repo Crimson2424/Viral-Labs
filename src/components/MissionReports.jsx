@@ -1,5 +1,6 @@
 import { useRef, useState, useCallback, useEffect } from "react";
 import { gsap, SplitText, ScrollTrigger, useGSAP } from "../components/Gsapconfig";
+import GlobalTexture from "./Globaltexture";
 
 /* ─── Glow Line Blur Values (matches site pattern) ─── */
 const LINE_BLURS = [0.5, 0.5, 3, 3, 5.5];
@@ -494,6 +495,8 @@ export default function MissionReports() {
       <div className="pointer-events-none absolute top-0 right-0 w-px h-full bg-white/20 z-50" aria-hidden="true" />
       <div className="pointer-events-none absolute top-0 left-0 right-0 h-px bg-white/20 z-50" aria-hidden="true" />
       <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-px bg-white/20 z-50" aria-hidden="true" />
+
+      <GlobalTexture />
 
       <CornerLeft className="pointer-events-none absolute z-50 top-0 left-0 -translate-y-1/2" />
       <CornerRight className="pointer-events-none absolute z-50 top-0 right-0 -translate-y-1/2" />

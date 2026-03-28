@@ -2,6 +2,7 @@ import { useRef } from "react";
 import GlobalGrid from "./Globalgrid";
 import { gsap, ScrollTrigger, SplitText, useGSAP } from "../components/Gsapconfig";
 import { viralityState } from "./Viralitystate";
+import GlobalTexture from "./Globaltexture";
 
 const LINE_BLURS = [0.5, 0.5, 3, 3, 5.5];
 const CUBE_BLURS = [0, 5, 5];
@@ -308,6 +309,7 @@ export default function ViralitySection({ globeContainerRef }) {
       </div>
 
       <GlobalGrid />
+      <GlobalTexture />
 
       <div className="pointer-events-none absolute top-0 left-[105px] w-px h-full bg-white/20 z-30" aria-hidden="true" />
       <div className="pointer-events-none absolute top-0 right-[105px] w-px h-full bg-white/20 z-30" aria-hidden="true" />

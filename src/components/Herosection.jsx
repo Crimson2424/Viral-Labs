@@ -28,6 +28,7 @@ import { transitionState } from "./Transitionstate";
 import { entranceState } from "./Entrancestate";
 import MissionStats from "./Missionstats";
 import { loadingState } from "./Loadingstate";
+import GlobalTexture from "./Globaltexture";
 
 export default function HeroSection() {
   const sectionRef = useRef();
@@ -511,6 +512,8 @@ export default function HeroSection() {
     >
       {/* ═══ GlobalGrid — inside the section so it scrolls with the pin ═══ */}
       <GlobalGrid animated navOffset />
+
+      <GlobalTexture />
 
       {/* ═══ Hero Content ═══ */}
       <div

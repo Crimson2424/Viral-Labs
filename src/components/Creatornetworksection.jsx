@@ -17,6 +17,7 @@ import { gsap, ScrollTrigger, SplitText, useGSAP } from "./Gsapconfig";
 import GlobalGrid from "./Globalgrid";
 import { creatorGlobeState } from "./Creatorglobestate";
 import { NUDGE_3D, GLOBE_ENTRY_Y, GLOBE_ENTRY_X } from "./Globecanvas";
+import GlobalTexture from "./Globaltexture";
 
 /* ══════════════════════════════════════════════════════
    CONSTANTS
@@ -27,12 +28,12 @@ const SCRUB_SMOOTHING = 1.8;
 
 // Globe 3D offsets at CN start (after approach nudge)
 const CN_START_Y = GLOBE_ENTRY_Y - NUDGE_3D;  // e.g. 1.2 - 0.4 = 0.8
-const CN_START_X = GLOBE_ENTRY_X;              // e.g. 0.525
+const CN_START_X = GLOBE_ENTRY_X;              // e.g. 1.18
 
 // ┌─────────────────────────────────────────────────────┐
 // │  TUNE THESE — Globe final resting position in CN.   │
 // │  Y: more negative = higher on screen                │
-// │  X: 0 = left (child group's -1.05 takes effect)    │
+// │  X: 0 = left (child group's -1.18 takes effect)    │
 // └─────────────────────────────────────────────────────┘
 const CN_FINAL_Y = -0.1;
 const CN_FINAL_X = 0;
@@ -189,11 +190,10 @@ export default function CreatorNetworkSection() {
       className="creator-network-section relative z-25 w-full h-screen"
     >
       {/* <GlobalGrid /> */}
+      <GlobalTexture />
 
       <div className="absolute inset-0 overflow-hidden">
 
-        <div className="pointer-events-none absolute top-0 left-[105px] w-px h-full bg-white/20 z-30" aria-hidden="true" />
-        <div className="pointer-events-none absolute top-0 right-[105px] w-px h-full bg-white/20 z-30" aria-hidden="true" />
         <div className="pointer-events-none absolute bottom-0 left-[105px] right-[105px] h-px bg-white/20 z-30" aria-hidden="true" />
 
         {/* CN RIGHT-SIDE CONTENT */}

@@ -37,9 +37,9 @@ const NUDGE_3D = 0.4;
 // Rocket-phase end values — where the globe is when rocket section unpins.
 // Globe stays centered during rocket phase (no X shift).
 // Must match RocketLaunchSection: globeYOffset = GLOBE_3D_MID_Y (1.2),
-// globeXOffset stays at initial 1.05 (no tween moves it).
+// globeXOffset stays at initial 1.18 (no tween moves it).
 const GLOBE_ENTRY_Y = 1.2;
-const GLOBE_ENTRY_X = 1.05;  // globe stays centered — no X shift during rocket phase
+const GLOBE_ENTRY_X = 1.18;  // adjusted for full-width canvas (was 1.05)
 
 // Export for CN section to compute its start values.
 export { NUDGE_3D, GLOBE_ENTRY_Y, GLOBE_ENTRY_X };
@@ -196,7 +196,7 @@ export default function GlobeCanvas() {
   return (
     <div
       ref={containerRef}
-      className="fixed top-0 bottom-0 left-[105px] right-[105px] z-22"
+      className="fixed inset-0 z-27"
       style={{ opacity: 0, pointerEvents: "none" }}
     >
       <Canvas
@@ -206,7 +206,7 @@ export default function GlobeCanvas() {
         style={{ width: "100%", height: "100%", pointerEvents: "none" }}
       >
         <CreatorGlobeOffsetGroup>
-          <group position={[-1.05, -0.25, 0.73]} rotation={[-0.2, 0.64, 1.23]}>
+          <group position={[-1.18, -0.25, 0.73]} rotation={[-0.2, 0.64, 1.23]}>
             <CreatorGlobe containerRef={containerRef} />
           </group>
         </CreatorGlobeOffsetGroup>

@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { gsap, SplitText, useGSAP } from "./Gsapconfig";
 import GlobalGrid from "./Globalgrid";
+import GlobalTexture from "./Globaltexture";
 
 // ── Orange corner marker SVGs ──
 
@@ -240,6 +241,7 @@ export default function CoreOperations() {
     >
       {/* ── Background grid mesh ── */}
       <GlobalGrid />
+      <GlobalTexture />
 
       {/* ── Container ── */}
       <div className="relative mx-auto w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem]">

@@ -12,6 +12,7 @@ import { gsap, ScrollTrigger, SplitText, useGSAP } from "./Gsapconfig";
 import GlobalGrid from "./Globalgrid";
 import { CubesSvg, GlowLineSvg, RocketThrustersSvg } from "./Svgassets";
 import { creatorGlobeState } from "./Creatorglobestate";
+import GlobalTexture from "./Globaltexture";
 
 /* ══════════════════════════════════════════════════════
    CONSTANTS
@@ -31,7 +32,7 @@ const ROCKET_FULL_SCALE = 0.8;
 
 const GLOBE_3D_START_Y = 1.3;
 const GLOBE_3D_MID_Y = 1.2;
-const GLOBE_3D_START_X = 1.05;
+const GLOBE_3D_START_X = 1.18;  // adjusted for full-width canvas (was 1.05)
 
 const SCROLL_LENGTH = "+=500%";
 const SCRUB_SMOOTHING = 1.8;
@@ -300,11 +301,8 @@ export default function RocketLaunchSection() {
     <section ref={sectionRef} className="rocket-launch-section relative z-25 w-full h-screen">
       {/* <GlobalGrid /> */}
 
+      <GlobalTexture />
       <div className="absolute inset-0 overflow-hidden">
-
-        <div className="pointer-events-none absolute top-0 left-[105px] w-px h-full bg-white/20 z-30" aria-hidden="true" />
-        <div className="pointer-events-none absolute top-0 right-[105px] w-px h-full bg-white/20 z-30" aria-hidden="true" />
-        {/* <div className="pointer-events-none absolute top-0 left-[105px] right-[105px] h-px bg-white/20 z-30" aria-hidden="true" /> */}
 
         {/* ROCKET ASSEMBLY — stays centered */}
         <div

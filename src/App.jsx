@@ -152,7 +152,6 @@ const App = () => {
       <RocketLaunchSection />
       <CreatorNetworkSection />
       <DummySection />
-      <GlobalTexture />
     </main>
   );
 };
