@@ -464,10 +464,10 @@ export default function HeroSection() {
     <>
     <style>{`
       /* ── Hide GridOverlay's hardcoded lines — replaced by container-edge lines ── */
-      .grid-line-left,
-      .grid-line-right,
-      .grid-line-top,
-      .grid-crosshair {
+      .grid-line-left:not(.hero-grid),
+      .grid-line-right:not(.hero-grid),
+      .grid-line-top:not(.hero-grid),
+      .grid-crosshair:not(.hero-grid) {
         display: none !important;
       }
 
@@ -523,12 +523,12 @@ export default function HeroSection() {
           {/* ── Container (matches MissionStats/CoreOperations/MissionReports) ── */}
           <div className="relative mx-auto w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem] h-full">
 
-            {/* Crosshair lines at container edges */}
-            <div className="pointer-events-none absolute inset-y-0 left-0 w-px bg-white/20 z-50" aria-hidden="true" />
-            <div className="pointer-events-none absolute inset-y-0 right-0 w-px bg-white/20 z-50" aria-hidden="true" />
-            <div className="pointer-events-none absolute top-[56px] left-0 right-0 h-px bg-white/20 z-50" aria-hidden="true" />
-            <GridCrosshair className="pointer-events-none absolute top-[52px] -left-1 z-50" aria-hidden="true" />
-            <GridCrosshair className="pointer-events-none absolute top-[52px] -right-1 z-50" aria-hidden="true" />
+            {/* Crosshair lines at container edges (hero-grid class prevents CSS hide) */}
+            <div className="hero-grid grid-line-left pointer-events-none absolute inset-y-0 left-0 w-px bg-white/20 z-50" aria-hidden="true" />
+            <div className="hero-grid grid-line-right pointer-events-none absolute inset-y-0 right-0 w-px bg-white/20 z-50" aria-hidden="true" />
+            <div className="hero-grid grid-line-top pointer-events-none absolute top-[56px] left-0 right-0 h-px bg-white/20 z-50" aria-hidden="true" />
+            <GridCrosshair className="hero-grid grid-crosshair pointer-events-none absolute top-[52px] -left-1 z-50" aria-hidden="true" />
+            <GridCrosshair className="hero-grid grid-crosshair pointer-events-none absolute top-[52px] -right-1 z-50" aria-hidden="true" />
 
             <div className="relative z-40 flex flex-col items-start justify-center md:items-center h-full pt-14 pl-3 md:pl-0">
               <div className="mb-6 h-[30px] hidden md:block" />

@@ -188,6 +188,13 @@ export default function Navbar({ entranceDelay = 0.3 }) {
         linesClass: "line",
       });
       gsap.set(logoSplit.lines, { yPercent: 110 });
+      logoSplit.lines.forEach((line) => {
+        const maskWrapper = line.parentElement;
+        if (maskWrapper && maskWrapper !== logoTextRef.current) {
+          maskWrapper.style.overflowX = "visible";
+          maskWrapper.style.overflowY = "clip";
+        }
+      });
 
       // ── Nav links + CTA — inner mask wrappers ──
       const linkInners = navRef.current.querySelectorAll(".nav-link-inner");
@@ -512,7 +519,7 @@ export default function Navbar({ entranceDelay = 0.3 }) {
       >
         <nav
           ref={navRef}
-          className="relative flex items-center justify-between md:inline-flex md:justify-center gap-4 md:gap-6 lg:gap-9 px-4 md:px-5 py-1 overflow-hidden w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] md:w-auto"
+          className="relative flex items-center justify-between gap-4 px-4 md:px-5 py-1 overflow-hidden w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] md:w-[95%] md:max-w-[calc(100%-clamp(2.5rem,10vw,13.125rem))]"
           style={navStyle}
         >
           {/* ── Logo ── */}
@@ -537,31 +544,32 @@ export default function Navbar({ entranceDelay = 0.3 }) {
             </span>
           </a>
 
-          {/* ── Nav Links ── */}
-          <div className="hidden md:inline-flex md:items-center md:gap-4">
-            {NAV_ITEMS.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                onClick={(e) => {
-                  e.preventDefault();
-                  setActiveNav(item.label);
-                }}
-                className="nav-link-item relative inline-flex items-center font-bricolage font-light text-white text-sm text-center tracking-[-0.56px] leading-none"
-                style={fontStyle}
-                aria-current={activeNav === item.label ? "page" : undefined}
-              >
-                <span className="text-clip">
-                  <span className="nav-link-inner inline-block">
-                    <CharSpans text={item.label} />
+          {/* ── Center Group: Nav Links + CTA (absolutely centered on md+) ── */}
+          <div className="hidden md:flex md:absolute md:left-1/2 md:-translate-x-1/2 md:items-center md:gap-4 lg:gap-6">
+            <div className="inline-flex items-center gap-4">
+              {NAV_ITEMS.map((item) => (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setActiveNav(item.label);
+                  }}
+                  className="nav-link-item relative inline-flex items-center font-bricolage font-light text-white text-sm text-center tracking-[-0.56px] leading-none"
+                  style={fontStyle}
+                  aria-current={activeNav === item.label ? "page" : undefined}
+                >
+                  <span className="text-clip">
+                    <span className="nav-link-inner inline-block">
+                      <CharSpans text={item.label} />
+                    </span>
                   </span>
-                </span>
-              </a>
-            ))}
-          </div>
+                </a>
+              ))}
+            </div>
 
-          {/* ── CTA Button with Glow ── */}
-          <div className="hidden md:relative md:inline-flex md:items-center md:justify-center md:py-0">
+            {/* ── CTA Button with Glow ── */}
+            <div className="relative inline-flex items-center justify-center py-0">
             <a
               ref={ctaItemRef}
               href="#go-viral"
@@ -591,6 +599,7 @@ export default function Navbar({ entranceDelay = 0.3 }) {
               ref={glowLineRef}
               className="absolute bottom-0 -left-2 w-[calc(100%+16px)] pointer-events-none"
             />
+            </div>
           </div>
 
           {/* ── Sound Wave + Hamburger (grouped on mobile) ── */}
