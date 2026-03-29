@@ -465,10 +465,10 @@ export default function HeroSection() {
     <>
     <style>{`
       /* ── Hide GridOverlay's hardcoded lines — replaced by container-edge lines ── */
-      .grid-line-left,
-      .grid-line-right,
-      .grid-line-top,
-      .grid-crosshair {
+      .grid-line-left:not(.hero-grid),
+      .grid-line-right:not(.hero-grid),
+      .grid-line-top:not(.hero-grid),
+      .grid-crosshair:not(.hero-grid) {
         display: none !important;
       }
 
@@ -504,6 +504,16 @@ export default function HeroSection() {
           max-width: 75% !important;
         }
       }
+
+      @media (min-width: 160rem) {
+        .hero-heading {
+          font-size: clamp(8.125rem, 6.5vw, 10rem) !important;
+        }
+        .mission-text {
+          font-size: clamp(3.125rem, 2.8vw, 4.5rem) !important;
+          max-width: 80% !important;
+        }
+      }
     `}</style>
     <section
       ref={sectionRef}
@@ -526,15 +536,15 @@ export default function HeroSection() {
           {/* ── Container (matches MissionStats/CoreOperations/MissionReports) ── */}
           <div className="relative mx-auto w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem] h-full">
 
-            {/* Crosshair lines at container edges */}
-            <div className="pointer-events-none absolute inset-y-0 left-0 w-px bg-white/20 z-50" aria-hidden="true" />
-            <div className="pointer-events-none absolute inset-y-0 right-0 w-px bg-white/20 z-50" aria-hidden="true" />
-            <div className="pointer-events-none absolute top-[56px] left-0 right-0 h-px bg-white/20 z-50" aria-hidden="true" />
-            <GridCrosshair className="pointer-events-none absolute top-[52px] -left-1 z-50" aria-hidden="true" />
-            <GridCrosshair className="pointer-events-none absolute top-[52px] -right-1 z-50" aria-hidden="true" />
+            {/* Crosshair lines at container edges (hero-grid class prevents CSS hide) */}
+            <div className="hero-grid grid-line-left pointer-events-none absolute inset-y-0 left-0 w-px bg-white/20 z-50" aria-hidden="true" />
+            <div className="hero-grid grid-line-right pointer-events-none absolute inset-y-0 right-0 w-px bg-white/20 z-50" aria-hidden="true" />
+            <div className="hero-grid grid-line-top pointer-events-none absolute top-[56px] left-0 right-0 h-px bg-white/20 z-50" aria-hidden="true" />
+            <GridCrosshair className="hero-grid grid-crosshair pointer-events-none absolute top-[52px] -left-1 z-50" aria-hidden="true" />
+            <GridCrosshair className="hero-grid grid-crosshair pointer-events-none absolute top-[52px] -right-1 z-50" aria-hidden="true" />
 
             <div className="relative z-40 flex flex-col items-start justify-center md:items-center h-full pt-14 pl-3 md:pl-0">
-              <div className="mb-6 h-[30px] hidden md:block" />
+              <div className="mb-6 h-[30px] 4xl:h-[50px] 5xl:h-[70px] hidden md:block" />
 
               <h1
                 ref={headingRef}
@@ -569,7 +579,7 @@ export default function HeroSection() {
 
               <p
                 ref={subheadingRef}
-                className="hero-subheading font-host text-base text-[#a1a1aa] text-left md:text-center tracking-[-0.32px] leading-tight max-w-[75%] md:max-w-[540px] mb-5"
+                className="hero-subheading font-host text-base 4xl:text-lg 5xl:text-xl text-[#a1a1aa] text-left md:text-center tracking-[-0.32px] leading-tight max-w-[75%] md:max-w-[540px] 4xl:max-w-[700px] 5xl:max-w-[800px] mb-5"
               >
                 We build short-form content systems that turn attention into
                 installs consistently, at scale, without relying on luck.
@@ -580,7 +590,7 @@ export default function HeroSection() {
                 <a
                   href="#results"
                   onMouseEnter={handleCtaHover}
-                  className="relative flex items-center justify-center gap-3 w-40 h-10 px-1.5 py-2 overflow-visible hover:bg-white/10 transition-colors duration-300"
+                  className="relative flex items-center justify-center gap-3 w-40 h-10 4xl:w-48 4xl:h-12 5xl:w-52 5xl:h-14 px-1.5 py-2 overflow-visible hover:bg-white/10 transition-colors duration-300"
                 >
                   <svg
                     className="cta-border absolute"
@@ -597,7 +607,7 @@ export default function HeroSection() {
                       vectorEffect="non-scaling-stroke"
                     />
                   </svg>
-                  <span className="cta-text font-host font-medium text-base text-white text-center tracking-[-0.32px] leading-normal whitespace-nowrap">
+                  <span className="cta-text font-host font-medium text-base 4xl:text-lg 5xl:text-xl text-white text-center tracking-[-0.32px] leading-normal whitespace-nowrap">
                     Viral Results
                   </span>
                   <span className="cta-arrow" style={{ display: "inline-flex", alignItems: "center" }}>
@@ -623,7 +633,7 @@ export default function HeroSection() {
               </div>
               <div className="overflow-hidden">
                 <div className="cta-sub flex flex-col items-center">
-                  <span className="font-host text-xs text-[#a1a1aa] text-center tracking-[-0.24px] leading-normal -mb-1">
+                  <span className="font-host text-xs 4xl:text-sm 5xl:text-base text-[#a1a1aa] text-center tracking-[-0.24px] leading-normal -mb-1">
                     Real missions. Real outcomes.
                   </span>
                   <CtaGlowLine className="cta-glow-svg pointer-events-none" />
