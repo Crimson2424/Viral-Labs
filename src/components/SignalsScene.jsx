@@ -2,12 +2,11 @@
  * SignalsScene — R3F scene for the "Stream of Data" signals visualization.
  *
  * Converted from vanilla Three.js (codepen) to R3F hooks pattern.
- * Runs inside a <View> in the shared Canvas.
+ * Runs inside a standalone SignalsCanvas with bloom.
  *
  * Architecture:
- *   - Background lines: 80 static THREE.Line objects (no wave animation)
+ *   - Background lines: 80 THREE.Line objects animated with wave per frame
  *   - Signal trails: 53 animated THREE.Line objects with vertex colors
- *   - Additive blending on signals replaces bloom post-processing
  *   - All objects managed imperatively via group ref for performance
  *
  * Config values tuned from the codepen's lil-gui settings.
@@ -25,11 +24,11 @@ const CONFIG = {
   // Geometry
   lineCount: 80,
   segmentCount: 150,
-  positionX: -25,
-  positionY: 0,
-  spreadHeight: 35.82,
+  positionX: -5,
+  positionY: 2,
+  spreadHeight: 38.07,
   spreadDepth: 0,
-  curveLength: 52.52,
+  curveLength: 60.58,
   straightLength: 113.76,
   curvePower: 1.0382,
 
@@ -37,12 +36,12 @@ const CONFIG = {
   colorLine: "#2d2e2e",
   lineOpacity: 0.742,
 
-  // Wave (disabled — static lines)
-  waveSpeed: 0,
-  waveHeight: 0,
+  // Wave
+  waveSpeed: 1.06,
+  waveHeight: 0.515,
 
   // Signals
-  signalCount: 53,
+  signalCount: 73,
   speedGlobal: 0.603,
   trailLength: 26,
   colorSignal: "#ff6f21",
@@ -58,17 +57,19 @@ const CONFIG = {
 
 /**
  * Compute a point along a line's path.
- * Left side (x < 0) fans out with cosine shaping.
+ * Left side (x < 0) fans out with cosine shaping + wave animation.
  * Right side (x >= 0) is a straight horizontal line at y=0.
  *
  * @param {number} t — 0..1 progress along path
  * @param {number} lineIndex — which line (0..lineCount-1)
  * @param {number[]} out — [x, y, z] output array (mutated)
+ * @param {number} time — elapsed time for wave animation
  */
-function getPathPoint(t, lineIndex, out) {
+function getPathPoint(t, lineIndex, out, time) {
   const {
     curveLength, straightLength, lineCount,
     spreadHeight, spreadDepth, curvePower,
+    waveSpeed, waveHeight,
   } = CONFIG;
 
   const totalLen = curveLength + straightLength;
@@ -84,6 +85,10 @@ function getPathPoint(t, lineIndex, out) {
 
     y = spreadFactor * spreadHeight * shapeFactor;
     z = spreadFactor * spreadDepth * shapeFactor;
+
+    // Wave animation — only on curved section, strength follows shape
+    const wave = Math.sin(time * waveSpeed + currentX * 0.1 + lineIndex) * waveHeight * shapeFactor;
+    y += wave;
   }
 
   out[0] = currentX;
@@ -97,6 +102,7 @@ function getPathPoint(t, lineIndex, out) {
 
 export default function SignalsScene() {
   const groupRef = useRef();
+  const bgLinesRef = useRef([]);
   const signalsRef = useRef([]);
   const colorsRef = useRef([]);
 
@@ -113,7 +119,7 @@ export default function SignalsScene() {
     const pt = [0, 0, 0];
     const createdObjects = [];
 
-    /* ── Background lines (static — computed once) ── */
+    /* ── Background lines ── */
     const bgMat = new THREE.LineBasicMaterial({
       color: CONFIG.colorLine,
       transparent: true,
@@ -122,11 +128,14 @@ export default function SignalsScene() {
     });
     createdObjects.push(bgMat);
 
+    const bgLines = [];
+
     for (let i = 0; i < CONFIG.lineCount; i++) {
       const positions = new Float32Array(CONFIG.segmentCount * 3);
 
+      // Initial positions (will be updated every frame with wave)
       for (let j = 0; j < CONFIG.segmentCount; j++) {
-        getPathPoint(j / (CONFIG.segmentCount - 1), i, pt);
+        getPathPoint(j / (CONFIG.segmentCount - 1), i, pt, 0);
         positions[j * 3] = pt[0];
         positions[j * 3 + 1] = pt[1];
         positions[j * 3 + 2] = pt[2];
@@ -137,9 +146,13 @@ export default function SignalsScene() {
 
       const line = new THREE.Line(geo, bgMat);
       line.renderOrder = 0;
+      line.userData = { id: i };
       group.add(line);
       createdObjects.push(geo, line);
+      bgLines.push(line);
     }
+
+    bgLinesRef.current = bgLines;
 
     /* ── Signal colors ── */
     const sigColors = [new THREE.Color(CONFIG.colorSignal)];
@@ -150,7 +163,7 @@ export default function SignalsScene() {
     /* ── Signal trail lines (animated per frame) ── */
     const sigMat = new THREE.LineBasicMaterial({
       vertexColors: true,
-    //   blending: THREE.AdditiveBlending,
+      blending: THREE.AdditiveBlending,
       depthWrite: false,
       depthTest: false,
       transparent: true,
@@ -189,6 +202,7 @@ export default function SignalsScene() {
     /* ── Cleanup ── */
     return () => {
       signalsRef.current = [];
+      bgLinesRef.current = [];
       createdObjects.forEach((obj) => {
         if (obj.isLine) group.remove(obj);
         if (obj.dispose) obj.dispose();
@@ -196,11 +210,30 @@ export default function SignalsScene() {
     };
   }, []);
 
-  /* ── Animate signals every frame ── */
-  useFrame(() => {
+  /* ── Animate background lines + signals every frame ── */
+  useFrame(({ clock }) => {
+    const time = clock.getElapsedTime();
+    const pt = tempPt;
+
+    /* ── Update background lines with wave ── */
+    const bgLines = bgLinesRef.current;
+    for (let i = 0; i < bgLines.length; i++) {
+      const line = bgLines[i];
+      const posArr = line.geometry.attributes.position.array;
+      const lineId = line.userData.id;
+
+      for (let j = 0; j < CONFIG.segmentCount; j++) {
+        getPathPoint(j / (CONFIG.segmentCount - 1), lineId, pt, time);
+        posArr[j * 3] = pt[0];
+        posArr[j * 3 + 1] = pt[1];
+        posArr[j * 3 + 2] = pt[2];
+      }
+      line.geometry.attributes.position.needsUpdate = true;
+    }
+
+    /* ── Animate signals ── */
     const signals = signalsRef.current;
     const sigColors = colorsRef.current;
-    const pt = tempPt;
     const { trailLength, lineCount, speedGlobal } = CONFIG;
 
     for (let s = 0; s < signals.length; s++) {
@@ -217,8 +250,8 @@ export default function SignalsScene() {
         sig.color = sigColors[Math.floor(Math.random() * sigColors.length)];
       }
 
-      // Compute current position and push to flat history
-      getPathPoint(sig.progress, sig.laneIndex, pt);
+      // Compute current position with wave and push to flat history
+      getPathPoint(sig.progress, sig.laneIndex, pt, time);
       sig.history.push(pt[0], pt[1], pt[2]);
 
       // Trim history

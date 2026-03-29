@@ -2,85 +2,330 @@
  * SignalsSection — "Stream of Data" section.
  *
  * DOM layer for the signals visualization.
- * The R3F scene renders via a <View> in the shared Canvas,
- * tracked to the div that receives `viewRef`.
+ * The R3F scene renders via SignalsCanvas (standalone),
+ * which tracks this section's DOM element for positioning.
  *
  * Layout (from Figma):
  *   - Center: "STREAM OF DATA" subtitle + "Signals drive everything" heading
  *   - Bottom-right: "WHAT RESULTS CAN I EXPECT?" + input + disclaimer
+ *
+ * Text animations:
+ *   SplitText line reveal (mask + translateY) via ScrollTrigger.
+ *   Heading group animates first, bottom-right content follows.
  */
 
-import { useRef } from "react";
+import { useRef, useCallback } from "react";
+import { useGSAP } from "@gsap/react";
+import { gsap, SplitText, ScrollTrigger } from "./Gsapconfig";
 import GlobalTexture from "./Globaltexture";
+import { signalsCanvasState } from "./SignalsCanvas";
 
-export default function SignalsSection({ viewRef }) {
-  const sectionRef = useRef(null);
+/* ─── ASCII chars for scramble effect ─── */
+const ASCII_CHARS = "!@#$%^&*()_+-=[]{}|;:,.<>?/~`01";
 
-  return (
-    <section
-      ref={sectionRef}
-      className="signals-section relative z-25 w-full h-screen "
-    >
-      <GlobalTexture />
+/* ─── Corner bracket config ─── */
+const CORNER_SIZE = 8;
+const CORNER_THICKNESS = "1.7px";
+const CORNER_COLOR = "#FF6F21";
+const OFFSET_DEFAULT = -6;
+const OFFSET_HOVER = -10;
 
-      {/* R3F View tracking div — full section */}
-      <div ref={viewRef} className="absolute inset-0 z-10" />
+/* ─────────────────────────────────────────────
+   SignalsCTA — isolated button with hover effects
+   (same pattern as CornerBracketButton in MissionReports)
+   ───────────────────────────────────────────── */
+function SignalsCTA() {
+    const btnRef = useRef(null);
+    const tlCornerRef = useRef(null);
+    const trCornerRef = useRef(null);
+    const blCornerRef = useRef(null);
+    const brCornerRef = useRef(null);
+    const scrambleDataRef = useRef(null);
 
-      {/* DOM content overlay */}
-      <div className="absolute inset-0 z-40 pointer-events-none">
+    /* Set up SplitText on mount for char scramble */
+    useGSAP(
+        () => {
+            if (!btnRef.current) return;
+            const textEl = btnRef.current.querySelector(".cta-scramble-text");
+            if (!textEl) return;
 
-        {/* Center heading group */}
-        <div className="absolute top-[38%] left-[42%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
-          <p className="font-host text-sm text-[#FF6F21] uppercase tracking-wide mb-2">
-            STREAM OF DATA
-          </p>
-          <h2 className="font-host font-medium text-[54px] tracking-[-2px] leading-[56px] text-center text-white">
-            Signals drive<br />everything
-          </h2>
-        </div>
+            const split = SplitText.create(textEl, {
+                type: "chars",
+                charsClass: "btn-char",
+            });
 
-        {/* Bottom-right content */}
-        <div className="absolute bottom-[6%] right-[8%] flex flex-col items-end gap-3">
+            const chars = split.chars;
+            const originals = chars.map((c) => c.textContent);
 
-          {/* Results label */}
-          <div className="flex items-center gap-3">
-            <span className="font-host text-[10px] text-white/50 uppercase tracking-[0.15em]">
-              WHAT RESULTS CAN I EXPECT?
-            </span>
-            <div className="flex gap-1">
-              <span className="w-1.5 h-1.5 bg-[#FF6F21]" />
-              <span className="w-1.5 h-1.5 bg-[#FF6F21]" />
-              <span className="w-1.5 h-1.5 bg-[#FF6F21]" />
+            // Lock each char width so scramble doesn't cause layout shift
+            chars.forEach((char) => {
+                const w = char.offsetWidth;
+                char.style.display = "inline-block";
+                char.style.width = `${w}px`;
+                char.style.textAlign = "center";
+            });
+
+            scrambleDataRef.current = { chars, originals };
+        },
+        { scope: btnRef }
+    );
+
+    const handleEnter = useCallback(() => {
+        // Corners spread outward
+        gsap.to(tlCornerRef.current, { top: OFFSET_HOVER, left: OFFSET_HOVER, duration: 0.3, ease: "power2.out" });
+        gsap.to(trCornerRef.current, { top: OFFSET_HOVER, right: OFFSET_HOVER, duration: 0.3, ease: "power2.out" });
+        gsap.to(blCornerRef.current, { bottom: OFFSET_HOVER, left: OFFSET_HOVER, duration: 0.3, ease: "power2.out" });
+        gsap.to(brCornerRef.current, { bottom: OFFSET_HOVER, right: OFFSET_HOVER, duration: 0.3, ease: "power2.out" });
+
+        // Text scramble
+        const data = scrambleDataRef.current;
+        if (!data) return;
+        const { chars, originals } = data;
+        const tl = gsap.timeline();
+
+        chars.forEach((char, i) => {
+            const original = originals[i];
+            if (original.trim() === "") return;
+            const proxy = { progress: 0 };
+            tl.to(proxy, {
+                progress: 1,
+                duration: 0.3,
+                ease: "none",
+                onUpdate: () => {
+                    if (proxy.progress < 0.6) {
+                        char.textContent = ASCII_CHARS[Math.floor(Math.random() * ASCII_CHARS.length)];
+                    } else {
+                        char.textContent = original;
+                    }
+                },
+            }, i * 0.02);
+        });
+    }, []);
+
+    const handleLeave = useCallback(() => {
+        // Corners return
+        gsap.to(tlCornerRef.current, { top: OFFSET_DEFAULT, left: OFFSET_DEFAULT, duration: 0.3, ease: "power2.out" });
+        gsap.to(trCornerRef.current, { top: OFFSET_DEFAULT, right: OFFSET_DEFAULT, duration: 0.3, ease: "power2.out" });
+        gsap.to(blCornerRef.current, { bottom: OFFSET_DEFAULT, left: OFFSET_DEFAULT, duration: 0.3, ease: "power2.out" });
+        gsap.to(brCornerRef.current, { bottom: OFFSET_DEFAULT, right: OFFSET_DEFAULT, duration: 0.3, ease: "power2.out" });
+
+        // Reset chars to original
+        const data = scrambleDataRef.current;
+        if (!data) return;
+        data.chars.forEach((char, i) => {
+            char.textContent = data.originals[i];
+        });
+    }, []);
+
+    const cornerBase = { position: "absolute", width: CORNER_SIZE, height: CORNER_SIZE };
+
+    return (
+        <div
+            ref={btnRef}
+            className="signals-cta relative inline-block cursor-pointer"
+            onMouseEnter={handleEnter}
+            onMouseLeave={handleLeave}
+        >
+            {/* Animated orange corner brackets */}
+            <span ref={tlCornerRef} style={{ ...cornerBase, top: OFFSET_DEFAULT, left: OFFSET_DEFAULT, borderTop: `${CORNER_THICKNESS} solid ${CORNER_COLOR}`, borderLeft: `${CORNER_THICKNESS} solid ${CORNER_COLOR}` }} aria-hidden="true" />
+            <span ref={trCornerRef} style={{ ...cornerBase, top: OFFSET_DEFAULT, right: OFFSET_DEFAULT, borderTop: `${CORNER_THICKNESS} solid ${CORNER_COLOR}`, borderRight: `${CORNER_THICKNESS} solid ${CORNER_COLOR}` }} aria-hidden="true" />
+            <span ref={blCornerRef} style={{ ...cornerBase, bottom: OFFSET_DEFAULT, left: OFFSET_DEFAULT, borderBottom: `${CORNER_THICKNESS} solid ${CORNER_COLOR}`, borderLeft: `${CORNER_THICKNESS} solid ${CORNER_COLOR}` }} aria-hidden="true" />
+            <span ref={brCornerRef} style={{ ...cornerBase, bottom: OFFSET_DEFAULT, right: OFFSET_DEFAULT, borderBottom: `${CORNER_THICKNESS} solid ${CORNER_COLOR}`, borderRight: `${CORNER_THICKNESS} solid ${CORNER_COLOR}` }} aria-hidden="true" />
+
+            {/* Beveled hollow border via clip-path */}
+            <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                    background: "rgba(255,255,255,0.45)",
+                    clipPath: "polygon(0 0,100% 0,100% calc(100% - 24px),calc(100% - 24px) 100%,0 100%,0 0,1px 1px,1px calc(100% - 1px),calc(100% - 24px - 0.62px) calc(100% - 1px),calc(100% - 1px) calc(100% - 24px - 0.62px),calc(100% - 1px) 1px,1px 1px)",
+                }}
+            />
+
+            <div className="relative px-4.5 py-3.5">
+                <span className="cta-scramble-text font-host font-thin text-sm text-white uppercase tracking-tight">
+                    ASK ABOUT THE SYSTEM …
+                </span>
             </div>
-          </div>
-
-          {/* Input field with corner brackets */}
-          <div className="relative pointer-events-auto px-5 py-3 w-[300px] border border-white/15">
-            <svg className="absolute top-0 left-0" width="10" height="10" viewBox="0 0 10 10" fill="none">
-              <path d="M9.36328 0.5H0.5V9.45225" stroke="#FF6F21" />
-            </svg>
-            <svg className="absolute top-0 right-0 scale-x-[-1]" width="10" height="10" viewBox="0 0 10 10" fill="none">
-              <path d="M9.36328 0.5H0.5V9.45225" stroke="#FF6F21" />
-            </svg>
-            <svg className="absolute bottom-0 left-0 scale-y-[-1]" width="10" height="10" viewBox="0 0 10 10" fill="none">
-              <path d="M9.36328 0.5H0.5V9.45225" stroke="#FF6F21" />
-            </svg>
-            <svg className="absolute bottom-0 right-0 scale-[-1]" width="10" height="10" viewBox="0 0 10 10" fill="none">
-              <path d="M9.36328 0.5H0.5V9.45225" stroke="#FF6F21" />
-            </svg>
-            <span className="font-host text-xs text-white/40 uppercase tracking-[0.15em]">
-              ASK ABOUT THE SYSTEM …
-            </span>
-          </div>
-
-          {/* Disclaimer */}
-          <p className="font-host text-[8px] text-white/30 uppercase tracking-[0.1em] text-right max-w-[300px] leading-relaxed">
-            SESSIONS MAY BE RECORDED. BY USING CHAT,<br />
-            YOU ACKNOWLEDGE OUR PRIVACY POLICY.
-          </p>
         </div>
+    );
+}
 
-      </div>
-    </section>
-  );
+/* ─────────────────────────────────────────────
+   SignalsSection
+   ───────────────────────────────────────────── */
+export default function SignalsSection() {
+    const sectionRef = useRef(null);
+    const headingGroupRef = useRef(null);
+    const bottomGroupRef = useRef(null);
+    const ctaRef = useRef(null);
+
+    /* Register section element for SignalsCanvas scroll tracking */
+    useGSAP(() => {
+        signalsCanvasState.sectionEl = sectionRef.current;
+        return () => {
+            signalsCanvasState.sectionEl = null;
+        };
+    }, []);
+
+    /* ── Text reveal animations ── */
+    useGSAP(
+        () => {
+            if (!headingGroupRef.current || !bottomGroupRef.current) return;
+
+            const splitInstances = [];
+
+            /* ── 1. Heading group: subtitle + h2 ── */
+            const headingEls = Array.from(headingGroupRef.current.children);
+            const headingLines = [];
+
+            headingEls.forEach((el) => {
+                const split = SplitText.create(el, {
+                    type: "lines",
+                    mask: "lines",
+                    linesClass: "line++",
+                    lineThreshold: 0.1,
+                });
+                splitInstances.push(split);
+
+                // Give masked lines room for descenders without changing line-height
+                split.lines.forEach((line) => {
+                    line.style.paddingBottom = "6px";
+                });
+
+                headingLines.push(...split.lines);
+            });
+
+            // Set initial state (below the mask)
+            gsap.set(headingLines, { y: "100%" });
+
+            // Animate into view
+            gsap.to(headingLines, {
+                y: "0%",
+                duration: 1,
+                stagger: 0.1,
+                ease: "power4.out",
+                scrollTrigger: {
+                    trigger: headingGroupRef.current,
+                    start: "top 75%",
+                    once: true,
+                },
+            });
+
+            /* ── 2. Bottom-right group: label + disclaimer (skip .signals-cta) ── */
+            const bottomEls = Array.from(bottomGroupRef.current.children);
+            const bottomLines = [];
+
+            bottomEls.forEach((el) => {
+                // Skip the CTA wrapper — it has its own entrance + hover logic
+                if (el === ctaRef.current) return;
+
+                const split = SplitText.create(el, {
+                    type: "lines",
+                    mask: "lines",
+                    linesClass: "line++",
+                    lineThreshold: 0.1,
+                });
+                splitInstances.push(split);
+                bottomLines.push(...split.lines);
+            });
+
+            // Set initial state
+            gsap.set(bottomLines, { y: "100%", opacity: 0 });
+
+            // Animate into view (delayed so heading finishes first)
+            gsap.to(bottomLines, {
+                y: "0%",
+                opacity: 1,
+                duration: 1,
+                stagger: 0.1,
+                ease: "power4.out",
+                delay: 0.3,
+                scrollTrigger: {
+                    trigger: bottomGroupRef.current,
+                    start: "top 85%",
+                    once: true,
+                },
+            });
+
+            /* ── 3. CTA button entrance ── */
+            if (ctaRef.current) {
+                gsap.set(ctaRef.current, { opacity: 0, y: 20 });
+                gsap.to(ctaRef.current, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.8,
+                    ease: "power4.out",
+                    delay: 0.5,
+                    scrollTrigger: {
+                        trigger: bottomGroupRef.current,
+                        start: "top 85%",
+                        once: true,
+                    },
+                });
+            }
+
+            // Cleanup: revert all SplitText instances
+            return () => {
+                splitInstances.forEach((split) => split && split.revert());
+            };
+        },
+        { scope: sectionRef }
+    );
+
+    return (
+        <section
+            ref={sectionRef}
+            className="signals-section relative z-25 w-full h-[130vh] "
+        >
+            <GlobalTexture />
+
+            {/* DOM content overlay */}
+            <div className="absolute inset-0 z-40 pointer-events-none">
+
+                {/* Center heading group */}
+                <div
+                    ref={headingGroupRef}
+                    className="absolute top-[36%] left-[48%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center"
+                >
+                    <p className="font-host self-start text-sm text-[#FF6F21] uppercase tracking-wide">
+                        STREAM OF DATA
+                    </p>
+                    <h2 className="font-host text-[54px] tracking-[-2px] leading-[56px] text-white">
+                        Signals drive<br />everything
+                    </h2>
+                </div>
+
+                {/* Bottom-right content — pointer-events-auto so CTA is interactive */}
+                <div
+                    ref={bottomGroupRef}
+                    className="absolute bottom-[22%] right-[8%] flex flex-col items-end gap-4 pointer-events-auto"
+                >
+
+                    {/* Results label */}
+                    <div className="flex flex-col items-end gap-1 mb-6 pointer-events-none">
+                        <span className="font-host text-sm font-thin text-white/50 uppercase tracking-tight">
+                            WHAT RESULTS CAN I EXPECT?
+                        </span>
+                        <div className="flex gap-1">
+                            <span className="w-2 h-3 bg-[#FF6F21]" />
+                            <span className="w-2 h-3 bg-[#FF6F21]/70" />
+                            <span className="w-2 h-3 bg-[#FF6F21]/45" />
+                        </div>
+                    </div>
+
+                    {/* CTA button */}
+                    <div ref={ctaRef}>
+                        <SignalsCTA />
+                    </div>
+
+                    {/* Disclaimer */}
+                    <p className="font-host font-thin text-[12px] text-white/50 uppercase tracking-tight max-w-[300px] leading-tight pointer-events-none">
+                        SESSIONS MAY BE RECORDED. BY USING CHAT,<br />
+                        YOU ACKNOWLEDGE OUR <span className="underline">PRIVACY POLICY</span>.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+    );
 }

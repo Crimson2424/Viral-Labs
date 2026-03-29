@@ -12,17 +12,14 @@ import GlobeContent from "./components/Globescene";
 import GlobeCanvas from "./components/Globecanvas";
 import ViralitySection from "./components/Viralitysection";
 import PlaybookSection from "./components/PlaybookSection";
-// import ViralEngineSection from "./components/ViralEngineSection";
-// import BridgeTestimonial from "./components/BridgeTestimonial";
 import CoreOperations from "./components/CoreOperations";
 import GlobalGrid from "./components/Globalgrid";
-// import { loadingState } from "./components/loadingState";
 import { entranceState } from "./components/Entrancestate";
 import RocketLaunchSection from "./components/Rocketlaunchsection";
 import CreatorNetworkSection from "./components/Creatornetworksection";
 import MissionReports from "./components/MissionReports";
 import SignalsSection from "./components/SignalsSection";
-import SignalsScene from "./components/SignalsScene";
+import SignalsCanvas from "./components/SignalsCanvas";
 
 function DummySection() {
   return (
@@ -68,9 +65,8 @@ const App = () => {
   const lenisRef = useRef(null);
   const containerRef = useRef(null);
 
-  // View tracking refs
+  // View tracking ref — only the GPGPU globe uses the shared Canvas now
   const globeContainerRef = useRef(null);
-  const signalsContainerRef = useRef(null);
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -113,7 +109,7 @@ const App = () => {
       <LoadingScreen videoSrc="/videos/loader.webm" />
       <GlobalCanvas />
 
-      {/* Shared Canvas — GPGPU globe + Signals Views */}
+      {/* Shared Canvas — only GPGPU globe View remains here */}
       <Canvas
         eventSource={containerRef}
         eventPrefix="client"
@@ -139,28 +135,21 @@ const App = () => {
           <PerspectiveCamera makeDefault position={[0, 0, 3.5]} fov={45} />
           <GlobeContent containerRef={globeContainerRef} />
         </View>
-
-        {/* Signals visualization — tracks SignalsSection container */}
-        <View track={signalsContainerRef}>
-          <PerspectiveCamera makeDefault position={[0, 0, 95]} fov={45} />
-          <SignalsScene />
-        </View>
       </Canvas>
 
       {/* Creator Globe — standalone fixed Canvas (3rd WebGL context) */}
       <GlobeCanvas />
 
+      {/* Signals — standalone fixed Canvas with bloom (4th WebGL context) */}
+      <SignalsCanvas />
+
       <HeroSection />
       <CoreOperations />
       <ViralitySection globeContainerRef={globeContainerRef} />
       <MissionReports />
-      {/* <PlaybookSection /> */}
-      {/* <BridgeTestimonial /> */}
-      {/* <ViralEngineSection /> */}
-      {/* <CreatorNetwork viewRef={creatorViewRef} /> */}
       <RocketLaunchSection />
       <CreatorNetworkSection />
-      <SignalsSection viewRef={signalsContainerRef} />
+      <SignalsSection />
       <DummySection />
     </main>
   );
