@@ -33,7 +33,7 @@
  */
 
 import { useRef, forwardRef, useImperativeHandle } from "react";
-import { gsap, ScrollTrigger, useGSAP } from "./Gsapconfig";
+import { gsap, ScrollTrigger, Draggable, useGSAP } from "./Gsapconfig";
 
 // ════════════════════════════════════════════════
 // SVGs
@@ -116,7 +116,30 @@ export default forwardRef(function MissionStats(props, ref) {
     if (setWidth <= 0) return;
 
     gsap.set(track, { x: 0 });
-    gsap.to(track, { x: -setWidth, duration: 20, ease: "none", repeat: -1 });
+
+    function createMarquee(startX) {
+      return gsap.fromTo(track,
+        { x: startX },
+        { x: startX - setWidth, duration: 20, ease: "none", repeat: -1 }
+      );
+    }
+
+    let marqueeTween = createMarquee(0);
+
+    // Touch drag/swipe on small screens
+    if (window.innerWidth < 640) {
+      Draggable.create(track, {
+        type: "x",
+        onDragStart: () => marqueeTween.kill(),
+        onDragEnd() {
+          // Wrap x into one setWidth range, then restart marquee from there
+          let x = parseFloat(gsap.getProperty(track, "x"));
+          x = ((x % setWidth) + setWidth) % setWidth;
+          if (x > 0) x -= setWidth;
+          marqueeTween = createMarquee(x);
+        },
+      });
+    }
   }, { scope: wrapperRef });
 
   // ── GSAP dashed arc rotation ──
@@ -325,36 +348,37 @@ export default forwardRef(function MissionStats(props, ref) {
 
   return (
     <div ref={wrapperRef} className="relative w-full min-h-screen overflow-visible">
+     <div className="relative mx-auto w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem] min-h-svh flex flex-col">
 
       {/* Grid lines */}
-      <div className="pointer-events-none absolute inset-y-0 left-[105px] w-px bg-white/20 z-30" aria-hidden="true" />
-      <div className="pointer-events-none absolute inset-y-0 right-[105px] w-px bg-white/20 z-30" aria-hidden="true" />
-      <div className="pointer-events-none absolute top-0 left-[105px] right-[105px] h-px bg-white/20 z-30" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-px bg-white/20 z-50" aria-hidden="true" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-px bg-white/20 z-50" aria-hidden="true" />
+      <div className="pointer-events-none absolute top-0 left-0 right-0 h-px bg-white/20 z-50" aria-hidden="true" />
 
-      <CornerLeft className="pointer-events-none absolute -top-0.5 left-[105px] z-30" />
-      <CornerRight className="pointer-events-none absolute -top-0.5 right-[105px] z-30" />
-      <CornerLeft className="pointer-events-none absolute -bottom-1 left-[105px] z-30" style={{ transform: "scaleY(-1)" }} />
-      <CornerRight className="pointer-events-none absolute -bottom-1 right-[105px] z-30" style={{ transform: "scaleY(-1)" }} />
+      <CornerLeft className="pointer-events-none absolute -top-0.5 left-0 z-50" />
+      <CornerRight className="pointer-events-none absolute -top-0.5 right-0 z-50" />
+      {/* <CornerLeft className="pointer-events-none absolute -bottom-1 left-0 z-50" style={{ transform: "scaleY(-1)" }} />
+      <CornerRight className="pointer-events-none absolute -bottom-1 right-0 z-50" style={{ transform: "scaleY(-1)" }} /> */}
 
       {/* ── Header ── */}
       <div
-        className="relative z-40 px-38"
+        className="relative z-40 px-[clamp(0.75rem,3vw,3rem)] max-sm:px-2 4xl:px-16 5xl:px-20"
         style={{ paddingTop: "clamp(3rem, 5.5vh, 5rem)" }}
       >
         <div
-          className="impact-header flex justify-between items-start"
+          className="impact-header flex flex-col gap-6 lg:flex-row lg:justify-between items-start max-sm:gap-6"
           style={{ marginBottom: "clamp(4rem, 9.5vh, 8.5rem)" }}
         >
-          <div className="flex flex-col gap-1 w-90">
-            <p className="impact-label font-bricolage font-normal text-base text-[#ff6f21] uppercase leading-normal"
+          <div className="flex flex-col gap-1 w-full lg:max-w-[22.5rem] 4xl:max-w-[28rem] 5xl:max-w-[34rem] max-sm:w-full">
+            <p className="impact-label font-bricolage font-normal text-base 4xl:text-lg 5xl:text-xl text-[#ff6f21] uppercase leading-normal"
               style={{ fontVariationSettings: "'opsz' 14, 'wdth' 100" }}>
               Performance deployed at scale
             </p>
-            <h2 className="impact-heading font-host font-medium text-[54px] text-[#f1f1f1] tracking-[-2.16px] leading-14">
+            <h2 className="impact-heading font-host font-medium text-[clamp(2rem,4.5vw,3.375rem)] max-sm:text-4xl 4xl:text-[4rem] 5xl:text-[5rem] text-[#f1f1f1] tracking-[-2.16px] leading-[1.1]">
               Proven Impact
             </h2>
           </div>
-          <p className="impact-desc font-host font-light text-base text-white tracking-tight leading-5 w-73 mt-12">
+          <p className="impact-desc font-host font-light text-base 4xl:text-lg 5xl:text-xl text-white tracking-tight leading-5 w-full lg:max-w-[18.25rem] 4xl:max-w-[24rem] 5xl:max-w-[28rem] lg:mt-12 max-sm:w-full max-sm:mt-0">
             simply dummy text of the printing and typesetting industry. Lorem
             Ipsum has been the industry's standard dummy text.
           </p>
@@ -363,15 +387,15 @@ export default forwardRef(function MissionStats(props, ref) {
 
       {/* ── Marquee ── */}
       <div
-        className="relative z-40 mx-26"
+        className="relative z-40 mx-0"
         style={{ marginBottom: "clamp(2.5rem, 5.5vh, 5rem)" }}
       >
-        <FrameCorner className="frame-corner absolute -top-5 -left-5 z-10 opacity-0" />
-        <FrameCorner className="frame-corner absolute -top-5 -right-5 z-10 opacity-0" style={{ transform: "scaleX(-1)" }} />
-        <FrameCorner className="frame-corner absolute -bottom-5 -left-5 z-10 opacity-0" style={{ transform: "scaleY(-1)" }} />
-        <FrameCorner className="frame-corner absolute -bottom-5 -right-5 z-10 opacity-0" style={{ transform: "scale(-1, -1)" }} />
+        <FrameCorner className="frame-corner absolute -top-5 left-0 max-sm:size-3.5 z-10 max-sm:z-51 opacity-0" />
+        <FrameCorner className="frame-corner absolute -top-5 right-0 max-sm:size-3.5 z-10 max-sm:z-51 opacity-0" style={{ transform: "scaleX(-1)" }} />
+        <FrameCorner className="frame-corner absolute -bottom-5 left-0 max-sm:size-3.5 z-10 max-sm:z-51 opacity-0" style={{ transform: "scaleY(-1)" }} />
+        <FrameCorner className="frame-corner absolute -bottom-5 right-0 max-sm:size-3.5 z-10 max-sm:z-51 opacity-0" style={{ transform: "scale(-1, -1)" }} />
 
-        <div className="relative overflow-hidden py-10">
+        <div className="relative overflow-hidden py-10 w-[99.5%] mx-auto">
           <div
             className="marquee-fade absolute inset-y-0 left-0 w-40 z-10 pointer-events-none opacity-0"
             style={{ background: "linear-gradient(to right, #121212 0%, transparent 100%)" }}
@@ -381,15 +405,15 @@ export default forwardRef(function MissionStats(props, ref) {
             style={{ background: "linear-gradient(to left, #121212 0%, transparent 100%)" }}
           />
 
-          <div ref={trackRef} className="flex w-max items-center">
+          <div ref={trackRef} className="flex w-max items-center max-sm:cursor-grab max-sm:active:cursor-grabbing">
             {["a", "b", "c", "d"].map((setKey) => (
-              <div key={setKey} className="marquee-set flex shrink-0 items-center justify-around gap-14" style={{ width: "calc(100vw - 210px)" }}>
+              <div key={setKey} className="marquee-set flex shrink-0 items-center justify-evenly gap-14 max-sm:gap-12" style={{ width: "max(calc(100vw - 13.125rem), 56.25rem)" }}>
                 {LOGOS.map((logo, i) => (
                   <img
                     key={`${setKey}-${i}`}
                     src={logo.src}
                     alt={logo.alt}
-                    className="screen-card h-15 w-auto object-contain opacity-0 grayscale brightness-75 transition-all duration-300 ease-out hover:brightness-150 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]"
+                    className="screen-card h-15 4xl:h-20 5xl:h-24 w-auto object-contain opacity-0 grayscale brightness-75 transition-all duration-300 ease-out hover:brightness-150 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]"
                   />
                 ))}
               </div>
@@ -399,28 +423,28 @@ export default forwardRef(function MissionStats(props, ref) {
       </div>
 
       {/* ── Quote + Stats ── */}
-      <div className="relative z-40 px-38 pb-10">
+      <div className="relative z-40 px-[clamp(0.75rem,3vw,3rem)] max-sm:px-2 4xl:px-16 5xl:px-20 pb-10 my-auto">
         <div
           className="flex justify-center"
           style={{ marginBottom: "clamp(2.5rem, 5.5vh, 5rem)" }}
         >
-          <p className="impact-quote font-host text-[40px] text-[#f1f1f1] text-center tracking-[-1.6px] leading-10 w-[419px]">
+          <p className="impact-quote font-host text-[clamp(1.5rem,3.3vw,2.5rem)] max-sm:text-2xl 4xl:text-[3rem] 5xl:text-[3.5rem] text-[#f1f1f1] text-center tracking-[-1.6px] leading-[1.1] w-full max-w-[26.25rem] 4xl:max-w-[32rem] 5xl:max-w-[38rem] max-sm:w-full">
             Performance isn't accidental. It's deployed.
           </p>
         </div>
 
         <div className="stats-arc relative flex flex-col items-center opacity-0 scale-90">
-          <div className="relative w-[1064px] h-[346px] overflow-hidden">
-            <DashedArc ref={arcRef} className="absolute left-0 top-1.5" />
-            <div className="absolute inset-0 flex flex-col items-center justify-center pt-14">
+          <div className="relative w-full max-w-[1064px] 4xl:max-w-[1300px] 5xl:max-w-[1500px] aspect-[1064/346] overflow-hidden max-sm:w-[115%]">
+            <DashedArc ref={arcRef} className="absolute left-0 top-1.5 w-full h-auto" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center pt-[clamp(1rem,2.5vw,3.5rem)] max-sm:pt-5">
               <div className="flex flex-col items-center gap-0 text-center">
 
-                <span className="stat-sub font-host font-medium text-sm text-[#ff6f21] tracking-tight leading-none opacity-0 translate-y-4">
+                <span className="stat-sub font-host font-medium text-sm 4xl:text-base 5xl:text-lg text-[#ff6f21] tracking-tight leading-none opacity-0 translate-y-4">
                   Views
                 </span>
 
                 <div
-                  className="stat-number flex items-center font-bricolage font-normal text-[88px] text-white tracking-[-5.28px] leading-none whitespace-nowrap opacity-0 translate-y-8"
+                  className="stat-number flex items-center font-bricolage font-normal text-[clamp(2.5rem,6vw,5.5rem)] max-sm:text-5xl 4xl:text-[6.5rem] 5xl:text-[8rem] text-white tracking-[-0.06em] max-sm:tracking-[-2px] leading-none whitespace-nowrap opacity-0 translate-y-8"
                   style={{ fontVariationSettings: "'opsz' 14, 'wdth' 100" }}
                 >
                   {[0, 1, 2].map((colIndex) => (
@@ -445,7 +469,7 @@ export default forwardRef(function MissionStats(props, ref) {
                   <span>M+</span>
                 </div>
 
-                <span className="stat-sub font-host font-medium text-lg text-white tracking-tight leading-none opacity-0 translate-y-4">
+                <span className="stat-sub font-host font-medium text-lg 4xl:text-xl 5xl:text-2xl text-white tracking-tight leading-none opacity-0 translate-y-4">
                   <span className="block overflow-hidden" style={{ height: "1.4em" }}>
                     <span ref={statLabelRef} className="block">
                       Viral Impressions
@@ -455,15 +479,16 @@ export default forwardRef(function MissionStats(props, ref) {
 
               </div>
 
-              <div className="flex gap-2 items-center mt-12">
-                <div ref={(el) => (dotsRef.current[0] = el)} className="stat-dot size-1.5 bg-[#ff6f21] opacity-0 scale-0" />
-                <div ref={(el) => (dotsRef.current[1] = el)} className="stat-dot size-1.5 bg-white opacity-0 scale-0" />
-                <div ref={(el) => (dotsRef.current[2] = el)} className="stat-dot size-1.5 bg-white opacity-0 scale-0" />
+              <div className="flex gap-2 items-center mt-[clamp(0.5rem,2vw,3rem)] max-sm:mt-2">
+                <div ref={(el) => (dotsRef.current[0] = el)} className="stat-dot size-1.5 4xl:size-2 5xl:size-2.5 bg-[#ff6f21] opacity-0 scale-0" />
+                <div ref={(el) => (dotsRef.current[1] = el)} className="stat-dot size-1.5 4xl:size-2 5xl:size-2.5 bg-white opacity-0 scale-0" />
+                <div ref={(el) => (dotsRef.current[2] = el)} className="stat-dot size-1.5 4xl:size-2 5xl:size-2.5 bg-white opacity-0 scale-0" />
               </div>
             </div>
           </div>
         </div>
       </div>
+     </div>
     </div>
   );
 });

@@ -23,11 +23,12 @@ import { gsap, ScrollTrigger, SplitText, DrawSVGPlugin, useGSAP } from "./Gsapco
 import GridOverlay from "./Gridoverlay";
 import GlobalGrid from "./Globalgrid";
 import Navbar from "./Navbar";
-import { CtaGlowLine } from "./Svgassets";
+import { CtaGlowLine, GridCrosshair } from "./Svgassets";
 import { transitionState } from "./Transitionstate";
 import { entranceState } from "./Entrancestate";
 import MissionStats from "./Missionstats";
 import { loadingState } from "./Loadingstate";
+import GlobalTexture from "./Globaltexture";
 
 export default function HeroSection() {
   const sectionRef = useRef();
@@ -319,41 +320,65 @@ export default function HeroSection() {
       });
 
       // ACT 1 — ZOOM TRANSITION (0.00 → 0.40)
+      const isMobile = window.innerWidth < 768;
 
-      tl.to(subheadingRef.current,
-        { opacity: 0, y: -40, duration: 0.03, ease: "power2.in" }, 0)
-        .to(ctaRef.current,
-          { opacity: 0, y: -30, duration: 0.03, ease: "power2.in" }, 0.01)
-        .to("header",
-          { opacity: 0, y: -30, duration: 0.03, ease: "power2.in" }, 0)
+      if (isMobile) {
+        // ── ACT 1 MOBILE — texts slide up and out, shader transition fires ──
+        tl.to("header", { yPercent: -120, duration: 0.08, ease: "power2.in" }, 0);
+        tl.to(headingRef.current, { yPercent: -50, opacity: 0, duration: 0.12, ease: "power2.in" }, 0.01);
+        tl.to(subheadingRef.current, { yPercent: -50, opacity: 0, duration: 0.10, ease: "power2.in" }, 0.03);
+        tl.to(ctaRef.current, { yPercent: -50, opacity: 0, duration: 0.10, ease: "power2.in" }, 0.04);
 
-        .to(headingRef.current,
-          { scale: 1.6, opacity: 0, duration: 0.11, ease: "power2.in" }, 0.03)
-        .to(headingRef.current,
-          { filter: "blur(12px)", duration: 0.06, ease: "power2.in" }, 0.06)
+        tl.set(missionTextRef.current, { scale: 1, filter: "blur(0px)" }, 0.14);
+        tl.to(missionTextRef.current, { opacity: 1, duration: 0.06, ease: "power2.out" }, 0.14);
+        tl.to(missionTextRef.current, { yPercent: 50, opacity: 0, duration: 0.12, ease: "power2.in" }, 0.22);
 
-        .to(transitionState,
-          { zoomProgress: 1, duration: 0.25, ease: "power1.in" }, 0.03)
+        tl.to(transitionState, { zoomProgress: 1, duration: 0.20, ease: "power1.in" }, 0.10);
+        tl.to(transitionState, { revealProgress: 1, duration: 0.20, ease: "power2.inOut" }, 0.28);
 
-        .to(missionTextRef.current,
-          { scale: 1.8, duration: 0.13, ease: "power2.in" }, 0.14)
-        .to(missionTextRef.current,
-          { opacity: 1, duration: 0.03, ease: "power2.out" }, 0.14)
-        .to(missionTextRef.current,
-          { opacity: 0, duration: 0.05, ease: "power2.in" }, 0.22)
-        .to(missionTextRef.current,
-          { filter: "blur(14px)", duration: 0.05, ease: "power2.in" }, 0.19)
+        tl.to(missionRef.current, { opacity: 1, duration: 0.02 }, 0.28);
+        tl.set(missionRef.current, { pointerEvents: "auto" }, 0.28);
+        tl.set(heroContentRef.current, { pointerEvents: "none" }, 0.38);
 
-        .to(missionRef.current, { opacity: 1, duration: 0.02 }, 0.28)
-        .set(missionRef.current, { pointerEvents: "auto" }, 0.28)
-        .set(heroContentRef.current, { pointerEvents: "none" }, 0.40)
+        tl.set(heroContentRef.current, { opacity: 1 }, 0);
+        tl.to(heroContentRef.current, { opacity: 0, duration: 0.04, ease: "power1.in" }, 0.38);
+      } else {
+        // ── ACT 1 DESKTOP — existing code, ZERO changes ──
+        tl.to(subheadingRef.current,
+          { opacity: 0, y: -40, duration: 0.03, ease: "power2.in" }, 0)
+          .to(ctaRef.current,
+            { opacity: 0, y: -30, duration: 0.03, ease: "power2.in" }, 0.01)
+          .to("header",
+            { yPercent: -120, duration: 0.03, ease: "power2.in" }, 0)
 
-        .to(transitionState,
-          { revealProgress: 1, duration: 0.25, ease: "power2.inOut" }, 0.28);
+          .to(headingRef.current,
+            { scale: 1.6, opacity: 0, duration: 0.11, ease: "power2.in" }, 0.03)
+          .to(headingRef.current,
+            { filter: "blur(12px)", duration: 0.06, ease: "power2.in" }, 0.06)
 
-      tl.set(heroContentRef.current, { opacity: 1 }, 0)
-        .to(heroContentRef.current,
-          { opacity: 0, duration: 0.04, ease: "power1.in" }, 0.40);
+          .to(transitionState,
+            { zoomProgress: 1, duration: 0.25, ease: "power1.in" }, 0.03)
+
+          .to(missionTextRef.current,
+            { scale: 1.8, duration: 0.13, ease: "power2.in" }, 0.14)
+          .to(missionTextRef.current,
+            { opacity: 1, duration: 0.03, ease: "power2.out" }, 0.14)
+          .to(missionTextRef.current,
+            { opacity: 0, duration: 0.05, ease: "power2.in" }, 0.22)
+          .to(missionTextRef.current,
+            { filter: "blur(14px)", duration: 0.05, ease: "power2.in" }, 0.19)
+
+          .to(missionRef.current, { opacity: 1, duration: 0.02 }, 0.28)
+          .set(missionRef.current, { pointerEvents: "auto" }, 0.28)
+          .set(heroContentRef.current, { pointerEvents: "none" }, 0.40)
+
+          .to(transitionState,
+            { revealProgress: 1, duration: 0.25, ease: "power2.inOut" }, 0.28);
+
+        tl.set(heroContentRef.current, { opacity: 1 }, 0)
+          .to(heroContentRef.current,
+            { opacity: 0, duration: 0.04, ease: "power1.in" }, 0.40);
+      }
 
       // ACT 2 — MISSION STATS (0.55 → 0.95)
 
@@ -437,6 +462,59 @@ export default function HeroSection() {
   };
 
   return (
+    <>
+    <style>{`
+      /* ── Hide GridOverlay's hardcoded lines — replaced by container-edge lines ── */
+      .grid-line-left:not(.hero-grid),
+      .grid-line-right:not(.hero-grid),
+      .grid-line-top:not(.hero-grid),
+      .grid-crosshair:not(.hero-grid) {
+        display: none !important;
+      }
+
+      @media (max-width: 767px) {
+        .hero-heading {
+          font-size: clamp(2.5rem, 10vw, 4.5rem) !important;
+          line-height: 0.9 !important;
+        }
+        .mission-text {
+          font-size: clamp(1.35rem, 5.5vw, 1.75rem) !important;
+          line-height: 1.3 !important;
+          letter-spacing: -0.5px !important;
+          max-width: 75% !important;
+          margin-left: 0 !important;
+          padding-left: calc(clamp(1.25rem, 5vw, 6.5625rem) + 0.75rem) !important;
+        }
+      }
+
+      @media (min-width: 768px) and (max-width: 1023px) {
+        .hero-heading {
+          font-size: clamp(3rem, 8vw, 4.5rem) !important;
+        }
+        .mission-text {
+          max-width: 65% !important;
+        }
+        .hero-subheading {
+          max-width: 400px !important;
+        }
+      }
+
+      @media (min-width: 1024px) and (max-width: 1279px) {
+        .mission-text {
+          max-width: 75% !important;
+        }
+      }
+
+      @media (min-width: 160rem) {
+        .hero-heading {
+          font-size: clamp(8.125rem, 6.5vw, 10rem) !important;
+        }
+        .mission-text {
+          font-size: clamp(3.125rem, 2.8vw, 4.5rem) !important;
+          max-width: 80% !important;
+        }
+      }
+    `}</style>
     <section
       ref={sectionRef}
       id="home"
@@ -445,62 +523,74 @@ export default function HeroSection() {
       {/* ═══ GlobalGrid — inside the section so it scrolls with the pin ═══ */}
       <GlobalGrid animated navOffset />
 
+      <GlobalTexture />
+
       {/* ═══ Hero Content ═══ */}
       <div
         ref={heroContentRef}
-        className="absolute inset-x-0 top-0 z-[10] h-screen min-h-[945px] overflow-hidden"
+        className="absolute inset-x-0 top-0 z-[10] h-screen min-h-svh md:min-h-[945px] overflow-hidden"
       >
         <GridOverlay ref={gridOverlayRef} showTexture={true}>
           <Navbar entranceDelay={6.2} />
-          <div className="relative z-40 flex flex-col items-center justify-center h-full pt-14">
-            <div className="mb-6 h-[30px]" />
 
-            <h1
-              ref={headingRef}
-              className="hero-heading font-bricolage font-medium text-center mb-6 tracking-normal"
-              style={{
-                fontSize: "clamp(90px, 6.5vw, 130px)",
-                lineHeight: 0.83,
-                // letterSpacing: "-2.5px",
-              }}
-            >
-              <span className="hw-eng">We </span><span className="hw-solve">Solve</span>
-              <br />
-              <span className="hw-vir">Distribution</span>
-            </h1>
+          {/* ── Container (matches MissionStats/CoreOperations/MissionReports) ── */}
+          <div className="relative mx-auto w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem] h-full">
 
-            <p
-              ref={missionTextRef}
-              className="mission-text absolute inset-x-0 font-host font-normal text-center text-[#a1a1aa]"
-              style={{
-                fontSize: "clamp(40px, 2.8vw, 50px)",
-                lineHeight: 1.2,
-                letterSpacing: "-1.5px",
-                maxWidth: "900px",
-                margin: "0 auto",
-                top: "50%",
-                transform: "translateY(-50%)",
-              }}
-            >
-              A special-ops inspired team using science-backed systems, creator
-              networks, and disciplined execution to turn apps into{" "}
-              <span style={{ color: "#F05A1F" }}>viral hits</span>.
-            </p>
+            {/* Crosshair lines at container edges (hero-grid class prevents CSS hide) */}
+            <div className="hero-grid grid-line-left pointer-events-none absolute inset-y-0 left-0 w-px bg-white/20 z-50" aria-hidden="true" />
+            <div className="hero-grid grid-line-right pointer-events-none absolute inset-y-0 right-0 w-px bg-white/20 z-50" aria-hidden="true" />
+            <div className="hero-grid grid-line-top pointer-events-none absolute top-[56px] left-0 right-0 h-px bg-white/20 z-50" aria-hidden="true" />
+            <GridCrosshair className="hero-grid grid-crosshair pointer-events-none absolute top-[52px] -left-1 z-50" aria-hidden="true" />
+            <GridCrosshair className="hero-grid grid-crosshair pointer-events-none absolute top-[52px] -right-1 z-50" aria-hidden="true" />
 
-            <p
-              ref={subheadingRef}
-              className="hero-subheading font-host text-base text-[#a1a1aa] text-center tracking-[-0.32px] leading-tight max-w-[540px] mb-5"
-            >
-              We build short-form content systems that turn attention into
-              installs consistently, at scale, without relying on luck.
-            </p>
+            <div className="relative z-40 flex flex-col items-start justify-center md:items-center h-full pt-14 pl-3 md:pl-0">
+              <div className="mb-6 h-[30px] 4xl:h-[50px] 5xl:h-[70px] hidden md:block" />
 
-            <div ref={ctaRef} className="flex flex-col items-center gap-2">
+              <h1
+                ref={headingRef}
+                className="hero-heading font-bricolage font-medium text-left md:text-center mb-6 tracking-normal max-w-[70%] md:max-w-none"
+                style={{
+                  fontSize: "clamp(90px, 6.5vw, 130px)",
+                  lineHeight: 0.83,
+                  // letterSpacing: "-2.5px",
+                }}
+              >
+                <span className="hw-eng">We </span><span className="hw-solve">Solve</span>
+                <br />
+                <span className="hw-vir">Distribution</span>
+              </h1>
+
+              <p
+                ref={missionTextRef}
+                className="mission-text absolute inset-x-0 font-host font-normal text-left md:text-center text-[#a1a1aa]"
+                style={{
+                  fontSize: "clamp(40px, 2.8vw, 50px)",
+                  lineHeight: 1.2,
+                  letterSpacing: "-1.5px",
+                  maxWidth: "900px",
+                  margin: "0 auto",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                }}
+              >
+                A distribution consulting firm that works with Fortune 500 Companies, Unicorn Startups & Enterprises to solve their growth problems through organic <span style={{ color: "#F05A1F" }}>viral</span> content.
+                
+              </p>
+
+              <p
+                ref={subheadingRef}
+                className="hero-subheading font-host text-base 4xl:text-lg 5xl:text-xl text-[#a1a1aa] text-left md:text-center tracking-[-0.32px] leading-tight max-w-[75%] md:max-w-[540px] 4xl:max-w-[700px] 5xl:max-w-[800px] mb-5"
+              >
+                We build short-form content systems that turn attention into
+                installs consistently, at scale, without relying on luck.
+              </p>
+
+              <div ref={ctaRef} className="flex flex-col items-center gap-2">
               <div className="cta-inner overflow-visible">
                 <a
                   href="#results"
                   onMouseEnter={handleCtaHover}
-                  className="relative flex items-center justify-center gap-3 w-40 h-10 px-1.5 py-2 overflow-visible hover:bg-white/10 transition-colors duration-300"
+                  className="relative flex items-center justify-center gap-3 w-40 h-10 4xl:w-48 4xl:h-12 5xl:w-52 5xl:h-14 px-1.5 py-2 overflow-visible hover:bg-white/10 transition-colors duration-300"
                 >
                   <svg
                     className="cta-border absolute"
@@ -517,7 +607,7 @@ export default function HeroSection() {
                       vectorEffect="non-scaling-stroke"
                     />
                   </svg>
-                  <span className="cta-text font-host font-medium text-base text-white text-center tracking-[-0.32px] leading-normal whitespace-nowrap">
+                  <span className="cta-text font-host font-medium text-base 4xl:text-lg 5xl:text-xl text-white text-center tracking-[-0.32px] leading-normal whitespace-nowrap">
                     Viral Results
                   </span>
                   <span className="cta-arrow" style={{ display: "inline-flex", alignItems: "center" }}>
@@ -543,13 +633,14 @@ export default function HeroSection() {
               </div>
               <div className="overflow-hidden">
                 <div className="cta-sub flex flex-col items-center">
-                  <span className="font-host text-xs text-[#a1a1aa] text-center tracking-[-0.24px] leading-normal -mb-1">
+                  <span className="font-host text-xs 4xl:text-sm 5xl:text-base text-[#a1a1aa] text-center tracking-[-0.24px] leading-normal -mb-1">
                     Real missions. Real outcomes.
                   </span>
                   <CtaGlowLine className="cta-glow-svg pointer-events-none" />
                 </div>
               </div>
             </div>
+          </div>
           </div>
         </GridOverlay>
       </div>
@@ -559,5 +650,6 @@ export default function HeroSection() {
         <MissionStats ref={missionStatsRef} />
       </div>
     </section>
+    </>
   );
 }

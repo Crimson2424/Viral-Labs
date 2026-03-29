@@ -12,14 +12,14 @@ import GlobeContent from "./components/Globescene";
 import GlobeCanvas from "./components/Globecanvas";
 import ViralitySection from "./components/Viralitysection";
 import PlaybookSection from "./components/PlaybookSection";
-// import ViralEngineSection from "./components/ViralEngineSection";
-// import BridgeTestimonial from "./components/BridgeTestimonial";
 import CoreOperations from "./components/CoreOperations";
 import GlobalGrid from "./components/Globalgrid";
-// import { loadingState } from "./components/loadingState";
 import { entranceState } from "./components/Entrancestate";
 import RocketLaunchSection from "./components/Rocketlaunchsection";
 import CreatorNetworkSection from "./components/Creatornetworksection";
+import MissionReports from "./components/MissionReports";
+import SignalsSection from "./components/SignalsSection";
+import SignalsCanvas from "./components/SignalsCanvas";
 
 function DummySection() {
   return (
@@ -140,17 +140,17 @@ const App = () => {
       {/* Creator Globe — standalone fixed Canvas (3rd WebGL context) */}
       <GlobeCanvas />
 
+      {/* Signals — standalone fixed Canvas with bloom (4th WebGL context) */}
+      <SignalsCanvas />
+
       <HeroSection />
       <CoreOperations />
       <ViralitySection globeContainerRef={globeContainerRef} />
-      <PlaybookSection />
-      {/* <BridgeTestimonial /> */}
-      {/* <ViralEngineSection /> */}
-      {/* <CreatorNetwork viewRef={creatorViewRef} /> */}
+      <MissionReports />
       <RocketLaunchSection />
       <CreatorNetworkSection />
+      <SignalsSection />
       <DummySection />
-      <GlobalTexture />
     </main>
   );
 };

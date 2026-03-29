@@ -26,7 +26,7 @@
  * useGSAP hook for cleanup.
  */
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { gsap, SplitText, DrawSVGPlugin, useGSAP } from "./Gsapconfig";
 import { ViralLabsLogo, ArrowIcon, NavGlowLine } from "./Svgassets";
 import { entranceState } from "./Entrancestate";
@@ -123,6 +123,7 @@ function SoundWaveButton({ onClick, isPlaying, wavePathRef }) {
 export default function Navbar({ entranceDelay = 0.3 }) {
   const [activeNav, setActiveNav] = useState("Home");
   const [isSoundPlaying, setIsSoundPlaying] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const headerRef = useRef();
   const navRef = useRef();
@@ -131,6 +132,8 @@ export default function Navbar({ entranceDelay = 0.3 }) {
   const logoTextRef = useRef();
   const glowLineRef = useRef();
   const ctaItemRef = useRef();
+  const mobileMenuRef = useRef();
+  const mobileMenuTlRef = useRef();
 
   /* Wave refs */
   const wavePathRef = useRef();
@@ -185,6 +188,13 @@ export default function Navbar({ entranceDelay = 0.3 }) {
         linesClass: "line",
       });
       gsap.set(logoSplit.lines, { yPercent: 110 });
+      logoSplit.lines.forEach((line) => {
+        const maskWrapper = line.parentElement;
+        if (maskWrapper && maskWrapper !== logoTextRef.current) {
+          maskWrapper.style.overflowX = "visible";
+          maskWrapper.style.overflowY = "clip";
+        }
+      });
 
       // ── Nav links + CTA — inner mask wrappers ──
       const linkInners = navRef.current.querySelectorAll(".nav-link-inner");
@@ -334,6 +344,73 @@ export default function Navbar({ entranceDelay = 0.3 }) {
     }
   };
 
+  /* ─── Mobile menu animation ─── */
+  useEffect(() => {
+    const el = mobileMenuRef.current;
+    if (!el) return;
+
+    const panel = el.querySelector(".mobile-menu-panel");
+    const links = el.querySelectorAll(".mobile-menu-link");
+
+    if (isMobileMenuOpen) {
+      // Kill any running close animation
+      if (mobileMenuTlRef.current) mobileMenuTlRef.current.kill();
+
+      el.style.pointerEvents = "auto";
+      gsap.set(el, { display: "block" });
+      gsap.set(panel, { clipPath: "inset(0 0 100% 0)" });
+      gsap.set(links, { yPercent: 110, opacity: 0 });
+
+      const tl = gsap.timeline();
+
+      // Panel drops down with clip-path reveal
+      tl.to(panel, {
+        clipPath: "inset(0 0 0% 0)",
+        duration: 0.45,
+        ease: "power3.inOut",
+      });
+
+      // Links stagger in with text mask effect (slide up from behind mask)
+      tl.to(links, {
+        yPercent: 0,
+        opacity: 1,
+        stagger: 0.06,
+        duration: 0.4,
+        ease: "expo.out",
+      }, "-=0.2");
+
+      mobileMenuTlRef.current = tl;
+    } else {
+      const links = el.querySelectorAll(".mobile-menu-link");
+      const panel = el.querySelector(".mobile-menu-panel");
+
+      const tl = gsap.timeline({
+        onComplete: () => {
+          gsap.set(el, { display: "none" });
+          el.style.pointerEvents = "none";
+        },
+      });
+
+      // Links slide back down behind mask
+      tl.to(links, {
+        yPercent: 110,
+        opacity: 0,
+        stagger: 0.03,
+        duration: 0.25,
+        ease: "power2.in",
+      });
+
+      // Panel clips back up
+      tl.to(panel, {
+        clipPath: "inset(0 0 100% 0)",
+        duration: 0.35,
+        ease: "power3.inOut",
+      }, "-=0.1");
+
+      mobileMenuTlRef.current = tl;
+    }
+  }, [isMobileMenuOpen]);
+
   /* ─── Styles ─── */
   const navStyle = {
     background: "rgba(255, 255, 255, 0.06)",
@@ -442,7 +519,7 @@ export default function Navbar({ entranceDelay = 0.3 }) {
       >
         <nav
           ref={navRef}
-          className="relative inline-flex items-center justify-center gap-9 px-5 py-1 overflow-hidden"
+          className="relative flex items-center justify-between gap-4 px-4 md:px-5 4xl:px-8 5xl:px-10 py-1 overflow-hidden w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] md:w-[95%] md:max-w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] xl:w-auto xl:max-w-none xl:inline-flex xl:justify-center xl:gap-9"
           style={navStyle}
         >
           {/* ── Logo ── */}
@@ -456,42 +533,43 @@ export default function Navbar({ entranceDelay = 0.3 }) {
               ref={logoIconRef}
               className="inline-flex items-center justify-center"
             >
-              <ViralLabsLogo className="w-[16px] h-[16px] translate-y-[1px]" />
+              <ViralLabsLogo className="w-[16px] h-[16px] 4xl:w-5 4xl:h-5 5xl:w-6 5xl:h-6 translate-y-[1px]" />
             </span>
             <span
               ref={logoTextRef}
-              className="font-bricolage font-normal text-white text-md leading-none pr-1"
+              className="font-bricolage font-normal text-white text-md 4xl:text-lg 5xl:text-xl leading-none pr-1"
               style={{ letterSpacing: "-1.1px", ...fontStyle }}
             >
               Viral Labs
             </span>
           </a>
 
-          {/* ── Nav Links ── */}
-          <div className="inline-flex items-center gap-4">
-            {NAV_ITEMS.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                onClick={(e) => {
-                  e.preventDefault();
-                  setActiveNav(item.label);
-                }}
-                className="nav-link-item relative inline-flex items-center font-bricolage font-light text-white text-sm text-center tracking-[-0.56px] leading-none"
-                style={fontStyle}
-                aria-current={activeNav === item.label ? "page" : undefined}
-              >
-                <span className="text-clip">
-                  <span className="nav-link-inner inline-block">
-                    <CharSpans text={item.label} />
+          {/* ── Center Group: Nav Links + CTA (absolutely centered on md+) ── */}
+          <div className="hidden md:flex md:absolute md:left-1/2 md:-translate-x-1/2 md:items-center md:gap-4 lg:gap-6 4xl:gap-8 5xl:gap-10 xl:static xl:translate-x-0 xl:contents">
+            <div className="inline-flex items-center gap-4">
+              {NAV_ITEMS.map((item) => (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setActiveNav(item.label);
+                  }}
+                  className="nav-link-item relative inline-flex items-center font-bricolage font-light text-white text-sm 4xl:text-base 5xl:text-lg text-center tracking-[-0.56px] leading-none"
+                  style={fontStyle}
+                  aria-current={activeNav === item.label ? "page" : undefined}
+                >
+                  <span className="text-clip">
+                    <span className="nav-link-inner inline-block">
+                      <CharSpans text={item.label} />
+                    </span>
                   </span>
-                </span>
-              </a>
-            ))}
-          </div>
+                </a>
+              ))}
+            </div>
 
-          {/* ── CTA Button with Glow ── */}
-          <div className="relative inline-flex items-center justify-center py-0">
+            {/* ── CTA Button with Glow ── */}
+            <div className="relative inline-flex items-center justify-center py-0">
             <a
               ref={ctaItemRef}
               href="#go-viral"
@@ -501,7 +579,7 @@ export default function Navbar({ entranceDelay = 0.3 }) {
                 <span className="text-clip">
                   <span className="nav-cta-inner inline-block">
                     <span
-                      className="font-bricolage font-thin text-white text-sm text-center tracking-[-0.56px] leading-none"
+                      className="font-bricolage font-thin text-white text-sm 4xl:text-base 5xl:text-lg text-center tracking-[-0.56px] leading-none"
                       style={fontStyle}
                     >
                       <CharSpans text="Go Viral" />
@@ -521,27 +599,79 @@ export default function Navbar({ entranceDelay = 0.3 }) {
               ref={glowLineRef}
               className="absolute bottom-0 -left-2 w-[calc(100%+16px)] pointer-events-none"
             />
+            </div>
           </div>
 
-          {/* ── Sound Wave Button ── */}
-          <SoundWaveButton
-            onClick={handleSoundToggle}
-            isPlaying={isSoundPlaying}
-            wavePathRef={wavePathRef}
-          />
+          {/* ── Sound Wave + Hamburger (grouped on mobile) ── */}
+          <div className="flex items-center gap-3">
+            <span className="4xl:scale-125 5xl:scale-150 origin-center">
+              <SoundWaveButton
+                onClick={handleSoundToggle}
+                isPlaying={isSoundPlaying}
+                wavePathRef={wavePathRef}
+              />
+            </span>
+
+            <button
+              className="md:hidden p-1"
+              aria-label="Menu"
+              onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+            >
+              <img src="/images/hamburger Menu.png" alt="Menu" className="w-6 h-6 object-contain" />
+            </button>
+          </div>
 
           {/* ── Glow lights ── */}
           <div
-            className="absolute top-0 -left-[35px] w-9 h-9 rounded-[18px] pointer-events-none"
+            className="hidden md:block absolute top-0 -left-[35px] w-9 h-9 rounded-[18px] pointer-events-none"
             style={{ background: "white", filter: "blur(17px)" }}
             aria-hidden="true"
           />
           <div
-            className="absolute -top-[15px] -right-9 w-9 h-9 rounded-[18px] pointer-events-none"
+            className="hidden md:block absolute -top-[15px] -right-9 w-9 h-9 rounded-[18px] pointer-events-none"
             style={{ background: "#fbe7d4", filter: "blur(17px)" }}
             aria-hidden="true"
           />
         </nav>
+
+        {/* ── Mobile Dropdown Menu ── */}
+        <div
+          ref={mobileMenuRef}
+          className="md:hidden absolute top-full left-0 w-full mt-1 z-40"
+          style={{ display: "none", pointerEvents: "none" }}
+        >
+          <div
+            className="mobile-menu-panel w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] mx-auto"
+            style={{
+              background: "rgba(255, 255, 255, 0.06)",
+              backdropFilter: "blur(9.5px)",
+              WebkitBackdropFilter: "blur(9.5px)",
+              borderWidth: "1px",
+              borderStyle: "solid",
+              borderImage:
+                "linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(102,102,102,0.7) 100%) 1",
+            }}
+          >
+            <div className="flex flex-col py-4 px-4 gap-3">
+              {NAV_ITEMS.map((item) => (
+                <div key={item.label} className="overflow-hidden">
+                  <a
+                    href={item.href}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setActiveNav(item.label);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="mobile-menu-link block font-bricolage font-light text-white text-sm tracking-[-0.56px] leading-none py-2"
+                    style={fontStyle}
+                  >
+                    {item.label}
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </header>
     </>
   );

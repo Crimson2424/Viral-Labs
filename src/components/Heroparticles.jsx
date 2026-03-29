@@ -1,5 +1,5 @@
 import { useRef, useMemo } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { transitionState } from "./Transitionstate";
 import { entranceState } from "./Entrancestate";
@@ -55,6 +55,7 @@ uniform float uMouseForce;
 uniform float uRevealProgress;
 uniform float uEntranceOpacity;
 uniform float uZoomProgress;
+uniform float uDpr;
 
 attribute float aSize;
 attribute float aOffset;
@@ -123,7 +124,7 @@ void main() {
   vOpacity = aOpacity * fadeFactor * uEntranceOpacity * zoomFade;
 
   vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
-  gl_PointSize = aSize * (1.0 / -mvPosition.z);
+  gl_PointSize = aSize * (1.0 / -mvPosition.z) * uDpr;
   gl_Position  = projectionMatrix * mvPosition;
 }
 `;
@@ -142,13 +143,23 @@ void main() {
 }
 `;
 
+// Reference viewport width at 1920x1080 with FOV 45° camera at z=5
+// viewport.height = 2 * tan(22.5°) * 5 = 4.142
+// viewport.width  = 4.142 * (1920/1080) = 7.364
+const REF_VIEWPORT_W = 7.364;
+
 export default function HeroParticles({ mouseWorld }) {
   const materialRef = useRef();
+  const pointsRef = useRef();
+  const { gl, viewport } = useThree();
+  const basePositions = useRef(null);
+  const lastScale = useRef(1);
 
   const geometry = useMemo(() => {
     const geo = new THREE.BufferGeometry();
 
     const positions = new Float32Array(TOTAL * 3);
+    const originals = new Float32Array(TOTAL * 3);
     const sizes = new Float32Array(TOTAL);
     const offsets = new Float32Array(TOTAL);
     const opacities = new Float32Array(TOTAL);
@@ -164,6 +175,9 @@ export default function HeroParticles({ mouseWorld }) {
 
     for (let g = 0; g < GOLD_COUNT; g++, i++) {
       const [x, y, z] = edgePosition(0.05);
+      originals[i * 3] = x;
+      originals[i * 3 + 1] = y;
+      originals[i * 3 + 2] = z;
       positions[i * 3] = x;
       positions[i * 3 + 1] = y;
       positions[i * 3 + 2] = z;
@@ -183,6 +197,9 @@ export default function HeroParticles({ mouseWorld }) {
 
     for (let w = 0; w < WHITE_COUNT; w++, i++) {
       const [x, y, z] = edgePosition(0.08);
+      originals[i * 3] = x;
+      originals[i * 3 + 1] = y;
+      originals[i * 3 + 2] = z;
       positions[i * 3] = x;
       positions[i * 3 + 1] = y;
       positions[i * 3 + 2] = z;
@@ -199,6 +216,8 @@ export default function HeroParticles({ mouseWorld }) {
       colors[i * 3 + 1] = whiteColor.g;
       colors[i * 3 + 2] = whiteColor.b;
     }
+
+    basePositions.current = originals;
 
     geo.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
     geo.setAttribute("aSize", new THREE.Float32BufferAttribute(sizes, 1));
@@ -222,6 +241,7 @@ export default function HeroParticles({ mouseWorld }) {
       uRevealProgress: { value: 0 },
       uEntranceOpacity: { value: 0 },
       uZoomProgress: { value: 0 },
+      uDpr: { value: gl.getPixelRatio() },
     }),
     []
   );
@@ -229,11 +249,28 @@ export default function HeroParticles({ mouseWorld }) {
   useFrame((state) => {
     if (!materialRef.current) return;
 
+    // ── Scale particle x-positions to track pillar edges at any viewport width ──
+    const xScale = state.viewport.width / REF_VIEWPORT_W;
+    if (Math.abs(xScale - lastScale.current) > 0.001 && basePositions.current) {
+      lastScale.current = xScale;
+      const posAttr = geometry.attributes.position;
+      const arr = posAttr.array;
+      const orig = basePositions.current;
+      for (let j = 0; j < TOTAL; j++) {
+        arr[j * 3] = orig[j * 3] * xScale;
+      }
+      posAttr.needsUpdate = true;
+    }
+
+    // ── Skip work when particles are fully invisible ──
+    if (transitionState.revealProgress >= 1) return;
+
     const u = materialRef.current.uniforms;
     u.uTime.value = state.clock.elapsedTime;
     u.uRevealProgress.value = transitionState.revealProgress;
     u.uEntranceOpacity.value = entranceState.particleOpacity;
     u.uZoomProgress.value = transitionState.zoomProgress;
+    u.uDpr.value = gl.getPixelRatio();
 
     if (mouseWorld?.current) {
       u.uMouse.value.copy(mouseWorld.current);
