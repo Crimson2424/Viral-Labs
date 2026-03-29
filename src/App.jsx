@@ -143,7 +143,9 @@ const App = () => {
       <GlobeCanvas />
 
       {/* Signals — standalone fixed Canvas with bloom (4th WebGL context) */}
-      <SignalsCanvas />
+      <div className="hidden md:block">
+        <SignalsCanvas />
+      </div>
 
       <HeroSection />
       <CoreOperations />

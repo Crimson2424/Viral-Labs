@@ -250,13 +250,13 @@ const BridgeTestimonial = () => {
   );
 
   return (
-    <section ref={sectionRef} className="relative w-full py-20 md:py-28 lg:py-32">
+    <section ref={sectionRef} className="relative w-full py-12 md:py-28 lg:py-32">
       <GlobalTexture />
 
       {/* ── centred wrapper ── */}
       <div className="relative z-10 mx-auto w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem]">
         {/* ── testimonial card ── */}
-        <div className="relative mx-auto max-w-[52rem] px-6 py-10 sm:px-10 md:px-14 md:py-14 lg:px-16 lg:py-16">
+        <div className="relative mx-auto max-w-[52rem] px-6 py-10 sm:px-10 md:px-14 md:py-14 lg:px-16 lg:py-16 4xl:px-24 4xl:py-20 5xl:px-32 5xl:py-24">
           {/* ─── Four orange corner brackets ─── */}
           <CornerBrackets />
 
@@ -276,7 +276,7 @@ const BridgeTestimonial = () => {
           <img
             src={QuoteIcon}
             alt="quote"
-            className="mb-5 h-7 w-8 select-none opacity-80 sm:mb-6 sm:h-8 sm:w-10 md:h-9 md:w-11"
+            className="mb-5 h-7 w-8 select-none opacity-80 sm:mb-6 sm:h-8 sm:w-10 md:h-9 md:w-11 4xl:h-12 4xl:w-14 5xl:h-14 5xl:w-16"
             draggable={false}
           />
 
@@ -284,7 +284,7 @@ const BridgeTestimonial = () => {
           <div ref={quoteWrapperRef} className="relative">
             <p
               ref={quoteRef}
-              className="font-bricolage text-base font-thin leading-[1.75] tracking-wide text-white sm:text-lg md:text-2xl md:leading-tight"
+              className="font-bricolage text-base font-thin leading-[1.75] tracking-wide text-white sm:text-lg md:text-2xl md:leading-tight 4xl:text-3xl 5xl:text-4xl"
             >
               {testimonials[0].quote}
             </p>
@@ -303,20 +303,20 @@ const BridgeTestimonial = () => {
           />
 
           {/* ─── Bottom row: founder info + company ─── */}
-          <div className="mt-8 flex items-center justify-between sm:mt-10">
+          <div className="mt-8 flex items-center justify-between sm:mt-10 4xl:mt-14 5xl:mt-16">
             {/* founder */}
             <div className="flex items-center gap-3">
               <div className="h-9 w-9 shrink-0 rounded-full bg-[#2a2a2a] sm:h-10 sm:w-10" />
               <div className="flex flex-col">
                 <span
                   ref={founderNameRef}
-                  className="font-host text-sm font-thin leading-tight text-white sm:text-sm"
+                  className="font-host text-sm font-thin leading-tight text-white sm:text-sm 4xl:text-base 5xl:text-lg"
                 >
                   {testimonials[0].founderName}
                 </span>
                 <span
                   ref={founderTitleRef}
-                  className="font-host text-xs leading-tight text-white/70 sm:text-[13px]"
+                  className="font-host text-xs leading-tight text-white/70 sm:text-[13px] 4xl:text-sm 5xl:text-base"
                 >
                   {testimonials[0].founderTitle}
                 </span>
@@ -326,7 +326,7 @@ const BridgeTestimonial = () => {
             {/* company name */}
             <span
               ref={companyRef}
-              className="font-host text-xl font-semibold tracking-tight text-white sm:text-2xl md:text-2xl"
+              className="font-host text-xl font-semibold tracking-tight text-white sm:text-2xl md:text-2xl 4xl:text-3xl 5xl:text-4xl"
             >
               {testimonials[0].companyName}
             </span>

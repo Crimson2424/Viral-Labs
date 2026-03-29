@@ -142,7 +142,7 @@ function SignalsCTA() {
             />
 
             <div className="relative px-4.5 py-3.5">
-                <span className="cta-scramble-text font-host font-thin text-sm text-white uppercase tracking-tight">
+                <span className="cta-scramble-text font-host font-thin text-xs md:text-sm 4xl:text-base text-white uppercase tracking-tight">
                     ASK ABOUT THE SYSTEM …
                 </span>
             </div>
@@ -275,35 +275,45 @@ export default function SignalsSection() {
     return (
         <section
             ref={sectionRef}
-            className="signals-section relative z-25 w-full h-[130vh] "
+            className="signals-section relative z-25 w-full h-auto min-h-screen md:h-[130vh]"
         >
             <GlobalTexture />
 
+            {/* Mobile fallback background */}
+            <div className="absolute inset-0 z-[5] md:hidden">
+              <img src="/images/signal-mobile.png" alt="" className="h-full w-full object-covern" draggable={false} />
+            </div>
+
             {/* DOM content overlay */}
-            <div className="absolute inset-0 z-40 pointer-events-none">
+            <div className="absolute inset-0 z-40 pointer-events-none flex flex-col md:block">
+
+                
 
                 {/* Center heading group */}
                 <div
                     ref={headingGroupRef}
-                    className="absolute top-[36%] left-[48%] -translate-x-1/2 -translate-y-1/2 flex flex-col items-center"
+                    className="relative md:absolute md:top-[36%] md:left-[48%] md:-translate-x-1/2 md:-translate-y-1/2 flex flex-col items-center pt-[20vh] md:pt-0 px-6 md:px-0"
                 >
-                    <p className="font-host self-start text-sm text-[#FF6F21] uppercase tracking-wide">
+                    <p className="font-host text-xs md:text-sm 4xl:text-base 5xl:text-lg text-[#FF6F21] uppercase tracking-wide">
                         STREAM OF DATA
                     </p>
-                    <h2 className="font-host text-[54px] tracking-[-2px] leading-[56px] text-white">
+                    <h2 className="font-host text-center text-[clamp(1.75rem,6vw,3.375rem)] md:text-[54px] 4xl:text-[4rem] 5xl:text-[5rem] tracking-[-2px] leading-tight md:leading-[56px] text-white">
                         Signals drive<br />everything
                     </h2>
                 </div>
 
+                {/* Spacer — pushes bottom group down on mobile flex layout */}
+                <div className="flex-1 md:hidden" />
+
                 {/* Bottom-right content — pointer-events-auto so CTA is interactive */}
                 <div
                     ref={bottomGroupRef}
-                    className="absolute bottom-[22%] right-[8%] flex flex-col items-end gap-4 pointer-events-auto"
+                    className="relative md:absolute md:bottom-[22%] md:right-[8%] flex flex-col items-end gap-4 pointer-events-auto px-6 md:px-0 pb-16 md:pb-0"
                 >
 
                     {/* Results label */}
                     <div className="flex flex-col items-end gap-1 mb-6 pointer-events-none">
-                        <span className="font-host text-sm font-thin text-white/50 uppercase tracking-tight">
+                        <span className="font-host text-sm 4xl:text-base 5xl:text-lg font-thin text-white/50 uppercase tracking-tight">
                             WHAT RESULTS CAN I EXPECT?
                         </span>
                         <div className="flex gap-1">
@@ -319,7 +329,7 @@ export default function SignalsSection() {
                     </div>
 
                     {/* Disclaimer */}
-                    <p className="font-host font-thin text-[12px] text-white/50 uppercase tracking-tight max-w-[300px] leading-tight pointer-events-none">
+                    <p className="font-host font-thin text-[11px] md:text-[12px] text-white/50 uppercase tracking-tight max-w-[260px] md:max-w-[300px] 4xl:max-w-[380px] 5xl:max-w-[450px] leading-tight pointer-events-none">
                         SESSIONS MAY BE RECORDED. BY USING CHAT,<br />
                         YOU ACKNOWLEDGE OUR <span className="underline">PRIVACY POLICY</span>.
                     </p>

@@ -214,15 +214,25 @@ const FooterSection = () => {
   );
 
   return (
-    <footer ref={sectionRef} className="relative w-full overflow-hidden" style={{ minHeight: "calc(100vw * 1484 / 1440)" }}>
+    <footer ref={sectionRef} className="footer-section relative w-full overflow-hidden" style={{ minHeight: "calc(100vw * 1484 / 1440)" }}>
+      <style>{`@media(max-width:639px){.footer-section{min-height:100vh!important}}`}</style>
       <GlobalTexture />
 
       {/* ─── Background image ─── */}
       <div className="absolute inset-0">
+        {/* Mobile BG — right-aligned, ~55% width so left side stays dark */}
+        <img
+          src="/images/footer-mobile.png"
+          alt=""
+          className="absolute -right-[18%] top-0 h-auto w-[55%] object-contain object-top-right md:hidden"
+          style={{ mixBlendMode: "lighten" }}
+          draggable={false}
+        />
+        {/* Desktop BG */}
         <img
           src={FooterBG}
           alt=""
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover hidden md:block"
           style={{ mixBlendMode: "lighten" }}
           draggable={false}
         />
@@ -233,11 +243,11 @@ const FooterSection = () => {
       <div className="relative z-10 mx-auto flex h-full min-h-[inherit] flex-col w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem]">
 
         {/* ═══ CTA AREA ═══ */}
-        <div className="flex flex-1 flex-col items-center pt-72 pb-20 text-center sm:pt-80 sm:pb-28 md:pt-96 md:pb-32 lg:pt-104 lg:pb-40">
+        <div className="flex flex-1 flex-col items-start sm:items-center pt-40 pb-12 text-left sm:text-center px-6 sm:px-0 sm:pt-36 sm:pb-12 md:pt-48 md:pb-12 lg:pt-104 lg:pb-40">
           {/* Heading */}
           <h2
             ref={headingRef}
-            className="font-bricolage text-center text-3xl font-normal leading-[1.05] tracking-tight text-white sm:text-4xl md:text-5xl lg:text-6xl xl:text-[4.25rem]"
+            className="font-bricolage text-left sm:text-center text-3xl font-normal leading-[1.05] tracking-tight text-white max-w-[14rem] sm:max-w-none sm:text-4xl md:text-5xl lg:text-6xl xl:text-[4.25rem] 4xl:text-[5rem] 5xl:text-[6rem]"
           >
             Engineering<br />predictable growth<br />starts here
           </h2>
@@ -245,7 +255,7 @@ const FooterSection = () => {
           {/* Subtext */}
           <p
             ref={subtextRef}
-            className="mt-2 max-w-[34rem] font-host text-sm font-thin leading-tight text-white/70 sm:text-base md:mt-2"
+            className="mt-2 max-w-[14rem] sm:max-w-[34rem] 4xl:max-w-[40rem] 5xl:max-w-[46rem] font-host text-sm font-thin leading-tight text-white/70 text-left sm:text-center sm:text-base 4xl:text-lg 5xl:text-xl sm:mt-2"
             style={{ opacity: 0 }}
           >
             If you're ready to move beyond guesswork and scale through structured
@@ -270,7 +280,7 @@ const FooterSection = () => {
             <div className="flex items-center border border-white/30 px-8 py-2">
               <span
                 ref={btnTextRef}
-                className="font-host text-md font-thin tracking-wider text-white"
+                className="font-host text-sm sm:text-md 4xl:text-lg font-thin tracking-wider text-white"
               >
                 {originalText}
               </span>
@@ -279,91 +289,95 @@ const FooterSection = () => {
           </div>
         </div>
 
-        {/* ═══ WORLD CLOCKS ═══ */}
-        <div
-          ref={clocksRowRef}
-          className="flex flex-wrap items-start justify-center gap-6 pb-20 sm:gap-8 md:gap-12 md:pb-28 lg:gap-10 lg:pb-60"
-          style={{ opacity: 0 }}
-        >
-          {CLOCKS.map((clock) => (
-            <AnalogClock key={clock.tz} {...clock} />
-          ))}
-        </div>
+        {/* ═══ BOTTOM SECTION — 2-col grid on mobile, normal flow on sm+ ═══ */}
+        <div className="mt-auto grid grid-cols-[1fr_auto] sm:block items-start gap-x-6 px-4 sm:px-0">
 
-        {/* ═══ FOOTER BAR ═══ */}
-        <div className="mt-auto">
-          <div ref={footerBarRef} className="py-12 md:py-22">
-            <div className="flex flex-col items-center gap-10 sm:flex-row sm:items-start sm:justify-center sm:gap-16 md:gap-20 lg:gap-38">
-              {/* Logo + tagline */}
-              <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-0.5">
-                  <img src="/svgs/Viral-Labs-logo.svg" alt="Viral Labs" className="h-5 w-5" draggable={false} />
-                  <span ref={logoNameRef} className="font-bricolage text-3xl font-semibold tracking-tight text-white">
-                    Viral Labs
+          {/* Left column on mobile: logo + nav */}
+          <div className="order-1 sm:order-none">
+            <div ref={footerBarRef} className="py-8 sm:py-8 md:py-12 lg:py-22 4xl:py-28 5xl:py-36">
+              <div className="flex flex-col items-start sm:flex-row sm:items-start sm:justify-center gap-8 sm:gap-12 md:gap-16 lg:gap-38 4xl:gap-48 5xl:gap-56">
+                {/* Logo + tagline */}
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-0.5">
+                    <img src="/svgs/Viral-Labs-logo.svg" alt="Viral Labs" className="h-5 w-5" draggable={false} />
+                    <span ref={logoNameRef} className="font-bricolage text-3xl 4xl:text-4xl 5xl:text-5xl font-semibold tracking-tight text-white">
+                      Viral Labs
+                    </span>
+                  </div>
+                  <span ref={taglineRef} className="font-host text-xs 4xl:text-sm 5xl:text-base font-thin text-white/50">
+                    Engineering Distribution
                   </span>
                 </div>
-                <span ref={taglineRef} className="font-host text-xs font-thin text-white/50">
-                  Engineering Distribution
-                </span>
-              </div>
 
-              {/* Nav links + Social icons grouped closer */}
-              <div className="flex items-start gap-12 sm:gap-16">
-                {/* Nav columns */}
-                <div ref={navCol1Ref} className="flex flex-col gap-1">
-                  {NAV_COL_1.map((link) => (
-                    <a
-                      key={link}
-                      href="#"
-                      className="font-host text-sm font-thin text-white transition-colors duration-200 hover:text-[#FF6F21]"
-                    >
-                      {link}
-                    </a>
-                  ))}
-                </div>
-                <div ref={navCol2Ref} className="flex flex-col gap-0.5">
-                  {NAV_COL_2.map((link) => (
-                    <a
-                      key={link}
-                      href="#"
-                      className="font-host text-sm font-thin text-white transition-colors duration-200 hover:text-[#FF6F21]"
-                    >
-                      {link}
-                    </a>
-                  ))}
-                </div>
+                {/* Nav links + Social icons grouped closer */}
+                <div className="flex flex-col sm:flex-row items-start gap-1 sm:gap-16">
+                  {/* Nav columns */}
+                  <div ref={navCol1Ref} className="flex flex-col gap-1">
+                    {NAV_COL_1.map((link) => (
+                      <a
+                        key={link}
+                        href="#"
+                        className={`font-host text-xl sm:text-sm 4xl:text-base 5xl:text-lg font-thin transition-colors duration-200 hover:text-[#FF6F21] ${link === "Home" ? "text-[#FF6F21]" : "text-white"}`}
+                      >
+                        {link}
+                      </a>
+                    ))}
+                  </div>
+                  <div ref={navCol2Ref} className="flex flex-col gap-0.5">
+                    {NAV_COL_2.map((link) => (
+                      <a
+                        key={link}
+                        href="#"
+                        className="font-host text-xl sm:text-sm 4xl:text-base 5xl:text-lg font-thin text-white transition-colors duration-200 hover:text-[#FF6F21]"
+                      >
+                        {link}
+                      </a>
+                    ))}
+                  </div>
 
-                {/* Social icons */}
-                <div ref={socialsRef} className="flex items-center gap-8" style={{ opacity: 0 }}>
-                  {[
-                    { key: "ig", content: <img src="/svgs/insta.svg" alt="Instagram" className="h-3 w-3" draggable={false} /> },
-                    { key: "x", content: <span className="font-host text-xs font-thin text-white transition-colors duration-200">X</span> },
-                    { key: "in", content: <span className="font-host text-xs font-thin text-white transition-colors duration-200">In</span> },
-                  ].map(({ key, content }) => (
-                    <a
-                      key={key}
-                      href="#"
-                      className="group relative flex h-4 w-8 items-center justify-center"
-                    >
-                      <span className="pointer-events-none absolute -left-1.5 -top-1.5 h-[8px] w-[8px] border-l border-t border-[#FF6F21]/60 transition-all duration-200 group-hover:-left-2.5 group-hover:-top-2.5 group-hover:border-[#FF6F21]" />
-                      <span className="pointer-events-none absolute -right-1.5 -top-1.5 h-[8px] w-[8px] border-r border-t border-[#FF6F21]/60 transition-all duration-200 group-hover:-right-2.5 group-hover:-top-2.5 group-hover:border-[#FF6F21]" />
-                      <span className="pointer-events-none absolute -bottom-1.5 -left-1.5 h-[8px] w-[8px] border-b border-l border-[#FF6F21]/60 transition-all duration-200 group-hover:-bottom-2.5 group-hover:-left-2.5 group-hover:border-[#FF6F21]" />
-                      <span className="pointer-events-none absolute -bottom-1.5 -right-1.5 h-[8px] w-[8px] border-b border-r border-[#FF6F21]/60 transition-all duration-200 group-hover:-bottom-2.5 group-hover:-right-2.5 group-hover:border-[#FF6F21]" />
+                  {/* Social icons — hidden on mobile */}
+                  <div ref={socialsRef} className="hidden sm:flex items-center gap-8" style={{ opacity: 0 }}>
+                    {[
+                      { key: "ig", content: <img src="/svgs/insta.svg" alt="Instagram" className="h-3 w-3" draggable={false} /> },
+                      { key: "x", content: <span className="font-host text-xs font-thin text-white transition-colors duration-200">X</span> },
+                      { key: "in", content: <span className="font-host text-xs font-thin text-white transition-colors duration-200">In</span> },
+                    ].map(({ key, content }) => (
+                      <a
+                        key={key}
+                        href="#"
+                        className="group relative flex h-4 w-8 items-center justify-center"
+                      >
+                        <span className="pointer-events-none absolute -left-1.5 -top-1.5 h-[8px] w-[8px] border-l border-t border-[#FF6F21]/60 transition-all duration-200 group-hover:-left-2.5 group-hover:-top-2.5 group-hover:border-[#FF6F21]" />
+                        <span className="pointer-events-none absolute -right-1.5 -top-1.5 h-[8px] w-[8px] border-r border-t border-[#FF6F21]/60 transition-all duration-200 group-hover:-right-2.5 group-hover:-top-2.5 group-hover:border-[#FF6F21]" />
+                        <span className="pointer-events-none absolute -bottom-1.5 -left-1.5 h-[8px] w-[8px] border-b border-l border-[#FF6F21]/60 transition-all duration-200 group-hover:-bottom-2.5 group-hover:-left-2.5 group-hover:border-[#FF6F21]" />
+                        <span className="pointer-events-none absolute -bottom-1.5 -right-1.5 h-[8px] w-[8px] border-b border-r border-[#FF6F21]/60 transition-all duration-200 group-hover:-bottom-2.5 group-hover:-right-2.5 group-hover:border-[#FF6F21]" />
 
-                      {content}
-                    </a>
-                  ))}
+                        {content}
+                      </a>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
+          {/* Right column on mobile: clocks stacked vertically */}
+          <div
+            ref={clocksRowRef}
+            className="order-2 sm:order-none flex flex-col items-center gap-6 py-4 sm:grid sm:grid-cols-2 sm:justify-items-center sm:gap-6 sm:pb-10 md:pb-16 lg:flex lg:flex-row lg:flex-wrap lg:justify-center lg:gap-10 lg:pb-60 4xl:pb-72 5xl:pb-80"
+            style={{ opacity: 0 }}
+          >
+            {CLOCKS.map((clock) => (
+              <AnalogClock key={clock.tz} {...clock} />
+            ))}
+          </div>
+
           {/* ═══ COPYRIGHT ═══ */}
-          <div className="mx-auto flex w-full max-w-4xl items-center justify-between py-6">
-            <span ref={copyLeftRef} className="font-host text-xs font-thin text-white/40">
+          <div className="order-3 sm:order-none col-span-2 sm:col-span-1 mx-auto flex flex-col sm:flex-row w-full max-w-4xl 4xl:max-w-5xl 5xl:max-w-6xl items-start sm:items-center sm:justify-between gap-1 sm:gap-0 py-6">
+            <span ref={copyLeftRef} className="font-host text-xs 4xl:text-sm 5xl:text-base font-thin text-white/40">
               © Copyright 2026 Viral Labs
             </span>
-            <a ref={copyRightRef} href="#" className="font-host text-xs font-thin text-white/40 transition-colors duration-200 hover:text-white/70">
+            <a ref={copyRightRef} href="#" className="font-host text-xs 4xl:text-sm 5xl:text-base font-thin text-white/40 transition-colors duration-200 hover:text-white/70">
               Privacy Policy
             </a>
           </div>
@@ -430,7 +444,7 @@ const AnalogClock = ({ city, tz, label }) => {
   return (
     <div className="flex flex-col items-center gap-4">
       {/* Clock face */}
-      <div className="relative flex h-[100px] w-[100px] items-center justify-center rounded-full border border-white/15 sm:h-[110px] sm:w-[110px] md:h-[120px] md:w-[120px]">
+      <div className="relative flex h-[100px] w-[100px] items-center justify-center rounded-full border border-white/15 sm:h-[90px] sm:w-[90px] md:h-[100px] md:w-[100px] lg:h-[120px] lg:w-[120px] 4xl:h-[140px] 4xl:w-[140px] 5xl:h-[160px] 5xl:w-[160px]">
         {/* Minimal tick marks — only 12, 3, 6, 9 */}
         {[0, 90, 180, 270].map((deg) => (
           <span
@@ -480,12 +494,12 @@ const AnalogClock = ({ city, tz, label }) => {
       </div>
 
       {/* Digital time */}
-      <span ref={digitalRef} className="font-host text-[11px] font-thin uppercase tracking-widest text-white/50">
+      <span ref={digitalRef} className="font-host text-[11px] 4xl:text-sm 5xl:text-base font-thin uppercase tracking-widest text-white/50">
         --:-- --
       </span>
 
       {/* City name */}
-      <span className="-mt-4 font-host text-[11px] font-thin text-white/35">
+      <span className="-mt-4 font-host text-[11px] 4xl:text-sm 5xl:text-base font-thin text-white/35">
         {city}
       </span>
     </div>
