@@ -20,6 +20,8 @@ import CreatorNetworkSection from "./components/Creatornetworksection";
 import MissionReports from "./components/MissionReports";
 import SignalsSection from "./components/SignalsSection";
 import SignalsCanvas from "./components/SignalsCanvas";
+import BridgeTestimonial from "./components/BridgeTestimonial";
+import FooterSection from "./components/FooterSection";
 
 function DummySection() {
   return (
@@ -150,7 +152,9 @@ const App = () => {
       <RocketLaunchSection />
       <CreatorNetworkSection />
       <SignalsSection />
-      <DummySection />
+      <BridgeTestimonial />
+      <FooterSection />
+      {/* <DummySection /> */}
     </main>
   );
 };
