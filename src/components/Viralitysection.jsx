@@ -316,7 +316,7 @@ export default function ViralitySection({ globeContainerRef }) {
       <div className="pointer-events-none absolute top-0 left-0 w-px h-full bg-white/20 z-30" aria-hidden="true" />
       <div className="pointer-events-none absolute top-0 right-0 w-px h-full bg-white/20 z-30" aria-hidden="true" />
       <div className="pointer-events-none absolute top-0 left-0 right-0 h-px bg-white/20 z-30" aria-hidden="true" />
-      <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-px bg-white/20 z-30" aria-hidden="true" />
+      
 
       {/* ═══ Main viewport content — heading + cards fit within 100vh ═══ */}
       <div className="relative z-40 px-[clamp(0.75rem,3vw,3rem)] max-sm:px-2 pt-8 pointer-events-none h-auto min-h-screen md:h-screen md:pb-20">

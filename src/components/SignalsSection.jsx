@@ -155,13 +155,16 @@ function SignalsCTA() {
    ───────────────────────────────────────────── */
 export default function SignalsSection() {
     const sectionRef = useRef(null);
+    const canvasTrackRef = useRef(null);
     const headingGroupRef = useRef(null);
     const bottomGroupRef = useRef(null);
     const ctaRef = useRef(null);
 
-    /* Register section element for SignalsCanvas scroll tracking */
+    /* Register tracking element for SignalsCanvas scroll positioning.
+       The tracking div is hidden md:block — on mobile the canvas gets
+       no sectionEl and stays invisible (matching GlobeCanvas pattern). */
     useGSAP(() => {
-        signalsCanvasState.sectionEl = sectionRef.current;
+        signalsCanvasState.sectionEl = canvasTrackRef.current;
         return () => {
             signalsCanvasState.sectionEl = null;
         };
@@ -275,14 +278,22 @@ export default function SignalsSection() {
     return (
         <section
             ref={sectionRef}
-            className="signals-section relative z-25 w-full h-auto min-h-screen md:h-[130vh]"
+            className="signals-section relative z-25 w-full h-auto min-h-screen md:h-[130vh] bg-[#121212]"
         >
             <GlobalTexture />
 
+            {/* Canvas tracking div — hidden on mobile so SignalsCanvas stays invisible,
+                visible on md+ so canvas positions itself against this element.
+                Matches the globeContainerRef pattern in ViralitySection. */}
+            <div ref={canvasTrackRef} className="absolute inset-0 hidden md:block" />
+
             {/* Mobile fallback background */}
-            <div className="absolute inset-0 z-[5] md:hidden">
-              <img src="/images/signal-mobile.png" alt="" className="h-full w-full object-covern" draggable={false} />
-            </div>
+            <img
+              src="/images/signal-mobile.png"
+              alt=""
+              className="absolute inset-0 z-1 h-full w-full object-cover mix-blend-lighten md:hidden object-[25%]"
+              draggable={false}
+            />
 
             {/* DOM content overlay */}
             <div className="absolute inset-0 z-40 pointer-events-none flex flex-col md:block">
@@ -308,11 +319,11 @@ export default function SignalsSection() {
                 {/* Bottom-right content — pointer-events-auto so CTA is interactive */}
                 <div
                     ref={bottomGroupRef}
-                    className="relative md:absolute md:bottom-[22%] md:right-[8%] flex flex-col items-end gap-4 pointer-events-auto px-6 md:px-0 pb-16 md:pb-0"
+                    className="relative md:absolute md:bottom-[22%] md:right-[8%] flex flex-col items-center md:items-end gap-4 pointer-events-auto px-6 md:px-0 pb-16 md:pb-0"
                 >
 
                     {/* Results label */}
-                    <div className="flex flex-col items-end gap-1 mb-6 pointer-events-none">
+                    <div className="flex flex-col items-center md:items-end gap-1 mb-6 pointer-events-none">
                         <span className="font-host text-sm 4xl:text-base 5xl:text-lg font-thin text-white/50 uppercase tracking-tight">
                             WHAT RESULTS CAN I EXPECT?
                         </span>
@@ -329,7 +340,7 @@ export default function SignalsSection() {
                     </div>
 
                     {/* Disclaimer */}
-                    <p className="font-host font-thin text-[11px] md:text-[12px] text-white/50 uppercase tracking-tight max-w-[260px] md:max-w-[300px] 4xl:max-w-[380px] 5xl:max-w-[450px] leading-tight pointer-events-none">
+                    <p className="font-host font-thin text-[11px] md:text-[12px] text-white/50 uppercase tracking-tight max-w-[260px] md:max-w-[300px] 4xl:max-w-[380px] 5xl:max-w-[450px] leading-tight pointer-events-none text-center md:text-right">
                         SESSIONS MAY BE RECORDED. BY USING CHAT,<br />
                         YOU ACKNOWLEDGE OUR <span className="underline">PRIVACY POLICY</span>.
                     </p>

@@ -256,7 +256,7 @@ const BridgeTestimonial = () => {
       {/* ── centred wrapper ── */}
       <div className="relative z-10 mx-auto w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem]">
         {/* ── testimonial card ── */}
-        <div className="relative mx-auto max-w-[52rem] px-6 py-10 sm:px-10 md:px-14 md:py-14 lg:px-16 lg:py-16 4xl:px-24 4xl:py-20 5xl:px-32 5xl:py-24">
+        <div className="relative mx-auto max-w-[52rem] px-8 pt-14 pb-10 sm:px-10 sm:pt-10 sm:pb-10 md:px-14 md:py-14 lg:px-16 lg:py-16 4xl:px-24 4xl:py-20 5xl:px-32 5xl:py-24">
           {/* ─── Four orange corner brackets ─── */}
           <CornerBrackets />
 
@@ -326,14 +326,14 @@ const BridgeTestimonial = () => {
             {/* company name */}
             <span
               ref={companyRef}
-              className="font-host text-xl font-semibold tracking-tight text-white sm:text-2xl md:text-2xl 4xl:text-3xl 5xl:text-4xl"
+              className="font-host text-lg font-semibold tracking-tight text-white sm:text-2xl md:text-2xl 4xl:text-3xl 5xl:text-4xl"
             >
               {testimonials[0].companyName}
             </span>
           </div>
 
           {/* ─── Pagination cubes (below founder row) ─── */}
-          <div className="mt-6 flex items-center justify-center gap-0">
+          <div className="mt-8 flex items-center justify-center gap-0 sm:mt-6">
             {testimonials.map((_, i) => (
               <button
                 key={i}
@@ -372,28 +372,28 @@ const cornerBase = "pointer-events-none absolute h-[28px] w-[28px]";
 const CornerBrackets = () => (
   <>
     <span
-      className={`${cornerBase} left-0 top-10`}
+      className={`${cornerBase} left-0 top-6 sm:top-10`}
       style={{
         borderTop: `${CORNER_THICKNESS} solid ${CORNER_COLOR}`,
         borderLeft: `${CORNER_THICKNESS} solid ${CORNER_COLOR}`,
       }}
     />
     <span
-      className={`${cornerBase} right-0 top-10`}
+      className={`${cornerBase} right-0 top-6 sm:top-10`}
       style={{
         borderTop: `${CORNER_THICKNESS} solid ${CORNER_COLOR}`,
         borderRight: `${CORNER_THICKNESS} solid ${CORNER_COLOR}`,
       }}
     />
     <span
-      className={`${cornerBase} bottom-10 left-0`}
+      className={`${cornerBase} bottom-6 left-0 sm:bottom-10`}
       style={{
         borderBottom: `${CORNER_THICKNESS} solid ${CORNER_COLOR}`,
         borderLeft: `${CORNER_THICKNESS} solid ${CORNER_COLOR}`,
       }}
     />
     <span
-      className={`${cornerBase} bottom-10 right-0`}
+      className={`${cornerBase} bottom-6 right-0 sm:bottom-10`}
       style={{
         borderBottom: `${CORNER_THICKNESS} solid ${CORNER_COLOR}`,
         borderRight: `${CORNER_THICKNESS} solid ${CORNER_COLOR}`,
