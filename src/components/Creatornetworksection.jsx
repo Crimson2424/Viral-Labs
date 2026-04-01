@@ -188,7 +188,7 @@ export default function CreatorNetworkSection() {
   return (
     <section
       ref={sectionRef}
-      className="creator-network-section relative z-25 w-full h-[140vh]"
+      className="creator-network-section relative z-25 w-full h-auto min-h-svh lg:h-[140vh]"
     >
       {/* <GlobalGrid /> */}
       <GlobalTexture />
@@ -202,17 +202,17 @@ export default function CreatorNetworkSection() {
         <div className="absolute inset-0 overflow-hidden">
 
           {/* CN CONTENT — left on mobile, right on md+ (globe takes left side) */}
-          <div className="absolute z-40 left-3 top-[6%] flex flex-col items-start max-w-[85vw] pointer-events-none sm:left-6 sm:max-w-[70vw] md:left-auto md:right-8 md:top-[4%] md:items-end md:max-w-[380px] lg:right-12 lg:max-w-[420px] xl:right-20 xl:max-w-[460px] 4xl:max-w-[560px] 5xl:max-w-[660px]">
-            <div className="flex flex-col gap-0 items-start md:items-end">
-              <p ref={cnLabelRef} className="font-host font-thin text-xs sm:text-sm md:text-base lg:text-lg 4xl:text-xl 5xl:text-2xl text-[#FF6F21] text-left md:text-right uppercase tracking-normal">
+          <div className="absolute z-40 right-3 top-[6%] flex flex-col items-end max-w-[85vw] pointer-events-none sm:right-6 sm:max-w-[70vw] md:right-8 md:top-[4%] md:max-w-[380px] lg:right-12 lg:max-w-[420px] xl:right-20 xl:max-w-[460px] 4xl:max-w-[560px] 5xl:max-w-[660px]">
+            <div className="flex flex-col gap-0 items-end">
+              <p ref={cnLabelRef} className="font-host font-thin text-xs sm:text-sm md:text-base lg:text-lg 4xl:text-xl 5xl:text-2xl text-[#FF6F21] text-right uppercase tracking-normal">
                 Creator Network
               </p>
-              <h2 ref={cnHeadingRef} className="font-host font-medium text-3xl sm:text-4xl md:text-5xl lg:text-6xl 4xl:text-7xl 5xl:text-8xl tracking-tighter leading-none text-left md:text-right">
+              <h2 ref={cnHeadingRef} className="font-host font-medium text-3xl sm:text-4xl md:text-5xl lg:text-6xl 4xl:text-7xl 5xl:text-8xl tracking-tighter leading-none text-right">
                 Creator Operator<br />Network
               </h2>
             </div>
 
-            <div className="flex flex-col items-start md:items-end gap-3 mt-8 md:mt-12">
+            <div className="flex flex-col items-end gap-3 mt-8 md:mt-12">
               <svg ref={cnGlowRef} width="193" height="23" viewBox="0 0 193 23" fill="none" xmlns="http://www.w3.org/2000/svg" className="mt-0 w-32 sm:w-40 md:w-48 lg:w-56 h-auto">
                 <g filter="url(#cn-glow0)" style={{ mixBlendMode: "plus-lighter" }}><line x1="11" y1="11.5" x2="182" y2="11.5" stroke="#F05A1F" /></g>
                 <g filter="url(#cn-glow1)" style={{ mixBlendMode: "plus-lighter" }}><line x1="11" y1="11.5" x2="182" y2="11.5" stroke="#F05A1F" /></g>
@@ -224,10 +224,10 @@ export default function CreatorNetworkSection() {
                 </defs>
               </svg>
 
-              <p ref={cnDesc1Ref} className="font-host font-thin text-sm sm:text-base md:text-lg lg:text-xl 4xl:text-2xl 5xl:text-3xl text-left md:text-right leading-tight -mt-1">
+              <p ref={cnDesc1Ref} className="font-host font-thin text-sm sm:text-base md:text-lg lg:text-xl 4xl:text-2xl 5xl:text-3xl text-right leading-tight -mt-1">
                 We operate a coordinated network of 300+ creators, executing at a scale of 8,000+ monthly videos to meet specific category and audience objectives.
               </p>
-              <p ref={cnDesc2Ref} className="font-host font-thin text-sm sm:text-base md:text-lg lg:text-xl 4xl:text-2xl 5xl:text-3xl text-left md:text-right leading-relaxed">
+              <p ref={cnDesc2Ref} className="font-host font-thin text-sm sm:text-base md:text-lg lg:text-xl 4xl:text-2xl 5xl:text-3xl text-right leading-relaxed">
                 Our distribution model cumulatively reaches 1B+ views per month, ensuring consistent output and high-impact performance across all major platforms.
               </p>
 
