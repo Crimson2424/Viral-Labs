@@ -141,8 +141,8 @@ function SignalsCTA() {
                 }}
             />
 
-            <div className="relative px-4.5 py-3.5">
-                <span className="cta-scramble-text font-host font-thin text-xs md:text-sm 4xl:text-base text-white uppercase tracking-tight">
+            <div className="relative px-4.5 py-3.5 5xl:px-7 5xl:py-5">
+                <span className="cta-scramble-text font-host font-thin text-xs md:text-sm 4xl:text-base 5xl:text-xl text-white uppercase tracking-tight">
                     ASK ABOUT THE SYSTEM …
                 </span>
             </div>
@@ -305,10 +305,10 @@ export default function SignalsSection() {
                     ref={headingGroupRef}
                     className="relative md:absolute md:top-[36%] md:left-[48%] md:-translate-x-1/2 md:-translate-y-1/2 flex flex-col items-center pt-[20vh] md:pt-0 px-6 md:px-0"
                 >
-                    <p className="font-host text-xs md:text-sm 4xl:text-base 5xl:text-lg text-[#FF6F21] uppercase tracking-wide">
+                    <p className="font-host text-xs md:text-sm 4xl:text-base 5xl:text-2xl text-[#FF6F21] uppercase tracking-wide">
                         STREAM OF DATA
                     </p>
-                    <h2 className="font-host text-center text-[clamp(1.75rem,6vw,3.375rem)] md:text-[54px] 4xl:text-[4rem] 5xl:text-[5rem] tracking-[-2px] leading-tight md:leading-[56px] text-white">
+                    <h2 className="font-host text-center text-[clamp(1.75rem,6vw,3.375rem)] md:text-[54px] 4xl:text-[4rem] 5xl:text-[6.5rem] tracking-[-2px] leading-tight md:leading-[64px] 5xl:leading-[1.05] text-white">
                         Signals drive<br />everything
                     </h2>
                 </div>
@@ -319,18 +319,18 @@ export default function SignalsSection() {
                 {/* Bottom-right content — pointer-events-auto so CTA is interactive */}
                 <div
                     ref={bottomGroupRef}
-                    className="relative md:absolute md:bottom-[22%] md:right-[8%] flex flex-col items-center md:items-end gap-4 pointer-events-auto px-6 md:px-0 pb-16 md:pb-0"
+                    className="relative md:absolute md:bottom-[22%] md:right-[8%] flex flex-col items-center md:items-end gap-4 5xl:gap-8 pointer-events-auto px-6 md:px-0 pb-16 md:pb-0 5xl:scale-150 5xl:origin-bottom-right"
                 >
 
                     {/* Results label */}
                     <div className="flex flex-col items-center md:items-end gap-1 mb-6 pointer-events-none">
-                        <span className="font-host text-sm 4xl:text-base 5xl:text-lg font-thin text-white/50 uppercase tracking-tight">
+                        <span className="font-host text-sm 4xl:text-base 5xl:text-2xl font-thin text-white/50 uppercase tracking-tight">
                             WHAT RESULTS CAN I EXPECT?
                         </span>
-                        <div className="flex gap-1">
-                            <span className="w-2 h-3 bg-[#FF6F21]" />
-                            <span className="w-2 h-3 bg-[#FF6F21]/70" />
-                            <span className="w-2 h-3 bg-[#FF6F21]/45" />
+                        <div className="flex gap-1 5xl:gap-2">
+                            <span className="w-2 h-3 5xl:w-3 5xl:h-5 bg-[#FF6F21]" />
+                            <span className="w-2 h-3 5xl:w-3 5xl:h-5 bg-[#FF6F21]/70" />
+                            <span className="w-2 h-3 5xl:w-3 5xl:h-5 bg-[#FF6F21]/45" />
                         </div>
                     </div>
 
@@ -340,7 +340,7 @@ export default function SignalsSection() {
                     </div>
 
                     {/* Disclaimer */}
-                    <p className="font-host font-thin text-[11px] md:text-[12px] text-white/50 uppercase tracking-tight max-w-[260px] md:max-w-[300px] 4xl:max-w-[380px] 5xl:max-w-[450px] leading-tight pointer-events-none text-center md:text-right">
+                    <p className="font-host font-thin text-[11px] md:text-[12px] 5xl:text-base text-white/50 uppercase tracking-tight max-w-[260px] md:max-w-[300px] 4xl:max-w-[380px] 5xl:max-w-[550px] leading-tight pointer-events-none text-center md:text-right">
                         SESSIONS MAY BE RECORDED. BY USING CHAT,<br />
                         YOU ACKNOWLEDGE OUR <span className="underline">PRIVACY POLICY</span>.
                     </p>
