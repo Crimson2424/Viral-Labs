@@ -420,7 +420,7 @@ export default function ViralitySection({ globeContainerRef }) {
           </div>
 
           {/* ── Creative Methodology (bottom-left) ── */}
-          <div className="v-card-bl relative md:absolute md:left-2 md:-bottom-16 lg:left-8 lg:-bottom-8 xl:left-20 xl:bottom-0 z-30 pointer-events-auto overflow-visible">
+          <div className="v-card-bl relative md:absolute md:left-2 md:bottom-[clamp(-4rem,-8svh,0rem)] lg:left-8 lg:-bottom-8 xl:left-20 xl:bottom-0 z-30 pointer-events-auto overflow-visible">
             <div className="relative w-full md:w-56 4xl:w-64 5xl:w-72 flex flex-col overflow-visible">
               <div className="relative px-5 py-2 bg-[#1d1d1d]/90 md:bg-[#1d1d1d]/70">
                 <div className="font-bricolage text-xl 4xl:text-2xl 5xl:text-3xl text-white tracking-tight leading-5 text-left md:text-right">

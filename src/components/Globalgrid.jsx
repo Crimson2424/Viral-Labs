@@ -15,8 +15,13 @@
  *     false → visible immediately (for sections after the hero)
  *
  *   navOffset (default: false)
- *     true  → top-11 (44px offset for navbar, used in HeroSection)
+ *     true  → top-11 (44px offset for navbar)
  *     false → top-0 (flush with section top, used everywhere else)
+ *
+ *   topClass (default: undefined)
+ *     Pass an explicit Tailwind top class (e.g. "top-[56px]") to override
+ *     the navOffset logic. Useful when the grid must align to a specific
+ *     horizontal rule like the hero's grid-line-top.
  */
 
 import { useRef } from "react";
@@ -28,9 +33,11 @@ import { entranceState } from "./Entrancestate";
 // Lower = smaller cells, more of them. Tune to taste.
 const CELL_SIZE = 55;
 
-export default function GlobalGrid({ animated = false, navOffset = false }) {
+export default function GlobalGrid({ animated = false, navOffset = false, topClass }) {
   const gridRef = useRef();
   const lineColor = "rgba(255, 255, 255, 0.035)";
+
+  const resolvedTop = topClass || (navOffset ? "top-11" : "top-0");
 
   useGSAP(() => {
     const el = gridRef.current;
@@ -58,7 +65,7 @@ export default function GlobalGrid({ animated = false, navOffset = false }) {
   return (
     <div
       ref={gridRef}
-      className={`global-grid pointer-events-none absolute ${navOffset ? "top-11" : "top-0"} bottom-0 left-1/2 -translate-x-1/2 w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem] z-[15]`}
+      className={`global-grid pointer-events-none absolute ${resolvedTop} bottom-0 inset-x-0 mx-auto w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem] z-[15]`}
       aria-hidden="true"
       style={{
         backgroundImage: `

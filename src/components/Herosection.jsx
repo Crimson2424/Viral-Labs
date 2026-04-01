@@ -38,6 +38,10 @@ export default function HeroSection() {
   const missionTextRef = useRef();
   const subheadingRef = useRef();
   const ctaRef = useRef();
+  const ctaTLRef = useRef(null);
+  const ctaTRRef = useRef(null);
+  const ctaBLRef = useRef(null);
+  const ctaBRRef = useRef(null);
 
   const gridOverlayRef = useRef();
 
@@ -333,8 +337,8 @@ export default function HeroSection() {
         tl.to(missionTextRef.current, { opacity: 1, duration: 0.06, ease: "power2.out" }, 0.14);
         tl.to(missionTextRef.current, { yPercent: 50, opacity: 0, duration: 0.12, ease: "power2.in" }, 0.22);
 
-        tl.to(transitionState, { zoomProgress: 1, duration: 0.20, ease: "power1.in" }, 0.10);
-        tl.to(transitionState, { revealProgress: 1, duration: 0.20, ease: "power2.inOut" }, 0.28);
+        tl.to(transitionState, { zoomProgress: 1, duration: 0.35, ease: "sine.inOut" }, 0.10);
+        tl.to(transitionState, { revealProgress: 1, duration: 0.35, ease: "sine.inOut" }, 0.28);
 
         tl.to(missionRef.current, { opacity: 1, duration: 0.02 }, 0.28);
         tl.set(missionRef.current, { pointerEvents: "auto" }, 0.28);
@@ -357,7 +361,7 @@ export default function HeroSection() {
             { filter: "blur(12px)", duration: 0.06, ease: "power2.in" }, 0.06)
 
           .to(transitionState,
-            { zoomProgress: 1, duration: 0.25, ease: "power1.in" }, 0.03)
+            { zoomProgress: 1, duration: 0.40, ease: "sine.inOut" }, 0.03)
 
           .to(missionTextRef.current,
             { scale: 1.8, duration: 0.13, ease: "power2.in" }, 0.14)
@@ -373,7 +377,7 @@ export default function HeroSection() {
           .set(heroContentRef.current, { pointerEvents: "none" }, 0.40)
 
           .to(transitionState,
-            { revealProgress: 1, duration: 0.25, ease: "power2.inOut" }, 0.28);
+            { revealProgress: 1, duration: 0.40, ease: "sine.inOut" }, 0.28);
 
         tl.set(heroContentRef.current, { opacity: 1 }, 0)
           .to(heroContentRef.current,
@@ -434,6 +438,12 @@ export default function HeroSection() {
   );
 
   const handleCtaHover = () => {
+    // Corners move outward
+    gsap.to(ctaTLRef.current, { top: -14, left: -14, duration: 0.3, ease: "power2.out" });
+    gsap.to(ctaTRRef.current, { top: -14, right: -14, duration: 0.3, ease: "power2.out" });
+    gsap.to(ctaBLRef.current, { bottom: -14, left: -14, duration: 0.3, ease: "power2.out" });
+    gsap.to(ctaBRRef.current, { bottom: -14, right: -14, duration: 0.3, ease: "power2.out" });
+
     const data = ctaScrambleRef.current;
     if (!data) return;
 
@@ -459,6 +469,13 @@ export default function HeroSection() {
         },
       }, i * 0.02);
     });
+  };
+
+  const handleCtaLeave = () => {
+    gsap.to(ctaTLRef.current, { top: -10, left: -10, duration: 0.3, ease: "power2.out" });
+    gsap.to(ctaTRRef.current, { top: -10, right: -10, duration: 0.3, ease: "power2.out" });
+    gsap.to(ctaBLRef.current, { bottom: -10, left: -10, duration: 0.3, ease: "power2.out" });
+    gsap.to(ctaBRRef.current, { bottom: -10, right: -10, duration: 0.3, ease: "power2.out" });
   };
 
   return (
@@ -507,7 +524,7 @@ export default function HeroSection() {
 
       @media (min-width: 160rem) {
         .hero-heading {
-          font-size: clamp(8.125rem, 6.5vw, 10rem) !important;
+          font-size: clamp(10rem, 8vw, 14rem) !important;
         }
         .mission-text {
           font-size: clamp(3.125rem, 2.8vw, 4.5rem) !important;
@@ -520,8 +537,8 @@ export default function HeroSection() {
       id="home"
       className="relative z-20 w-full min-h-screen"
     >
-      {/* ═══ GlobalGrid — inside the section so it scrolls with the pin ═══ */}
-      <GlobalGrid animated navOffset />
+      {/* ═══ GlobalGrid — topClass aligns exactly with grid-line-top ═══ */}
+      <GlobalGrid animated topClass="top-[56px] 5xl:top-[80px]" />
 
       <GlobalTexture />
 
@@ -537,22 +554,21 @@ export default function HeroSection() {
           <div className="relative mx-auto w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem] h-full">
 
             {/* Crosshair lines at container edges (hero-grid class prevents CSS hide) */}
-            <div className="hero-grid grid-line-left pointer-events-none absolute inset-y-0 left-0 w-px bg-white/20 z-50" aria-hidden="true" />
-            <div className="hero-grid grid-line-right pointer-events-none absolute inset-y-0 right-0 w-px bg-white/20 z-50" aria-hidden="true" />
-            <div className="hero-grid grid-line-top pointer-events-none absolute top-[56px] left-0 right-0 h-px bg-white/20 z-50" aria-hidden="true" />
-            <GridCrosshair className="hero-grid grid-crosshair pointer-events-none absolute top-[52px] -left-1 z-50" aria-hidden="true" />
-            <GridCrosshair className="hero-grid grid-crosshair pointer-events-none absolute top-[52px] -right-1 z-50" aria-hidden="true" />
+            <div className="hero-grid grid-line-left pointer-events-none absolute inset-y-0 left-0 w-px bg-white/20 5xl:w-[1.5px] 5xl:bg-white/25 z-50" aria-hidden="true" />
+            <div className="hero-grid grid-line-right pointer-events-none absolute inset-y-0 right-0 w-px bg-white/20 5xl:w-[1.5px] 5xl:bg-white/25 z-50" aria-hidden="true" />
+            <div className="hero-grid grid-line-top pointer-events-none absolute top-[56px] 5xl:top-[80px] left-0 right-0 h-px bg-white/20 5xl:h-[1.5px] 5xl:bg-white/25 z-50" aria-hidden="true" />
+            <GridCrosshair className="hero-grid grid-crosshair pointer-events-none absolute top-[52px] 5xl:top-[76px] -left-1 z-50 5xl:scale-150" aria-hidden="true" />
+            <GridCrosshair className="hero-grid grid-crosshair pointer-events-none absolute top-[52px] 5xl:top-[76px] -right-1 z-50 5xl:scale-150" aria-hidden="true" />
 
             <div className="relative z-40 flex flex-col items-start justify-center md:items-center h-full pt-14 pl-3 md:pl-0">
               <div className="mb-6 h-[30px] 4xl:h-[50px] 5xl:h-[70px] hidden md:block" />
 
               <h1
                 ref={headingRef}
-                className="hero-heading font-bricolage font-medium text-left md:text-center mb-6 tracking-normal max-w-[70%] md:max-w-none"
+                className="hero-heading font-bricolage font-medium text-left md:text-center mb-6 5xl:mb-10 tracking-normal max-w-[70%] md:max-w-none"
                 style={{
                   fontSize: "clamp(90px, 6.5vw, 130px)",
                   lineHeight: 0.83,
-                  // letterSpacing: "-2.5px",
                 }}
               >
                 <span className="hw-eng">We </span><span className="hw-solve">Solve</span>
@@ -579,19 +595,25 @@ export default function HeroSection() {
 
               <p
                 ref={subheadingRef}
-                className="hero-subheading font-host text-base 4xl:text-lg 5xl:text-xl text-[#a1a1aa] text-left md:text-center tracking-[-0.32px] leading-tight max-w-[75%] md:max-w-[540px] 4xl:max-w-[700px] 5xl:max-w-[800px] mb-5"
+                className="hero-subheading font-host text-base 4xl:text-lg 5xl:text-2xl text-[#a1a1aa] text-left md:text-center tracking-[-0.32px] leading-tight max-w-[75%] md:max-w-[540px] 4xl:max-w-[700px] 5xl:max-w-[1000px] mb-5 5xl:mb-8"
               >
                 We build short-form content systems that turn attention into
                 installs consistently, at scale, without relying on luck.
               </p>
 
-              <div ref={ctaRef} className="flex flex-col items-center gap-2">
+              <div ref={ctaRef} className="flex flex-col items-center gap-2 5xl:gap-4">
               <div className="cta-inner overflow-visible">
                 <a
                   href="#results"
                   onMouseEnter={handleCtaHover}
-                  className="relative flex items-center justify-center gap-3 w-40 h-10 4xl:w-48 4xl:h-12 5xl:w-52 5xl:h-14 px-1.5 py-2 overflow-visible hover:bg-white/10 transition-colors duration-300"
+                  onMouseLeave={handleCtaLeave}
+                  className="relative flex items-center justify-center gap-3 w-40 h-10 4xl:w-48 4xl:h-12 5xl:w-64 5xl:h-16 px-1.5 py-2 overflow-visible hover:bg-white/10 transition-colors duration-300"
                 >
+                  {/* Orange corner brackets */}
+                  <span ref={ctaTLRef} className="pointer-events-none absolute" style={{ top: -10, left: -10, width: 8, height: 8, borderTop: "1.7px solid #FF6F21", borderLeft: "1.7px solid #FF6F21" }} aria-hidden="true" />
+                  <span ref={ctaTRRef} className="pointer-events-none absolute" style={{ top: -10, right: -10, width: 8, height: 8, borderTop: "1.7px solid #FF6F21", borderRight: "1.7px solid #FF6F21" }} aria-hidden="true" />
+                  <span ref={ctaBLRef} className="pointer-events-none absolute" style={{ bottom: -10, left: -10, width: 8, height: 8, borderBottom: "1.7px solid #FF6F21", borderLeft: "1.7px solid #FF6F21" }} aria-hidden="true" />
+                  <span ref={ctaBRRef} className="pointer-events-none absolute" style={{ bottom: -10, right: -10, width: 8, height: 8, borderBottom: "1.7px solid #FF6F21", borderRight: "1.7px solid #FF6F21" }} aria-hidden="true" />
                   <svg
                     className="cta-border absolute"
                     style={{ top: "-1px", left: "-1px", width: "calc(100% + 2px)", height: "calc(100% + 2px)" }}
@@ -607,10 +629,10 @@ export default function HeroSection() {
                       vectorEffect="non-scaling-stroke"
                     />
                   </svg>
-                  <span className="cta-text font-host font-medium text-base 4xl:text-lg 5xl:text-xl text-white text-center tracking-[-0.32px] leading-normal whitespace-nowrap">
-                    Viral Results
+                  <span className="cta-text font-host font-medium text-base 4xl:text-lg 5xl:text-2xl text-white text-center tracking-[-0.32px] leading-normal whitespace-nowrap">
+                    Go Viral
                   </span>
-                  <span className="cta-arrow" style={{ display: "inline-flex", alignItems: "center" }}>
+                  <span className="cta-arrow 5xl:scale-150" style={{ display: "inline-flex", alignItems: "center" }}>
                     <svg
                       className="cta-arrow-svg"
                       width="11"
@@ -633,7 +655,7 @@ export default function HeroSection() {
               </div>
               <div className="overflow-hidden">
                 <div className="cta-sub flex flex-col items-center">
-                  <span className="font-host text-xs 4xl:text-sm 5xl:text-base text-[#a1a1aa] text-center tracking-[-0.24px] leading-normal -mb-1">
+                  <span className="font-host text-xs 4xl:text-sm 5xl:text-lg text-[#a1a1aa] text-center tracking-[-0.24px] leading-normal -mb-1">
                     Real missions. Real outcomes.
                   </span>
                   <CtaGlowLine className="cta-glow-svg pointer-events-none" />
