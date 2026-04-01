@@ -54,6 +54,7 @@ function splitAndMask(el, type = "lines") {
   split.lines.forEach((line) => {
     const mask = document.createElement("div");
     mask.style.overflow = "hidden";
+    mask.style.clipPath = "inset(-1px -2px -2px -2px)";
     mask.style.display = "block";
     line.parentNode.insertBefore(mask, line);
     mask.appendChild(line);
@@ -95,11 +96,11 @@ export default function CreatorNetworkSection() {
     const cnStatsEl = cnStatsRef.current;
 
     /* ── INITIAL STATES ── */
-    gsap.set(cnLabelSplit.elements, { yPercent: 110, filter: "blur(6px)" });
-    gsap.set(cnHeadingSplit.split.chars, { yPercent: 120, opacity: 0, filter: "blur(6px)" });
+    gsap.set(cnLabelSplit.elements, { yPercent: 160, filter: "blur(6px)" });
+    gsap.set(cnHeadingSplit.split.chars, { yPercent: 160, opacity: 0, filter: "blur(6px)" });
     gsap.set(cnGlowRef.current, { scaleX: 0, transformOrigin: "right center", opacity: 0 });
-    gsap.set(cnDesc1Split.elements, { yPercent: 110, filter: "blur(5px)" });
-    gsap.set(cnDesc2Split.elements, { yPercent: 110, filter: "blur(5px)" });
+    gsap.set(cnDesc1Split.elements, { yPercent: 160, filter: "blur(5px)" });
+    gsap.set(cnDesc2Split.elements, { yPercent: 160, filter: "blur(5px)" });
     gsap.set(cnStatsEl, { opacity: 0, y: 30, filter: "blur(6px)" });
 
     /* ── MASTER TIMELINE ── */
@@ -187,28 +188,29 @@ export default function CreatorNetworkSection() {
   return (
     <section
       ref={sectionRef}
-      className="creator-network-section relative z-25 w-full h-[140vh]"
+      className="creator-network-section relative z-25 w-full h-auto min-h-svh lg:h-[140vh]"
     >
       {/* <GlobalGrid /> */}
       <GlobalTexture />
 
+      {/* ── Top grid line ── */}
+      {/* <div className="pointer-events-none absolute top-0 left-0 right-0 h-px bg-white/20 z-50" aria-hidden="true" /> */}
+
       <div className="absolute inset-0 overflow-hidden">
 
-        {/* <div className="pointer-events-none absolute bottom-0 left-[105px] right-[105px] h-px bg-white/20 z-30" aria-hidden="true" /> */}
-
-        {/* CN RIGHT-SIDE CONTENT */}
-        <div className="absolute z-40 right-35 top-[4%] flex flex-col items-end max-w-[440px] pointer-events-none">
+        {/* CN CONTENT — left on mobile, right on md+ (globe takes left side) */}
+        <div className="absolute z-40 inset-0 flex flex-col items-end justify-center px-3 pointer-events-none sm:px-6 sm:inset-auto sm:right-6 sm:top-[6%] sm:max-w-[70vw] md:right-8 md:top-[4%] md:max-w-[380px] lg:right-12 lg:max-w-[420px] xl:right-20 xl:max-w-[460px] 4xl:max-w-[560px] 5xl:max-w-[780px]">
           <div className="flex flex-col gap-0 items-end">
-            <p ref={cnLabelRef} className="font-host font-thin text-sm text-[#FF6F21] text-right uppercase tracking-normal">
+            <p ref={cnLabelRef} className="font-host font-thin text-xs sm:text-sm md:text-base lg:text-lg 4xl:text-xl 5xl:text-3xl text-[#FF6F21] text-right uppercase tracking-normal">
               Creator Network
             </p>
-            <h2 ref={cnHeadingRef} className="font-host font-medium text-5xl tracking-tighter leading-none text-right">
+            <h2 ref={cnHeadingRef} className="font-host font-medium text-3xl sm:text-4xl md:text-5xl lg:text-6xl 4xl:text-7xl 5xl:text-9xl tracking-tighter leading-none text-right">
               Creator Operator<br />Network
             </h2>
           </div>
 
-          <div className="flex flex-col items-end gap-3 mt-12">
-            <svg ref={cnGlowRef} width="193" height="23" viewBox="0 0 193 23" fill="none" xmlns="http://www.w3.org/2000/svg" className="mt-0">
+          <div className="flex flex-col items-end gap-3 5xl:gap-6 mt-8 md:mt-12 5xl:mt-20">
+            <svg ref={cnGlowRef} width="193" height="23" viewBox="0 0 193 23" fill="none" xmlns="http://www.w3.org/2000/svg" className="mt-0 w-32 sm:w-40 md:w-48 lg:w-56 h-auto">
               <g filter="url(#cn-glow0)" style={{ mixBlendMode: "plus-lighter" }}><line x1="11" y1="11.5" x2="182" y2="11.5" stroke="#F05A1F" /></g>
               <g filter="url(#cn-glow1)" style={{ mixBlendMode: "plus-lighter" }}><line x1="11" y1="11.5" x2="182" y2="11.5" stroke="#F05A1F" /></g>
               <g filter="url(#cn-glow2)" style={{ mixBlendMode: "plus-lighter" }}><line x1="11" y1="11.5" x2="182" y2="11.5" stroke="#F05A1F" /></g>
@@ -219,23 +221,23 @@ export default function CreatorNetworkSection() {
               </defs>
             </svg>
 
-            <p ref={cnDesc1Ref} className="font-host font-thin text-md text-right leading-tight -mt-1">
+            <p ref={cnDesc1Ref} className="font-host font-thin text-sm sm:text-base md:text-lg lg:text-xl 4xl:text-2xl 5xl:text-4xl text-right leading-tight 5xl:leading-snug -mt-1">
               We operate a coordinated network of 300+ creators, executing at a scale of 8,000+ monthly videos to meet specific category and audience objectives.
             </p>
-            <p ref={cnDesc2Ref} className="font-host font-thin text-md text-right leading-relaxed">
+            <p ref={cnDesc2Ref} className="font-host font-thin text-sm sm:text-base md:text-lg lg:text-xl 4xl:text-2xl 5xl:text-4xl text-right leading-relaxed">
               Our distribution model cumulatively reaches 1B+ views per month, ensuring consistent output and high-impact performance across all major platforms.
             </p>
 
-            <div ref={cnStatsRef} className="grid grid-cols-1 gap-y-3 w-full max-w-[260px] mt-2">
+            <div ref={cnStatsRef} className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 gap-3 md:gap-y-3 5xl:gap-y-5 w-full max-w-[180px] sm:max-w-[200px] md:max-w-[260px] lg:max-w-[300px] 4xl:max-w-[380px] 5xl:max-w-[540px] mt-2 5xl:mt-4 self-end">
               {CN_STATS.map((stat, i) => (
-                <div key={i} className="relative flex flex-col gap-0.5 px-4 py-3">
+                <div key={i} className="relative flex flex-col gap-0.5 5xl:gap-1.5 px-3 py-2 sm:px-4 sm:py-3 5xl:px-6 5xl:py-4">
                   <svg className="absolute top-0 left-0" width="14" height="14" viewBox="0 0 10 10" fill="none"><path d="M9.36328 0.5H0.5V9.45225" stroke="#FF6F21" /></svg>
                   <svg className="absolute top-0 right-0 scale-x-[-1]" width="14" height="14" viewBox="0 0 10 10" fill="none"><path d="M9.36328 0.5H0.5V9.45225" stroke="#FF6F21" /></svg>
                   <svg className="absolute bottom-0 left-0 scale-y-[-1]" width="14" height="14" viewBox="0 0 10 10" fill="none"><path d="M9.36328 0.5H0.5V9.45225" stroke="#FF6F21" /></svg>
                   <svg className="absolute bottom-0 right-0 scale-[-1]" width="14" height="14" viewBox="0 0 10 10" fill="none"><path d="M9.36328 0.5H0.5V9.45225" stroke="#FF6F21" /></svg>
-                  <span className="font-host text-2xl tracking-tight">{stat.value}</span>
+                  <span className="font-host text-lg sm:text-xl md:text-2xl lg:text-3xl 4xl:text-4xl 5xl:text-6xl tracking-tight">{stat.value}</span>
                   <svg width="100%" height="1" viewBox="0 0 134 1" fill="none" preserveAspectRatio="none"><line y1="0.5" x2="134" y2="0.5" stroke="#A1A1A1" /></svg>
-                  <span className="font-host font-thin text-xs text-white/50">{stat.label}</span>
+                  <span className="font-host font-thin text-[10px] sm:text-xs md:text-sm lg:text-base 4xl:text-lg 5xl:text-2xl text-white/50">{stat.label}</span>
                 </div>
               ))}
             </div>

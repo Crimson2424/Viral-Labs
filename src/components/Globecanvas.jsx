@@ -38,7 +38,7 @@ const NUDGE_3D = 0.4;
 // Globe stays centered during rocket phase (no X shift).
 // Must match RocketLaunchSection: globeYOffset = GLOBE_3D_MID_Y (1.2),
 // globeXOffset stays at initial 1.18 (no tween moves it).
-const GLOBE_ENTRY_Y = 1.0;
+const GLOBE_ENTRY_Y = 1.2;
 const GLOBE_ENTRY_X = 1.18;  // adjusted for full-width canvas (was 1.05)
 
 // Export for CN section to compute its start values.
@@ -196,7 +196,7 @@ export default function GlobeCanvas() {
   return (
     <div
       ref={containerRef}
-      className="fixed top-0 left-0 right-0 z-30"
+      className="fixed top-0 left-0 right-0 z-30 hidden lg:block"
       style={{ opacity: 0, pointerEvents: "none", height: "130vh" }}
     >
       <Canvas

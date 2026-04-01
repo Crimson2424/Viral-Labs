@@ -10,7 +10,7 @@
  * HOVER — NAV LINKS (after entrance):
  *   Character stagger via text-shadow + translateY.
  *
- * HOVER — CTA "Go Viral" + ARROW:
+ * HOVER — CTA "Build Your Engine" + ARROW:
  *   Text: char stagger + centering shift
  *   Arrow: clip-masked slide-in from left + rotate 45° → 0°
  *   Glow line: DrawSVG grows from center outward (50% 50% → 0% 100%)
@@ -33,10 +33,9 @@ import { entranceState } from "./Entrancestate";
 
 /* ─── Config ─── */
 const NAV_ITEMS = [
-  { label: "Home", href: "#home" },
-  { label: "Results", href: "#results" },
-  { label: "About", href: "#about" },
-  { label: "Contact", href: "#contact" },
+  { label: "Services", href: "#services" },
+  { label: "Reports", href: "#reports" },
+  { label: "System", href: "#system" },
 ];
 
 const CHAR_DELAY_INCREMENT = 0.01;
@@ -511,6 +510,19 @@ export default function Navbar({ entranceDelay = 0.3 }) {
         .sound-wave-btn:hover {
           opacity: 0.8;
         }
+
+        /* ── 5xl navbar scale-up ── */
+        @media (min-width: 240rem) {
+          header nav {
+            gap: 3rem !important;
+          }
+          .text-clip {
+            height: 1.25em !important;
+            line-height: 1.25em !important;
+            display: inline-flex !important;
+            align-items: center !important;
+          }
+        }
       `}</style>
 
       <header
@@ -519,7 +531,7 @@ export default function Navbar({ entranceDelay = 0.3 }) {
       >
         <nav
           ref={navRef}
-          className="relative flex items-center justify-between gap-4 px-4 md:px-5 4xl:px-8 5xl:px-10 py-1 overflow-hidden w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] md:w-[95%] md:max-w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] xl:w-auto xl:max-w-none xl:inline-flex xl:justify-center xl:gap-9"
+          className="relative flex items-center justify-between gap-4 px-4 md:px-5 4xl:px-8 5xl:px-10 py-1 5xl:py-3 overflow-hidden w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] md:w-[95%] md:max-w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] xl:w-auto xl:max-w-none xl:inline-flex xl:justify-center xl:gap-9"
           style={navStyle}
         >
           {/* ── Logo ── */}
@@ -533,11 +545,11 @@ export default function Navbar({ entranceDelay = 0.3 }) {
               ref={logoIconRef}
               className="inline-flex items-center justify-center"
             >
-              <ViralLabsLogo className="w-[16px] h-[16px] 4xl:w-5 4xl:h-5 5xl:w-6 5xl:h-6 translate-y-[1px]" />
+              <ViralLabsLogo className="w-[16px] h-[16px] 4xl:w-5 4xl:h-5 5xl:w-8 5xl:h-8 translate-y-[1px]" />
             </span>
             <span
               ref={logoTextRef}
-              className="font-bricolage font-normal text-white text-md 4xl:text-lg 5xl:text-xl leading-none pr-1"
+              className="font-bricolage font-normal text-white text-md 4xl:text-lg 5xl:text-2xl leading-none pr-1"
               style={{ letterSpacing: "-1.1px", ...fontStyle }}
             >
               Viral Labs
@@ -554,8 +566,13 @@ export default function Navbar({ entranceDelay = 0.3 }) {
                   onClick={(e) => {
                     e.preventDefault();
                     setActiveNav(item.label);
+                    gsap.to(window, {
+                      scrollTo: { y: item.href, offsetY: 0 },
+                      duration: 4,
+                      ease: "power2.inOut",
+                    });
                   }}
-                  className="nav-link-item relative inline-flex items-center font-bricolage font-light text-white text-sm 4xl:text-base 5xl:text-lg text-center tracking-[-0.56px] leading-none"
+                  className="nav-link-item relative inline-flex items-center font-bricolage font-light text-white text-sm 4xl:text-base 5xl:text-xl text-center tracking-[-0.56px] leading-none"
                   style={fontStyle}
                   aria-current={activeNav === item.label ? "page" : undefined}
                 >
@@ -579,10 +596,10 @@ export default function Navbar({ entranceDelay = 0.3 }) {
                 <span className="text-clip">
                   <span className="nav-cta-inner inline-block">
                     <span
-                      className="font-bricolage font-thin text-white text-sm 4xl:text-base 5xl:text-lg text-center tracking-[-0.56px] leading-none"
+                      className="font-bricolage font-thin text-white text-sm 4xl:text-base 5xl:text-xl text-center tracking-[-0.56px] leading-none"
                       style={fontStyle}
                     >
-                      <CharSpans text="Go Viral" />
+                      <CharSpans text="Build Your Engine" />
                     </span>
                   </span>
                 </span>
@@ -597,14 +614,14 @@ export default function Navbar({ entranceDelay = 0.3 }) {
 
             <NavGlowLine
               ref={glowLineRef}
-              className="absolute bottom-0 -left-2 w-[calc(100%+16px)] pointer-events-none"
+              className="absolute bottom-0 -left-5 w-[calc(100%+40px)] pointer-events-none"
             />
             </div>
           </div>
 
           {/* ── Sound Wave + Hamburger (grouped on mobile) ── */}
           <div className="flex items-center gap-3">
-            <span className="4xl:scale-125 5xl:scale-150 origin-center">
+            <span className="4xl:scale-125 5xl:scale-[1.75] origin-center">
               <SoundWaveButton
                 onClick={handleSoundToggle}
                 isPlaying={isSoundPlaying}
@@ -623,12 +640,12 @@ export default function Navbar({ entranceDelay = 0.3 }) {
 
           {/* ── Glow lights ── */}
           <div
-            className="hidden md:block absolute top-0 -left-[35px] w-9 h-9 rounded-[18px] pointer-events-none"
+            className="hidden md:block absolute top-0 -left-[35px] w-9 h-9 5xl:w-12 5xl:h-12 rounded-[18px] pointer-events-none"
             style={{ background: "white", filter: "blur(17px)" }}
             aria-hidden="true"
           />
           <div
-            className="hidden md:block absolute -top-[15px] -right-9 w-9 h-9 rounded-[18px] pointer-events-none"
+            className="hidden md:block absolute -top-[15px] -right-9 w-9 h-9 5xl:w-12 5xl:h-12 rounded-[18px] pointer-events-none"
             style={{ background: "#fbe7d4", filter: "blur(17px)" }}
             aria-hidden="true"
           />
@@ -661,6 +678,11 @@ export default function Navbar({ entranceDelay = 0.3 }) {
                       e.preventDefault();
                       setActiveNav(item.label);
                       setIsMobileMenuOpen(false);
+                      gsap.to(window, {
+                        scrollTo: { y: item.href, offsetY: 0 },
+                        duration: 8,
+                        ease: "back.out",
+                      });
                     }}
                     className="mobile-menu-link block font-bricolage font-light text-white text-sm tracking-[-0.56px] leading-none py-2"
                     style={fontStyle}

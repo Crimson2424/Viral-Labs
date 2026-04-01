@@ -52,20 +52,23 @@ export const ArrowIcon = forwardRef(({ className = "", size = 10 }, ref) => (
 ));
 
 // ── Grid Crosshair (9×9) — corner markers ──
-export const GridCrosshair = forwardRef(({ className = "" }, ref) => (
-  <svg
-    ref={ref}
-    width="9"
-    height="9"
-    viewBox="0 0 9 9"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    className={className}
-  >
-    <line x1="4.5" y1="0.5" x2="4.5" y2="8.5" stroke="white" strokeLinecap="round" />
-    <line x1="0.5" y1="4.5" x2="8.5" y2="4.5" stroke="white" strokeLinecap="round" />
-  </svg>
-));
+export const GridCrosshair = forwardRef(({ className = "", size = 9 }, ref) => {
+  const mid = size / 2;
+  return (
+    <svg
+      ref={ref}
+      width={size}
+      height={size}
+      viewBox={`0 0 ${size} ${size}`}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <line x1={mid} y1="0.5" x2={mid} y2={size - 0.5} stroke="white" strokeLinecap="round" />
+      <line x1="0.5" y1={mid} x2={size - 0.5} y2={mid} stroke="white" strokeLinecap="round" />
+    </svg>
+  );
+});
 
 // ── Grid Line Top (horizontal) — width controlled by CSS ──
 export const GridLineTop = forwardRef(({ className = "" }, ref) => (

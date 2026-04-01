@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { View, PerspectiveCamera } from "@react-three/drei";
+import useIsDesktop from "./components/useIsDesktop";
 import { gsap, ScrollTrigger } from "./components/Gsapconfig";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
@@ -20,6 +21,9 @@ import CreatorNetworkSection from "./components/Creatornetworksection";
 import MissionReports from "./components/MissionReports";
 import SignalsSection from "./components/SignalsSection";
 import SignalsCanvas from "./components/SignalsCanvas";
+import BridgeTestimonial from "./components/BridgeTestimonial";
+import FooterSection from "./components/FooterSection";
+import VideoTransition from "./components/VideoTransition";
 
 function DummySection() {
   return (
@@ -61,7 +65,7 @@ function DummySection() {
 }
 
 const App = () => {
-  
+  const isDesktop = useIsDesktop();
   const lenisRef = useRef(null);
   const containerRef = useRef(null);
 
@@ -119,13 +123,13 @@ const App = () => {
           alpha: true,
           powerPreference: "high-performance",
         }}
-        dpr={[1, 2]}
+        dpr={[1, 1.5]}
         style={{
           position: "fixed",
           top: 0,
           left: 0,
           width: "100vw",
-          height: "100vh",
+          height: "100svh",
           pointerEvents: "none",
           zIndex: 5,
         }}
@@ -138,19 +142,22 @@ const App = () => {
       </Canvas>
 
       {/* Creator Globe — standalone fixed Canvas (3rd WebGL context) */}
-      <GlobeCanvas />
+      {isDesktop && <GlobeCanvas />}
 
       {/* Signals — standalone fixed Canvas with bloom (4th WebGL context) */}
-      <SignalsCanvas />
+      {isDesktop && <SignalsCanvas />}
 
       <HeroSection />
       <CoreOperations />
       <ViralitySection globeContainerRef={globeContainerRef} />
       <MissionReports />
+      <VideoTransition />
       <RocketLaunchSection />
       <CreatorNetworkSection />
       <SignalsSection />
-      <DummySection />
+      <BridgeTestimonial />
+      <FooterSection />
+      {/* <DummySection /> */}
     </main>
   );
 };
