@@ -210,6 +210,7 @@ const BG_WIPE_COLORS = ["#3a3a3a", "#252525", "#171717", HOVER_BG];
 const caseStudies = [
   {
     id: "01", brand: "The North Face", logo: "tnf",
+    link: "https://giant-rubidium-888.notion.site/How-We-Drove-Sales-for-The-North-Face-Through-Organic-Content-3177dca4ef9f803f8357c8d54d4a2226?source=copy_link",
     tagline: "Driving Sales Through\nOrganic Content.",
     objective: "Drive qualified traffic and convert it into purchases using organic content.",
     execution: "Built a 12 creator UGC engine producing high volume, discovery led content across TikTok, Instagram, and YouTube.",
@@ -217,6 +218,7 @@ const caseStudies = [
   },
   {
     id: "02", brand: "FLO", logo: "flo",
+    link: "https://giant-rubidium-888.notion.site/How-Viral-Labs-Engineered-Flo-s-Organic-Comeback-30b7dca4ef9f801aa0e8f90b6ef91284?source=copy_link",
     tagline: "Engineering an Organic\nComeback.",
     objective: "Reverse negative brand perception and regain control of organic narrative.",
     execution: "Deployed a high-volume creator system with 3,500+ videos designed to dominate algorithmic distribution.",
@@ -335,7 +337,7 @@ function AccordionItem({ data, isActive, onEnter, onLeave, onClick }) {
             <div className="col-span-12 md:col-span-3">
               <span ref={execLabelRef} className="inline-block font-host text-xs 4xl:text-sm 5xl:text-base tracking-[0.15em] uppercase text-white mb-3">EXECUTION</span>
               <p ref={execTextRef} className="font-host text-sm 4xl:text-base 5xl:text-lg font-thin text-white/50 leading-relaxed tracking-tight mb-4">{data.execution}</p>
-              <a ref={linkRef} href="#" className="inline-flex items-center gap-1.5 font-host text-sm text-white/40 hover:text-[#FF6F21] transition-colors duration-300 underline underline-offset-4 decoration-white/15 hover:decoration-[#FF6F21]/50">
+              <a ref={linkRef} href={data.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 font-host text-sm text-white/40 hover:text-[#FF6F21] transition-colors duration-300 underline underline-offset-4 decoration-white/15 hover:decoration-[#FF6F21]/50">
                 View full case study <span className="text-xs">→</span>
               </a>
             </div>
@@ -510,7 +512,7 @@ export default function MissionReports() {
         .mr-header-content { padding-left: 5rem !important; padding-right: 5rem !important; }
       }
     `}</style>
-    <section ref={sectionRef} className="mission-reports-section relative w-full" onTouchStart={handleTouchStart}>
+    <section ref={sectionRef} id="reports" className="mission-reports-section relative w-full" onTouchStart={handleTouchStart}>
       <GlobalTexture />
       <div className="relative mx-auto w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem]">
       <div className="pointer-events-none absolute top-0 left-0 w-px h-full bg-white/20 z-50" aria-hidden="true" />

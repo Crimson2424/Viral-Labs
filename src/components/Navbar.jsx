@@ -10,7 +10,7 @@
  * HOVER — NAV LINKS (after entrance):
  *   Character stagger via text-shadow + translateY.
  *
- * HOVER — CTA "Go Viral" + ARROW:
+ * HOVER — CTA "Build Your Engine" + ARROW:
  *   Text: char stagger + centering shift
  *   Arrow: clip-masked slide-in from left + rotate 45° → 0°
  *   Glow line: DrawSVG grows from center outward (50% 50% → 0% 100%)
@@ -33,10 +33,9 @@ import { entranceState } from "./Entrancestate";
 
 /* ─── Config ─── */
 const NAV_ITEMS = [
-  { label: "Home", href: "#home" },
-  { label: "Results", href: "#results" },
-  { label: "About", href: "#about" },
-  { label: "Contact", href: "#contact" },
+  { label: "Services", href: "#services" },
+  { label: "Reports", href: "#reports" },
+  { label: "System", href: "#system" },
 ];
 
 const CHAR_DELAY_INCREMENT = 0.01;
@@ -567,6 +566,11 @@ export default function Navbar({ entranceDelay = 0.3 }) {
                   onClick={(e) => {
                     e.preventDefault();
                     setActiveNav(item.label);
+                    gsap.to(window, {
+                      scrollTo: { y: item.href, offsetY: 0 },
+                      duration: 4,
+                      ease: "power2.inOut",
+                    });
                   }}
                   className="nav-link-item relative inline-flex items-center font-bricolage font-light text-white text-sm 4xl:text-base 5xl:text-xl text-center tracking-[-0.56px] leading-none"
                   style={fontStyle}
@@ -595,7 +599,7 @@ export default function Navbar({ entranceDelay = 0.3 }) {
                       className="font-bricolage font-thin text-white text-sm 4xl:text-base 5xl:text-xl text-center tracking-[-0.56px] leading-none"
                       style={fontStyle}
                     >
-                      <CharSpans text="Go Viral" />
+                      <CharSpans text="Build Your Engine" />
                     </span>
                   </span>
                 </span>
@@ -610,7 +614,7 @@ export default function Navbar({ entranceDelay = 0.3 }) {
 
             <NavGlowLine
               ref={glowLineRef}
-              className="absolute bottom-0 -left-2 w-[calc(100%+16px)] pointer-events-none"
+              className="absolute bottom-0 -left-5 w-[calc(100%+40px)] pointer-events-none"
             />
             </div>
           </div>
@@ -674,6 +678,11 @@ export default function Navbar({ entranceDelay = 0.3 }) {
                       e.preventDefault();
                       setActiveNav(item.label);
                       setIsMobileMenuOpen(false);
+                      gsap.to(window, {
+                        scrollTo: { y: item.href, offsetY: 0 },
+                        duration: 8,
+                        ease: "back.out",
+                      });
                     }}
                     className="mobile-menu-link block font-bricolage font-light text-white text-sm tracking-[-0.56px] leading-none py-2"
                     style={fontStyle}
