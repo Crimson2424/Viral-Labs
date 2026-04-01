@@ -22,6 +22,7 @@ import SignalsSection from "./components/SignalsSection";
 import SignalsCanvas from "./components/SignalsCanvas";
 import BridgeTestimonial from "./components/BridgeTestimonial";
 import FooterSection from "./components/FooterSection";
+import VideoTransition from "./components/VideoTransition";
 
 function DummySection() {
   return (
@@ -121,7 +122,7 @@ const App = () => {
           alpha: true,
           powerPreference: "high-performance",
         }}
-        dpr={[1, 2]}
+        dpr={[1, 1.5]}
         style={{
           position: "fixed",
           top: 0,
@@ -149,6 +150,7 @@ const App = () => {
       <CoreOperations />
       <ViralitySection globeContainerRef={globeContainerRef} />
       <MissionReports />
+      <VideoTransition />
       <RocketLaunchSection />
       <CreatorNetworkSection />
       <SignalsSection />

@@ -1,24 +1,6 @@
-/**
- * SignalsScene — R3F scene for the "Stream of Data" signals visualization.
- *
- * Converted from vanilla Three.js (codepen) to R3F hooks pattern.
- * Runs inside a standalone SignalsCanvas with bloom.
- *
- * Architecture:
- *   - Background lines: 80 THREE.Line objects animated with wave per frame
- *   - Signal trails: 53 animated THREE.Line objects with vertex colors
- *   - All objects managed imperatively via group ref for performance
- *
- * Config values tuned from the codepen's lil-gui settings.
- */
-
 import { useRef, useEffect, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-
-/* ══════════════════════════════════════════════════════
-   CONFIGURATION (tuned values from codepen)
-   ══════════════════════════════════════════════════════ */
 
 const CONFIG = {
   // Geometry
@@ -30,7 +12,7 @@ const CONFIG = {
   spreadDepth: 0,
   curveLength: 60.58,
   straightLength: 113.76,
-  curvePower: 1.0382,
+  curvePower: 1.2382,
 
   // Line appearance
   colorLine: "#2d2e2e",
@@ -49,22 +31,13 @@ const CONFIG = {
   colorSignal2: "#a1687b",
   useColor3: false,
   colorSignal3: "#ffcc00",
+
+  // Convergence glow
+  glowColor: "#8a8b8b",
+  glowStrength: 0.6,
+  glowRange: 15,
 };
 
-/* ══════════════════════════════════════════════════════
-   PATH COMPUTATION
-   ══════════════════════════════════════════════════════ */
-
-/**
- * Compute a point along a line's path.
- * Left side (x < 0) fans out with cosine shaping + wave animation.
- * Right side (x >= 0) is a straight horizontal line at y=0.
- *
- * @param {number} t — 0..1 progress along path
- * @param {number} lineIndex — which line (0..lineCount-1)
- * @param {number[]} out — [x, y, z] output array (mutated)
- * @param {number} time — elapsed time for wave animation
- */
 function getPathPoint(t, lineIndex, out, time) {
   const {
     curveLength, straightLength, lineCount,
@@ -86,7 +59,6 @@ function getPathPoint(t, lineIndex, out, time) {
     y = spreadFactor * spreadHeight * shapeFactor;
     z = spreadFactor * spreadDepth * shapeFactor;
 
-    // Wave animation — only on curved section, strength follows shape
     const wave = Math.sin(time * waveSpeed + currentX * 0.1 + lineIndex) * waveHeight * shapeFactor;
     y += wave;
   }
@@ -96,20 +68,19 @@ function getPathPoint(t, lineIndex, out, time) {
   out[2] = z;
 }
 
-/* ══════════════════════════════════════════════════════
-   SCENE COMPONENT
-   ══════════════════════════════════════════════════════ */
-
 export default function SignalsScene() {
   const groupRef = useRef();
   const bgLinesRef = useRef([]);
   const signalsRef = useRef([]);
   const colorsRef = useRef([]);
 
-  // Reusable temp array — avoids allocations in hot path
+  // Persistent Color objects — avoid allocations in useFrame
+  const baseColorRef = useRef(new THREE.Color(CONFIG.colorLine));
+  const glowColorRef = useRef(new THREE.Color(CONFIG.glowColor));
+  const tmpColorRef = useRef(new THREE.Color());
+
   const tempPt = useMemo(() => [0, 0, 0], []);
 
-  /* ── Build all line objects once on mount ── */
   useEffect(() => {
     const group = groupRef.current;
     if (!group) return;
@@ -119,9 +90,9 @@ export default function SignalsScene() {
     const pt = [0, 0, 0];
     const createdObjects = [];
 
-    /* ── Background lines ── */
+    /* ── Background lines — vertex colors for convergence glow ── */
     const bgMat = new THREE.LineBasicMaterial({
-      color: CONFIG.colorLine,
+      vertexColors: true,
       transparent: true,
       opacity: CONFIG.lineOpacity,
       depthWrite: false,
@@ -132,17 +103,23 @@ export default function SignalsScene() {
 
     for (let i = 0; i < CONFIG.lineCount; i++) {
       const positions = new Float32Array(CONFIG.segmentCount * 3);
+      const colors = new Float32Array(CONFIG.segmentCount * 3);
 
-      // Initial positions (will be updated every frame with wave)
       for (let j = 0; j < CONFIG.segmentCount; j++) {
         getPathPoint(j / (CONFIG.segmentCount - 1), i, pt, 0);
         positions[j * 3] = pt[0];
         positions[j * 3 + 1] = pt[1];
         positions[j * 3 + 2] = pt[2];
+
+        // Initial color = base dark gray
+        colors[j * 3] = baseColorRef.current.r;
+        colors[j * 3 + 1] = baseColorRef.current.g;
+        colors[j * 3 + 2] = baseColorRef.current.b;
       }
 
       const geo = new THREE.BufferGeometry();
       geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+      geo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
 
       const line = new THREE.Line(geo, bgMat);
       line.renderOrder = 0;
@@ -160,7 +137,7 @@ export default function SignalsScene() {
     if (CONFIG.useColor3) sigColors.push(new THREE.Color(CONFIG.colorSignal3));
     colorsRef.current = sigColors;
 
-    /* ── Signal trail lines (animated per frame) ── */
+    /* ── Signal trail lines ── */
     const sigMat = new THREE.LineBasicMaterial({
       vertexColors: true,
       blending: THREE.AdditiveBlending,
@@ -191,7 +168,6 @@ export default function SignalsScene() {
         laneIndex: Math.floor(Math.random() * CONFIG.lineCount),
         speed: 0.2 + Math.random() * 0.5,
         progress: Math.random(),
-        // Flat history: [x,y,z, x,y,z, ...] — avoids per-frame object creation
         history: [],
         color: sigColors[Math.floor(Math.random() * sigColors.length)],
       });
@@ -199,7 +175,6 @@ export default function SignalsScene() {
 
     signalsRef.current = signals;
 
-    /* ── Cleanup ── */
     return () => {
       signalsRef.current = [];
       bgLinesRef.current = [];
@@ -210,16 +185,19 @@ export default function SignalsScene() {
     };
   }, []);
 
-  /* ── Animate background lines + signals every frame ── */
   useFrame(({ clock }) => {
     const time = clock.getElapsedTime();
     const pt = tempPt;
+    const baseColor = baseColorRef.current;
+    const glowColor = glowColorRef.current;
+    const tmpColor = tmpColorRef.current;
 
-    /* ── Update background lines with wave ── */
+    /* ── Update background lines with wave + convergence glow ── */
     const bgLines = bgLinesRef.current;
     for (let i = 0; i < bgLines.length; i++) {
       const line = bgLines[i];
       const posArr = line.geometry.attributes.position.array;
+      const colArr = line.geometry.attributes.color.array;
       const lineId = line.userData.id;
 
       for (let j = 0; j < CONFIG.segmentCount; j++) {
@@ -227,8 +205,22 @@ export default function SignalsScene() {
         posArr[j * 3] = pt[0];
         posArr[j * 3 + 1] = pt[1];
         posArr[j * 3 + 2] = pt[2];
+
+        // Glow near convergence point (x ≈ 0 is where all lines merge)
+        const distFromConvergence = Math.abs(pt[0]);
+        const glowFactor =
+          distFromConvergence < CONFIG.glowRange
+            ? (1 - distFromConvergence / CONFIG.glowRange) * CONFIG.glowStrength
+            : 0;
+
+        tmpColor.copy(baseColor).lerp(glowColor, glowFactor);
+        colArr[j * 3] = tmpColor.r;
+        colArr[j * 3 + 1] = tmpColor.g;
+        colArr[j * 3 + 2] = tmpColor.b;
       }
+
       line.geometry.attributes.position.needsUpdate = true;
+      line.geometry.attributes.color.needsUpdate = true;
     }
 
     /* ── Animate signals ── */
@@ -239,10 +231,8 @@ export default function SignalsScene() {
     for (let s = 0; s < signals.length; s++) {
       const sig = signals[s];
 
-      // Advance along path
       sig.progress += sig.speed * 0.005 * speedGlobal;
 
-      // Reset when reaching end
       if (sig.progress > 1.0) {
         sig.progress = 0;
         sig.laneIndex = Math.floor(Math.random() * lineCount);
@@ -250,11 +240,9 @@ export default function SignalsScene() {
         sig.color = sigColors[Math.floor(Math.random() * sigColors.length)];
       }
 
-      // Compute current position with wave and push to flat history
       getPathPoint(sig.progress, sig.laneIndex, pt, time);
       sig.history.push(pt[0], pt[1], pt[2]);
 
-      // Trim history
       const maxEntries = (trailLength + 1) * 3;
       while (sig.history.length > maxEntries) {
         sig.history.shift();
@@ -262,7 +250,6 @@ export default function SignalsScene() {
         sig.history.shift();
       }
 
-      // Write to geometry buffers
       const posArr = sig.mesh.geometry.attributes.position.array;
       const colArr = sig.mesh.geometry.attributes.color.array;
       const histPoints = sig.history.length / 3;
@@ -276,7 +263,6 @@ export default function SignalsScene() {
         posArr[i * 3 + 1] = sig.history[base + 1] ?? 0;
         posArr[i * 3 + 2] = sig.history[base + 2] ?? 0;
 
-        // Fade alpha along trail
         const alpha = trailLength > 0 ? Math.max(0, 1 - i / trailLength) : 1;
         colArr[i * 3] = sig.color.r * alpha;
         colArr[i * 3 + 1] = sig.color.g * alpha;

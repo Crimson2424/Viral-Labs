@@ -72,16 +72,17 @@ export default function SignalsCanvas() {
           powerPreference: "high-performance",
           toneMapping: THREE.NoToneMapping,
         }}
-        dpr={[1, 2]}
+        dpr={1}
         style={{ width: "100%", height: "100%", pointerEvents: "none" }}
       >
         <SignalsScene />
-        <EffectComposer>
+        <EffectComposer resolutionScale={0.5}>
           <Bloom
-            intensity={1.065}
+            intensity={5}
             luminanceThreshold={0}
             luminanceSmoothing={0.9}
-            radius={0.8}
+            radius={0.15}
+            mipmapBlur
           />
         </EffectComposer>
       </Canvas>
