@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import useIsDesktop from "./useIsDesktop";
 import GlobalGrid from "./Globalgrid";
 import { gsap, ScrollTrigger, SplitText, useGSAP } from "../components/Gsapconfig";
 import { viralityState } from "./Viralitystate";
@@ -48,6 +49,7 @@ function GlowCubes({ className }) {
 }
 
 export default function ViralitySection({ globeContainerRef }) {
+  const isDesktop = useIsDesktop();
   const sectionRef = useRef();
   const headerRef = useRef();
   const glowRef = useRef();
@@ -321,7 +323,7 @@ export default function ViralitySection({ globeContainerRef }) {
 
       {/* Clip wrapper — clips globe at section bounds, prevents bleed into section above */}
       <div className="absolute inset-0 overflow-hidden z-10">
-        <div ref={globeContainerRef} className="absolute -top-40 bottom-0 w-full -translate-y-12 hidden lg:block" />
+        {isDesktop && <div ref={globeContainerRef} className="absolute -top-40 bottom-0 w-full -translate-y-12" />}
       </div>
 
       {/* Glow-globe layer — above red glow, below globe-mobile */}
@@ -340,7 +342,7 @@ export default function ViralitySection({ globeContainerRef }) {
         src="/images/globe-mobile.png"
         alt=""
         aria-hidden="true"
-        className="absolute left-1/2 -translate-x-1/2 top-[18.5%] w-[90vw] max-w-md md:max-w-xl object-contain lg:hidden pointer-events-none z-10"
+        className="absolute left-1/2 -translate-x-1/2 top-[18.5%] max-sm:top-[14%] w-[90vw] max-w-md md:max-w-xl object-contain lg:hidden pointer-events-none z-10"
         style={{ mixBlendMode: "lighten" }}
       />
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { View, PerspectiveCamera } from "@react-three/drei";
+import useIsDesktop from "./components/useIsDesktop";
 import { gsap, ScrollTrigger } from "./components/Gsapconfig";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
@@ -64,7 +65,7 @@ function DummySection() {
 }
 
 const App = () => {
-  
+  const isDesktop = useIsDesktop();
   const lenisRef = useRef(null);
   const containerRef = useRef(null);
 
@@ -141,10 +142,10 @@ const App = () => {
       </Canvas>
 
       {/* Creator Globe — standalone fixed Canvas (3rd WebGL context) */}
-      <GlobeCanvas />
+      {isDesktop && <GlobeCanvas />}
 
       {/* Signals — standalone fixed Canvas with bloom (4th WebGL context) */}
-      <SignalsCanvas />
+      {isDesktop && <SignalsCanvas />}
 
       <HeroSection />
       <CoreOperations />
