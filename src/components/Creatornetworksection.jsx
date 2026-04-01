@@ -199,7 +199,7 @@ export default function CreatorNetworkSection() {
       <div className="absolute inset-0 overflow-hidden">
 
         {/* CN CONTENT — left on mobile, right on md+ (globe takes left side) */}
-        <div className="absolute z-40 right-3 top-[6%] flex flex-col items-end max-w-[85vw] pointer-events-none sm:right-6 sm:max-w-[70vw] md:right-8 md:top-[4%] md:max-w-[380px] lg:right-12 lg:max-w-[420px] xl:right-20 xl:max-w-[460px] 4xl:max-w-[560px] 5xl:max-w-[780px]">
+        <div className="absolute z-40 inset-0 flex flex-col items-end justify-center px-3 pointer-events-none sm:px-6 sm:inset-auto sm:right-6 sm:top-[6%] sm:max-w-[70vw] md:right-8 md:top-[4%] md:max-w-[380px] lg:right-12 lg:max-w-[420px] xl:right-20 xl:max-w-[460px] 4xl:max-w-[560px] 5xl:max-w-[780px]">
           <div className="flex flex-col gap-0 items-end">
             <p ref={cnLabelRef} className="font-host font-thin text-xs sm:text-sm md:text-base lg:text-lg 4xl:text-xl 5xl:text-3xl text-[#FF6F21] text-right uppercase tracking-normal">
               Creator Network
@@ -228,7 +228,7 @@ export default function CreatorNetworkSection() {
               Our distribution model cumulatively reaches 1B+ views per month, ensuring consistent output and high-impact performance across all major platforms.
             </p>
 
-            <div ref={cnStatsRef} className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-1 gap-3 md:gap-y-3 5xl:gap-y-5 w-full max-w-none md:max-w-[260px] lg:max-w-[300px] 4xl:max-w-[380px] 5xl:max-w-[540px] mt-2 5xl:mt-4">
+            <div ref={cnStatsRef} className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 gap-3 md:gap-y-3 5xl:gap-y-5 w-full max-w-[180px] sm:max-w-[200px] md:max-w-[260px] lg:max-w-[300px] 4xl:max-w-[380px] 5xl:max-w-[540px] mt-2 5xl:mt-4 self-end">
               {CN_STATS.map((stat, i) => (
                 <div key={i} className="relative flex flex-col gap-0.5 5xl:gap-1.5 px-3 py-2 sm:px-4 sm:py-3 5xl:px-6 5xl:py-4">
                   <svg className="absolute top-0 left-0" width="14" height="14" viewBox="0 0 10 10" fill="none"><path d="M9.36328 0.5H0.5V9.45225" stroke="#FF6F21" /></svg>
