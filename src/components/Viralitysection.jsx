@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import useIsDesktop from "./useIsDesktop";
 import GlobalGrid from "./Globalgrid";
 import { gsap, ScrollTrigger, SplitText, useGSAP } from "../components/Gsapconfig";
 import { viralityState } from "./Viralitystate";
@@ -48,6 +49,7 @@ function GlowCubes({ className }) {
 }
 
 export default function ViralitySection({ globeContainerRef }) {
+  const isDesktop = useIsDesktop();
   const sectionRef = useRef();
   const headerRef = useRef();
   const glowRef = useRef();
@@ -321,7 +323,7 @@ export default function ViralitySection({ globeContainerRef }) {
 
       {/* Clip wrapper — clips globe at section bounds, prevents bleed into section above */}
       <div className="absolute inset-0 overflow-hidden z-10">
-        <div ref={globeContainerRef} className="absolute -top-40 bottom-0 w-full -translate-y-12 hidden md:block" />
+        {isDesktop && <div ref={globeContainerRef} className="absolute -top-40 bottom-0 w-full -translate-y-12" />}
       </div>
 
       {/* Glow-globe layer — above red glow, below globe-mobile */}
@@ -330,7 +332,7 @@ export default function ViralitySection({ globeContainerRef }) {
         src="/images/glow-globe.png"
         alt=""
         aria-hidden="true"
-        className="absolute left-1/2 -translate-x-1/2 top-[12%] w-[90vw] max-w-md object-contain md:hidden pointer-events-none z-[9]"
+        className="absolute left-1/2 -translate-x-1/2 top-[12%] w-[90vw] max-w-md md:max-w-xl object-contain lg:hidden pointer-events-none z-[9]"
         style={{ mixBlendMode: "lighten" }}
       />
 
@@ -340,7 +342,7 @@ export default function ViralitySection({ globeContainerRef }) {
         src="/images/globe-mobile.png"
         alt=""
         aria-hidden="true"
-        className="absolute left-1/2 -translate-x-1/2 top-[13.5%] w-[90vw] max-w-md object-contain md:hidden pointer-events-none z-10"
+        className="absolute left-1/2 -translate-x-1/2 top-[18.5%] max-sm:top-[14%] w-[90vw] max-w-md md:max-w-xl object-contain lg:hidden pointer-events-none z-10"
         style={{ mixBlendMode: "lighten" }}
       />
 
@@ -420,7 +422,7 @@ export default function ViralitySection({ globeContainerRef }) {
           </div>
 
           {/* ── Creative Methodology (bottom-left) ── */}
-          <div className="v-card-bl relative md:absolute md:left-2 md:-bottom-16 lg:left-8 lg:bottom-0 xl:left-20 xl:bottom-0 2xl:left-14 2xl:-bottom-2 3xl:left-20 3xl:bottom-15 4xl:left-32 4xl:bottom-50 5xl:left-24 5xl:bottom-100 z-30 pointer-events-auto overflow-visible">
+          <div className="v-card-bl relative md:absolute md:left-2 md:bottom-26 lg:left-8 lg:bottom-0 xl:left-20 xl:bottom-0 2xl:left-14 2xl:-bottom-2 3xl:left-20 3xl:bottom-15 4xl:left-32 4xl:bottom-50 5xl:left-24 5xl:bottom-100 z-30 pointer-events-auto overflow-visible">
             <div className="relative w-full md:w-56 lg:w-44 xl:w-56 2xl:w-56 3xl:w-60 4xl:w-68 5xl:w-104 flex flex-col overflow-visible">
               <div className="relative px-5 lg:px-3 xl:px-5 5xl:px-8 py-2 lg:py-1.5 xl:py-2 5xl:py-4 bg-[#1d1d1d]/90 md:bg-[#1d1d1d]/70">
                 <div className="font-bricolage text-xl lg:text-base xl:text-xl 4xl:text-2xl 5xl:text-4xl text-white tracking-tight leading-5 lg:leading-4 xl:leading-5 5xl:leading-8 text-left md:text-right">
@@ -441,7 +443,7 @@ export default function ViralitySection({ globeContainerRef }) {
           </div>
 
           {/* ── Performance Outcomes (bottom-right) ── */}
-          <div className="v-card-br relative md:absolute md:right-0 md:-bottom-16 lg:right-4 lg:bottom-0 xl:right-6 xl:-bottom-3 2xl:right-4 2xl:-bottom-4 3xl:right-6 3xl:bottom-30 4xl:right-16 4xl:bottom-60 5xl:right-8 5xl:bottom-90 z-30 pointer-events-auto overflow-visible">
+          <div className="v-card-br relative md:absolute md:right-0 md:bottom-30 lg:right-4 lg:bottom-0 xl:right-6 xl:-bottom-3 2xl:right-4 2xl:-bottom-4 3xl:right-6 3xl:bottom-30 4xl:right-16 4xl:bottom-60 5xl:right-8 5xl:bottom-90 z-30 pointer-events-auto overflow-visible">
             <div className="relative w-full md:w-69 lg:w-52 xl:w-69 2xl:w-69 3xl:w-72 4xl:w-84 5xl:w-120 flex flex-col overflow-visible">
               <div className="relative px-5 lg:px-3 xl:px-5 5xl:px-8 py-2 lg:py-1.5 xl:py-2 5xl:py-4 bg-[#1d1d1d]/90 md:bg-[#1d1d1d]/70">
                 <div className="font-bricolage text-xl lg:text-base xl:text-xl 4xl:text-2xl 5xl:text-4xl text-white tracking-tight leading-5 lg:leading-4 xl:leading-5 5xl:leading-8 text-left">
