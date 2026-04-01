@@ -256,7 +256,7 @@ const BridgeTestimonial = () => {
       {/* ── centred wrapper ── */}
       <div className="relative z-10 mx-auto w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem]">
         {/* ── testimonial card ── */}
-        <div className="relative mx-auto max-w-[52rem] px-8 pt-14 pb-10 sm:px-10 sm:pt-10 sm:pb-10 md:px-14 md:py-14 lg:px-16 lg:py-16 4xl:px-24 4xl:py-20 5xl:px-32 5xl:py-24">
+        <div className="relative mx-auto max-w-[52rem] 4xl:max-w-[72rem] 5xl:max-w-[96rem] px-8 pt-14 pb-10 sm:px-10 sm:pt-10 sm:pb-10 md:px-14 md:py-14 lg:px-16 lg:py-16 4xl:px-24 4xl:py-20 5xl:px-32 5xl:py-24">
           {/* ─── Four orange corner brackets ─── */}
           <CornerBrackets />
 
@@ -284,7 +284,7 @@ const BridgeTestimonial = () => {
           <div ref={quoteWrapperRef} className="relative">
             <p
               ref={quoteRef}
-              className="font-bricolage text-base font-thin leading-[1.75] tracking-wide text-white sm:text-lg md:text-2xl md:leading-tight 4xl:text-3xl 5xl:text-4xl"
+              className="font-bricolage text-base font-thin leading-[1.75] tracking-wide text-white sm:text-lg md:text-2xl md:leading-tight 4xl:text-4xl 4xl:leading-snug 5xl:text-5xl 5xl:leading-snug"
             >
               {testimonials[0].quote}
             </p>
@@ -297,7 +297,7 @@ const BridgeTestimonial = () => {
             ref={shiftLineRef}
             src={ShiftLine}
             alt=""
-            className="mt-0 h-auto w-full max-w-[48rem] select-none"
+            className="mt-0 h-auto w-full max-w-[48rem] 4xl:max-w-[66rem] 5xl:max-w-[90rem] select-none"
             style={{ opacity: 0 }}
             draggable={false}
           />
@@ -306,7 +306,7 @@ const BridgeTestimonial = () => {
           <div className="mt-8 flex items-center justify-between sm:mt-10 4xl:mt-14 5xl:mt-16">
             {/* founder */}
             <div className="flex items-center gap-3">
-              <div className="h-9 w-9 shrink-0 rounded-full bg-[#2a2a2a] sm:h-10 sm:w-10" />
+              <div className="h-9 w-9 shrink-0 rounded-full bg-[#2a2a2a] sm:h-10 sm:w-10 4xl:h-12 4xl:w-12 5xl:h-14 5xl:w-14" />
               <div className="flex flex-col">
                 <span
                   ref={founderNameRef}
