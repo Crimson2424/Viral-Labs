@@ -61,7 +61,7 @@ export default function SignalsCanvas() {
   return (
     <div
       ref={containerRef}
-      className="fixed top-0 left-0 right-0 z-22"
+      className="fixed top-0 left-0 right-0 z-26"
       style={{ opacity: 0, pointerEvents: "none", height: "130vh" }}
     >
       <Canvas

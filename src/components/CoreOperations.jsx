@@ -46,18 +46,12 @@ const cards = [
   },
   {
     num: "02",
-    title: "Product Launch",
+    title: "Product Launch Engine",
     desc: "Structured launch execution that drives immediate traction through coordinated content and creator distribution.",
     img: "/images/image 493.png",
   },
   {
     num: "03",
-    title: "Pre-IPO Distribution",
-    desc: "High-scale distribution systems built to maximize visibility during critical growth phases.",
-    img: "/images/image 494.png",
-  },
-  {
-    num: "04",
     title: "Social Media Transformation",
     desc: "Turning social presence into a disciplined, performance-driven growth system.",
     img: "/images/image 495.png",
@@ -301,24 +295,24 @@ export default function CoreOperations() {
           aria-hidden="true"
         />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border-t border-[#383838]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 border-t border-[#383838]">
           {cards.map((card) => {
             return (
               <div
                 key={card.num}
                 className="co-card relative flex flex-col border-[#383838] border-b last:border-b-0 sm:border-r sm:[&:nth-child(2n)]:border-r-transparent sm:[&:nth-last-child(-n+2)]:border-b-0 lg:[&:nth-child(2n)]:border-r-[#383838] lg:border-b-0 lg:last:border-r-transparent"
               >
-                <div className="relative aspect-3/2 sm:aspect-square bg-black overflow-hidden">
+                <div className="relative aspect-3/2 sm:aspect-square lg:aspect-[4/3] bg-transparent overflow-hidden">
                   <img
                     src={card.img}
                     alt={card.title}
-                    className="co-card-img w-full h-full object-cover mix-blend-lighten will-change-transform"
+                    className="co-card-img w-full h-full object-contain will-change-transform"
                   />
                   <div className="absolute bottom-0 left-0 z-10 overflow-hidden">
                     <GlowLine className="co-card-glow w-full" />
                     <span
                       className="co-card-badge inline-block font-host text-white/90 bg-[#2a2a2a] px-2.5 py-2.5"
-                      style={{ fontSize: "clamp(0.75rem, 0.9vw, 0.9rem)" }}
+                      style={{ fontSize: "clamp(0.75rem, 0.9vw, 1rem)" }}
                     >
                       {card.num}
                     </span>
@@ -328,7 +322,7 @@ export default function CoreOperations() {
                 <div className="h-px bg-white/20" />
 
                 <div
-                  className="flex flex-col gap-4"
+                  className="flex flex-1 flex-col gap-4 bg-[#1C1C1C]"
                   style={{
                     padding: "clamp(1rem, 2vw, 1.75rem)",
                     paddingInline: "clamp(0.75rem, 1.5vw, 1.25rem)",
