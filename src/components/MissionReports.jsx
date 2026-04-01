@@ -511,13 +511,12 @@ export default function MissionReports() {
       }
     `}</style>
     <section ref={sectionRef} className="mission-reports-section relative w-full" onTouchStart={handleTouchStart}>
+      <GlobalTexture />
       <div className="relative mx-auto w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem]">
       <div className="pointer-events-none absolute top-0 left-0 w-px h-full bg-white/20 z-50" aria-hidden="true" />
       <div className="pointer-events-none absolute top-0 right-0 w-px h-full bg-white/20 z-50" aria-hidden="true" />
       <div className="pointer-events-none absolute top-0 left-0 right-0 h-px bg-white/20 z-50" aria-hidden="true" />
       <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-px bg-white/20 z-50" aria-hidden="true" />
-
-      <GlobalTexture />
 
       <CornerLeft className="pointer-events-none absolute z-50 top-0 left-0 -translate-y-1/2" />
       <CornerRight className="pointer-events-none absolute z-50 top-0 right-0 -translate-y-1/2" />

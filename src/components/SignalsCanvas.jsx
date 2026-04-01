@@ -36,7 +36,7 @@ export default function SignalsCanvas() {
       if (!el) return;
 
       const sectionEl = signalsCanvasState.sectionEl;
-      if (!sectionEl) {
+      if (!sectionEl || !sectionEl.offsetParent) {
         el.style.opacity = "0";
         return;
       }

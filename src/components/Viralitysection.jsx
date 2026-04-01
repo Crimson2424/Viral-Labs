@@ -52,6 +52,8 @@ export default function ViralitySection({ globeContainerRef }) {
   const headerRef = useRef();
   const glowRef = useRef();
   const bottomTextRef = useRef();
+  const mobileGlobeRef = useRef();
+  const glowGlobeRef = useRef();
 
   useGSAP(
     () => {
@@ -100,6 +102,10 @@ export default function ViralitySection({ globeContainerRef }) {
 
       // Globe glow — hidden
       gsap.set(glowRef.current, { opacity: 0, scale: 0.6 });
+
+      // Mobile globe image — hidden
+      gsap.set(mobileGlobeRef.current, { opacity: 0, scale: 0.85, filter: "blur(10px)" });
+      gsap.set(glowGlobeRef.current, { opacity: 0, scale: 0.85, filter: "blur(10px)" });
 
       // Cards — hidden, offset from their final positions
       gsap.set(".v-card-tl", {
@@ -248,6 +254,16 @@ export default function ViralitySection({ globeContainerRef }) {
         ease: "power3.inOut",
       }, 22);
 
+      // ── Mobile globe + glow-globe fade-in (small screens only) ──
+      tl.to(mobileGlobeRef.current, {
+        opacity: 1, scale: 1, filter: "blur(0px)",
+        duration: 20, ease: "power3.out",
+      }, 22);
+      tl.to(glowGlobeRef.current, {
+        opacity: 1, scale: 1, filter: "blur(0px)",
+        duration: 20, ease: "power3.out",
+      }, 22);
+
       // ── PHASE B — GLOBE GLOW ──
       tl.to(glowRef.current, {
         opacity: 1,
@@ -308,6 +324,26 @@ export default function ViralitySection({ globeContainerRef }) {
         <div ref={globeContainerRef} className="absolute -top-40 bottom-0 w-full -translate-y-12 hidden md:block" />
       </div>
 
+      {/* Glow-globe layer — above red glow, below globe-mobile */}
+      <img
+        ref={glowGlobeRef}
+        src="/images/glow-globe.png"
+        alt=""
+        aria-hidden="true"
+        className="absolute left-1/2 -translate-x-1/2 top-[12%] w-[90vw] max-w-md object-contain md:hidden pointer-events-none z-[9]"
+        style={{ mixBlendMode: "lighten" }}
+      />
+
+      {/* Static globe image for small screens */}
+      <img
+        ref={mobileGlobeRef}
+        src="/images/globe-mobile.png"
+        alt=""
+        aria-hidden="true"
+        className="absolute left-1/2 -translate-x-1/2 top-[13.5%] w-[90vw] max-w-md object-contain md:hidden pointer-events-none z-10"
+        style={{ mixBlendMode: "lighten" }}
+      />
+
       <GlobalGrid />
       <GlobalTexture />
 
@@ -316,7 +352,7 @@ export default function ViralitySection({ globeContainerRef }) {
       <div className="pointer-events-none absolute top-0 left-0 w-px h-full bg-white/20 z-30" aria-hidden="true" />
       <div className="pointer-events-none absolute top-0 right-0 w-px h-full bg-white/20 z-30" aria-hidden="true" />
       <div className="pointer-events-none absolute top-0 left-0 right-0 h-px bg-white/20 z-30" aria-hidden="true" />
-      <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-px bg-white/20 z-30" aria-hidden="true" />
+      
 
       {/* ═══ Main viewport content — heading + cards fit within 100vh ═══ */}
       <div className="relative z-40 px-[clamp(0.75rem,3vw,3rem)] max-sm:px-2 pt-8 pointer-events-none h-auto min-h-screen md:h-screen md:pb-20">
