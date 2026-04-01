@@ -361,9 +361,9 @@ export default function RocketLaunchSection() {
           </div>
 
           {/* VE BODY — bottom-left on sm/md, right side on lg+ */}
-          <div className="absolute z-40 pointer-events-none flex flex-col gap-0 left-2 bottom-[6%] max-w-[52vw] sm:left-4 sm:bottom-[4%] sm:max-w-56 md:max-w-64 lg:left-auto lg:bottom-auto lg:right-[8%] lg:top-[72%] lg:max-w-72 xl:max-w-80 2xl:max-w-[22rem] 3xl:max-w-[26.25rem] 4xl:max-w-[32rem] 5xl:right-[0%] 5xl:max-w-[40rem]">
+          <div className="absolute z-40 pointer-events-none flex flex-col gap-0 left-2 bottom-[6%] max-w-[65vw] sm:left-4 sm:bottom-[4%] sm:max-w-56 md:max-w-64 lg:left-auto lg:bottom-auto lg:right-[8%] lg:top-[72%] lg:max-w-72 xl:max-w-80 2xl:max-w-[22rem] 3xl:max-w-[26.25rem] 4xl:max-w-[32rem] 5xl:right-[0%] 5xl:max-w-[40rem]">
             <GlowLineSvg ref={veGlowRef} className="w-20 sm:w-28 lg:w-36 xl:w-44 3xl:w-48 4xl:w-56 5xl:w-80 h-auto -ml-2.5" />
-            <p ref={veBody1Ref} className="font-host text-[0.625rem] sm:text-xs lg:text-xs xl:text-sm 3xl:text-sm 4xl:text-base 5xl:text-2xl font-thin text-white tracking-tighter leading-snug mt-0.5">
+            <p ref={veBody1Ref} className="font-host text-sm sm:text-xs lg:text-xs xl:text-sm 3xl:text-sm 4xl:text-base 5xl:text-2xl font-thin text-white tracking-tighter leading-snug mt-0.5">
               Behind every <span className="font-medium">Engagement</span> is a structured distribution system. It starts with <span className="font-medium">Audience</span> and <span className="font-medium">Market signals</span>, converts them into content and <span className="font-medium">Message systems</span>, and executes them through coordinated <span className="font-medium">Publishing</span> and <span className="font-medium">Amplification infrastructure</span>.
             </p>
           </div>
