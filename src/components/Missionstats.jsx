@@ -379,8 +379,7 @@ export default forwardRef(function MissionStats(props, ref) {
             </h2>
           </div>
           <p className="impact-desc font-host font-light text-base 4xl:text-lg 5xl:text-xl text-white tracking-tight leading-5 w-full lg:max-w-[18.25rem] 4xl:max-w-[24rem] 5xl:max-w-[28rem] lg:mt-12 max-sm:w-full max-sm:mt-0">
-            simply dummy text of the printing and typesetting industry. Lorem
-            Ipsum has been the industry's standard dummy text.
+            These are outcomes from real deployments across platforms, creators, and content systems.
           </p>
         </div>
       </div>

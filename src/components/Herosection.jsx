@@ -514,6 +514,37 @@ export default function HeroSection() {
           max-width: 80% !important;
         }
       }
+
+      @media (min-width: 240rem) {
+        .hero-heading {
+          font-size: clamp(10rem, 6.5vw, 15rem) !important;
+          margin-bottom: 2rem !important;
+        }
+        .hero-subheading {
+          font-size: 1.75rem !important;
+          max-width: 1000px !important;
+          margin-bottom: 2rem !important;
+        }
+        .mission-text {
+          font-size: clamp(4rem, 2.8vw, 5.5rem) !important;
+          max-width: 85% !important;
+        }
+        .cta-inner a {
+          width: 16rem !important;
+          height: 4.5rem !important;
+          gap: 1rem !important;
+        }
+        .cta-text {
+          font-size: 1.5rem !important;
+        }
+        .cta-arrow-svg {
+          width: 16px !important;
+          height: 16px !important;
+        }
+        .cta-sub span {
+          font-size: 1.125rem !important;
+        }
+      }
     `}</style>
     <section
       ref={sectionRef}
@@ -537,11 +568,11 @@ export default function HeroSection() {
           <div className="relative mx-auto w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem] h-full">
 
             {/* Crosshair lines at container edges (hero-grid class prevents CSS hide) */}
-            <div className="hero-grid grid-line-left pointer-events-none absolute inset-y-0 left-0 w-px bg-white/20 z-50" aria-hidden="true" />
-            <div className="hero-grid grid-line-right pointer-events-none absolute inset-y-0 right-0 w-px bg-white/20 z-50" aria-hidden="true" />
-            <div className="hero-grid grid-line-top pointer-events-none absolute top-[56px] left-0 right-0 h-px bg-white/20 z-50" aria-hidden="true" />
-            <GridCrosshair className="hero-grid grid-crosshair pointer-events-none absolute top-[52px] -left-1 z-50" aria-hidden="true" />
-            <GridCrosshair className="hero-grid grid-crosshair pointer-events-none absolute top-[52px] -right-1 z-50" aria-hidden="true" />
+            <div className="hero-grid grid-line-left pointer-events-none absolute inset-y-0 left-0 w-[1.5px] bg-white/25 z-50" aria-hidden="true" />
+            <div className="hero-grid grid-line-right pointer-events-none absolute inset-y-0 right-0 w-[1.5px] bg-white/25 z-50" aria-hidden="true" />
+            <div className="hero-grid grid-line-top pointer-events-none absolute top-[56px] 5xl:top-[80px] left-0 right-0 h-[1.5px] bg-white/25 z-50" aria-hidden="true" />
+            <GridCrosshair className="hero-grid grid-crosshair pointer-events-none absolute top-[50px] 5xl:top-[74px] -left-[5px] z-50" size={11} aria-hidden="true" />
+            <GridCrosshair className="hero-grid grid-crosshair pointer-events-none absolute top-[50px] 5xl:top-[74px] -right-[5px] z-50" size={11} aria-hidden="true" />
 
             <div className="relative z-40 flex flex-col items-start justify-center md:items-center h-full pt-14 pl-3 md:pl-0">
               <div className="mb-6 h-[30px] 4xl:h-[50px] 5xl:h-[70px] hidden md:block" />
