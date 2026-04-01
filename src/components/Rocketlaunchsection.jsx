@@ -321,8 +321,7 @@ export default function RocketLaunchSection() {
       {/* ── Container (matches site-wide pattern) ── */}
       <div className="relative mx-auto w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem] h-full">
 
-        {/* ── Top grid line ── */}
-        <div className="pointer-events-none absolute top-0 left-0 right-0 h-px bg-white/20 z-50" aria-hidden="true" />
+        
 
         <div className="absolute inset-0 overflow-hidden">
 
