@@ -161,7 +161,7 @@ export default function SignalsSection() {
     const ctaRef = useRef(null);
 
     /* Register tracking element for SignalsCanvas scroll positioning.
-       The tracking div is hidden md:block — on mobile the canvas gets
+       The tracking div is hidden lg:block — below lg the canvas gets
        no sectionEl and stays invisible (matching GlobeCanvas pattern). */
     useGSAP(() => {
         signalsCanvasState.sectionEl = canvasTrackRef.current;
@@ -285,13 +285,13 @@ export default function SignalsSection() {
             {/* Canvas tracking div — hidden on mobile so SignalsCanvas stays invisible,
                 visible on md+ so canvas positions itself against this element.
                 Matches the globeContainerRef pattern in ViralitySection. */}
-            <div ref={canvasTrackRef} className="absolute inset-0 hidden md:block" />
+            <div ref={canvasTrackRef} className="absolute inset-0 hidden lg:block" />
 
             {/* Mobile fallback background */}
             <img
               src="/images/signal-mobile.png"
               alt=""
-              className="absolute inset-0 z-1 h-full w-full object-cover mix-blend-lighten md:hidden object-[25%]"
+              className="absolute inset-0 z-1 h-full w-full object-cover mix-blend-lighten lg:hidden object-[25%] md:object-[30%]"
               draggable={false}
             />
 
