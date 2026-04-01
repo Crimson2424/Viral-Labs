@@ -308,7 +308,7 @@ export default function ViralitySection({ globeContainerRef }) {
   );
 
   return (
-    <section ref={sectionRef} className="virality-section relative w-full min-h-screen overflow-hidden">
+    <section ref={sectionRef} className="virality-section relative w-full min-h-svh overflow-hidden">
 
       <div
         ref={glowRef}

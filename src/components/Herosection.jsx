@@ -535,7 +535,7 @@ export default function HeroSection() {
     <section
       ref={sectionRef}
       id="home"
-      className="relative z-20 w-full min-h-screen"
+      className="relative z-20 w-full min-h-svh"
     >
       {/* ═══ GlobalGrid — topClass aligns exactly with grid-line-top ═══ */}
       <GlobalGrid animated topClass="top-[56px] 5xl:top-[80px]" />
@@ -545,7 +545,7 @@ export default function HeroSection() {
       {/* ═══ Hero Content ═══ */}
       <div
         ref={heroContentRef}
-        className="absolute inset-x-0 top-0 z-[10] h-screen min-h-svh md:min-h-[945px] overflow-hidden"
+        className="absolute inset-x-0 top-0 z-[10] h-svh min-h-svh md:min-h-[945px] overflow-hidden"
       >
         <GridOverlay ref={gridOverlayRef} showTexture={true}>
           <Navbar entranceDelay={6.2} />
