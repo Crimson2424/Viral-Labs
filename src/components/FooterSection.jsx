@@ -349,13 +349,15 @@ const FooterSection = () => {
                   {/* Social icons — hidden on mobile */}
                   <div ref={socialsRef} className="hidden sm:flex items-center gap-8 4xl:gap-14 5xl:gap-18" style={{ opacity: 0 }}>
                     {[
-                      { key: "ig", content: <img src="/svgs/insta.svg" alt="Instagram" className="h-3 w-3 4xl:h-5 4xl:w-5 5xl:h-7 5xl:w-7" draggable={false} /> },
-                      { key: "x", content: <span className="font-host text-xs 4xl:text-base 5xl:text-lg font-thin text-white transition-colors duration-200">X</span> },
-                      { key: "in", content: <span className="font-host text-xs 4xl:text-base 5xl:text-lg font-thin text-white transition-colors duration-200">In</span> },
-                    ].map(({ key, content }) => (
+                      { key: "ig", href: "https://www.instagram.com", content: <img src="/svgs/insta.svg" alt="Instagram" className="h-3 w-3 4xl:h-5 4xl:w-5 5xl:h-7 5xl:w-7" draggable={false} /> },
+                      { key: "x", href: "https://x.com/EashanShetty", content: <span className="font-host text-xs 4xl:text-base 5xl:text-lg font-thin text-white transition-colors duration-200">X</span> },
+                      { key: "in", href: "https://www.linkedin.com/company/virallabs/", content: <span className="font-host text-xs 4xl:text-base 5xl:text-lg font-thin text-white transition-colors duration-200">In</span> },
+                    ].map(({ key, href, content }) => (
                       <a
                         key={key}
-                        href="#"
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="group relative flex h-4 w-8 4xl:h-6 4xl:w-12 5xl:h-8 5xl:w-16 items-center justify-center"
                       >
                         <span className="pointer-events-none absolute -left-1.5 -top-1.5 h-[8px] w-[8px] border-l border-t border-[#FF6F21]/60 transition-all duration-200 group-hover:-left-2.5 group-hover:-top-2.5 group-hover:border-[#FF6F21]" />
@@ -372,8 +374,31 @@ const FooterSection = () => {
             </div>
           </div>
 
+          {/* ═══ MOBILE SOCIALS — visible only below sm ═══ */}
+          <div className="order-3 sm:hidden col-span-2 flex items-center gap-8 pt-4">
+            {[
+              { key: "ig", href: "https://www.instagram.com", content: <img src="/svgs/insta.svg" alt="Instagram" className="h-3 w-3" draggable={false} /> },
+              { key: "x", href: "https://x.com/EashanShetty", content: <span className="font-host text-xs font-thin text-white">X</span> },
+              { key: "in", href: "https://www.linkedin.com/company/virallabs/", content: <span className="font-host text-xs font-thin text-white">In</span> },
+            ].map(({ key, href, content }) => (
+              <a
+                key={key}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative flex h-4 w-8 items-center justify-center"
+              >
+                <span className="pointer-events-none absolute -left-1.5 -top-1.5 h-[8px] w-[8px] border-l border-t border-[#FF6F21]/60" />
+                <span className="pointer-events-none absolute -right-1.5 -top-1.5 h-[8px] w-[8px] border-r border-t border-[#FF6F21]/60" />
+                <span className="pointer-events-none absolute -bottom-1.5 -left-1.5 h-[8px] w-[8px] border-b border-l border-[#FF6F21]/60" />
+                <span className="pointer-events-none absolute -bottom-1.5 -right-1.5 h-[8px] w-[8px] border-b border-r border-[#FF6F21]/60" />
+                {content}
+              </a>
+            ))}
+          </div>
+
           {/* ═══ COPYRIGHT ═══ */}
-          <div className="order-3 sm:order-none col-span-2 sm:col-span-1 mx-auto flex flex-col sm:flex-row w-full max-w-4xl 2xl:max-w-5xl 3xl:max-w-5xl 4xl:max-w-7xl 5xl:max-w-[96rem] items-start sm:items-center sm:justify-between gap-1 sm:gap-0 py-6 4xl:py-10 5xl:py-14">
+          <div className="order-4 sm:order-none col-span-2 sm:col-span-1 mx-auto flex flex-col sm:flex-row w-full max-w-4xl 2xl:max-w-5xl 3xl:max-w-5xl 4xl:max-w-7xl 5xl:max-w-[96rem] items-start sm:items-center sm:justify-between gap-1 sm:gap-0 py-6 4xl:py-10 5xl:py-14">
             <span ref={copyLeftRef} className="font-host text-xs 2xl:text-sm 3xl:text-sm 4xl:text-lg 5xl:text-xl font-thin text-white/40">
               © Copyright 2026 Viral Labs
             </span>
