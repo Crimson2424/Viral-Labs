@@ -310,10 +310,10 @@ export default function ViralitySection({ globeContainerRef }) {
 
       <div
         ref={glowRef}
-        className="pointer-events-none absolute left-1/2 top-[20%] md:top-[32%] -translate-x-1/2 -translate-y-[35%] z-[8]"
+        className="pointer-events-none absolute left-1/2 top-[20%] md:top-[32%]  lg:top-[28%] 4xl:top-[34%] 5xl:top-[38%] -translate-x-1/2 -translate-y-[35%] z-[8]"
         aria-hidden="true"
         style={{
-          width: "clamp(300px, 80vw, 1100px)", height: "clamp(300px, 80vw, 1100px)", borderRadius: "50%",
+          width: "clamp(300px, 80vw, 2000px)", height: "clamp(300px, 80vw, 1100px)", borderRadius: "50%",
           background: "radial-gradient(circle, #5a1a12 0%, #351010 40%, transparent 70%)",
           filter: "blur(90px)",
         }}
@@ -355,13 +355,13 @@ export default function ViralitySection({ globeContainerRef }) {
       
 
       {/* ═══ Main viewport content — heading + cards fit within 100vh ═══ */}
-      <div className="relative z-40 px-[clamp(0.75rem,3vw,3rem)] max-sm:px-2 pt-8 pointer-events-none h-auto min-h-screen md:h-screen md:pb-20">
+      <div className="relative z-40 px-[clamp(0.75rem,3vw,3rem)] max-sm:px-2 pt-8 pointer-events-none h-auto min-h-svh md:h-svh md:pb-20">
 
-        <div ref={headerRef} className="flex flex-col items-center gap-1 mb-4 md:mb-12" style={{ perspective: "600px" }}>
-          <p className="v-label virality-label font-host text-sm md:text-base 4xl:text-lg 5xl:text-xl text-[#ff6f21] text-center leading-none">
+        <div ref={headerRef} className="flex flex-col items-center gap-1 mb-4 md:mb-6 xl:mb-12" style={{ perspective: "600px" }}>
+          <p className="v-label virality-label font-host text-sm md:text-base lg:text-xs xl:text-base 4xl:text-lg 5xl:text-xl text-[#ff6f21] text-center leading-none">
             WHY VIRALITY CAN BE ENGINEERED
           </p>
-          <h2 className="v-heading virality-heading font-host text-[clamp(1.75rem,5vw,3rem)] 4xl:text-[4rem] 5xl:text-[5rem] text-[#f1f1f1] tracking-tighter leading-none text-center">
+          <h2 className="v-heading virality-heading font-host text-[clamp(1.75rem,5vw,3rem)] lg:text-[1.5rem] xl:text-[3rem] 4xl:text-[4rem] 5xl:text-[5rem] text-[#f1f1f1] tracking-tighter leading-none text-center">
             Distribution isn't luck. It
             <br />
             can be engineered.
@@ -373,89 +373,89 @@ export default function ViralitySection({ globeContainerRef }) {
 
         <div className="relative md:hidden w-full h-16 -mt-16 z-20 pointer-events-none" style={{ background: "linear-gradient(to bottom, transparent 0%, #121212 100%)" }} />
 
-        <div className="relative mx-auto max-w-6xl min-h-0 md:min-h-[500px] h-auto md:h-[calc(100vh-200px)] md:max-h-[700px]">
+        <div className="relative mx-auto max-w-6xl 3xl:max-w-7xl 4xl:max-w-[90rem] 5xl:max-w-[120rem] min-h-0 md:min-h-[31.25rem] h-auto md:h-[calc(100svh-10rem)] xl:h-[calc(100svh-12.5rem)]">
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 px-4 md:px-0 md:contents bg-[#121212]/80 md:bg-transparent p-3 md:p-0 rounded-lg md:rounded-none overflow-visible">
 
           {/* ── Distribution Architecture (top-left) ── */}
-          <div className="v-card-tl relative md:absolute md:left-2 md:-top-2 lg:left-8 lg:top-0 xl:left-26 xl:top-3 z-30 pointer-events-auto overflow-visible">
-            <div className="relative w-full md:w-48 4xl:w-56 5xl:w-64 flex flex-col overflow-visible">
-              <div className="relative px-5 py-2 bg-[#1d1d1d]/90 md:bg-[#1d1d1d]/70">
-                <div className="font-bricolage text-xl 4xl:text-2xl 5xl:text-3xl text-white tracking-tight leading-5 text-left md:text-right">
+          <div className="v-card-tl relative md:absolute md:left-2 md:-top-2 lg:left-8 lg:top-0 xl:left-26 xl:top-3 2xl:left-20 2xl:top-2 3xl:left-26 3xl:top-3 4xl:left-36 4xl:top-30 5xl:left-48 5xl:top-50 z-30 pointer-events-auto overflow-visible">
+            <div className="relative w-full md:w-48 lg:w-40 xl:w-48 2xl:w-48 3xl:w-52 4xl:w-60 5xl:w-96 flex flex-col overflow-visible">
+              <div className="relative px-5 lg:px-3 xl:px-5 5xl:px-8 py-2 lg:py-1.5 xl:py-2 5xl:py-4 bg-[#1d1d1d]/90 md:bg-[#1d1d1d]/70">
+                <div className="font-bricolage text-xl lg:text-base xl:text-xl 4xl:text-2xl 5xl:text-4xl text-white tracking-tight leading-5 lg:leading-4 xl:leading-5 5xl:leading-8 text-left md:text-right">
                   Distribution
                   <br />
                   Architecture
                 </div>
               </div>
-              <div className="relative px-5 py-2 bg-[#101010]/90 md:bg-[#101010]/60">
-                <p className="font-host text-xs 4xl:text-sm 5xl:text-base font-thin text-white leading-5 tracking-wide text-left md:text-right">
+              <div className="relative px-5 lg:px-3 xl:px-5 5xl:px-8 py-2 lg:py-1.5 xl:py-2 5xl:py-4 bg-[#101010]/90 md:bg-[#101010]/60">
+                <p className="font-host text-xs lg:text-[10px] xl:text-xs 4xl:text-sm 5xl:text-lg font-thin text-white leading-5 lg:leading-4 xl:leading-5 5xl:leading-7 tracking-wide text-left md:text-right">
                   Distribution systems amplify signal.
                 </p>
               </div>
-              <GlowH className="absolute -top-3 left-28 w-20 h-6" />
+              <GlowH className="absolute -top-3 right-0 max-sm:right-0 w-20 h-6" />
               <GlowV className="absolute -top-0 -left-4 w-7 h-[calc(100%+0px)]" />
               <GlowCubes className="absolute -top-3 -right-7 w-7 h-10 hidden md:block" />
             </div>
           </div>
 
           {/* ── Attention Dynamics (top-right) ── */}
-          <div className="v-card-tr relative md:absolute md:right-0 md:-top-2 lg:right-4 lg:top-4 xl:right-15 xl:top-20 z-30 pointer-events-auto overflow-visible">
-            <div className="relative w-full md:w-48 4xl:w-56 5xl:w-64 flex flex-col overflow-visible">
-              <div className="relative px-5 py-2 bg-[#1d1d1d]/90 md:bg-[#1d1d1d]/70">
-                <div className="font-bricolage text-xl 4xl:text-2xl 5xl:text-3xl text-white tracking-tight leading-5 text-left">
+          <div className="v-card-tr relative md:absolute md:right-0 md:-top-2 lg:right-4 lg:top-4 xl:right-15 xl:top-20 2xl:right-10 2xl:top-16 3xl:right-15 3xl:top-20 4xl:right-24 4xl:top-50 5xl:right-16 5xl:top-76 z-30 pointer-events-auto overflow-visible">
+            <div className="relative w-full md:w-48 lg:w-40 xl:w-48 2xl:w-48 3xl:w-52 4xl:w-60 5xl:w-96 flex flex-col overflow-visible">
+              <div className="relative px-5 lg:px-3 xl:px-5 5xl:px-8 py-2 lg:py-1.5 xl:py-2 5xl:py-4 bg-[#1d1d1d]/90 md:bg-[#1d1d1d]/70">
+                <div className="font-bricolage text-xl lg:text-base xl:text-xl 4xl:text-2xl 5xl:text-4xl text-white tracking-tight leading-5 lg:leading-4 xl:leading-5 5xl:leading-8 text-left">
                   Attention
                   <br />
                   Dynamics
                 </div>
               </div>
-              <div className="relative px-5 py-2 bg-[#101010]/90 md:bg-[#101010]/60">
-                <p className="font-host text-xs 4xl:text-sm 5xl:text-base font-thin text-white leading-5 tracking-wide text-left">
+              <div className="relative px-5 lg:px-3 xl:px-5 5xl:px-8 py-2 lg:py-1.5 xl:py-2 5xl:py-4 bg-[#101010]/90 md:bg-[#101010]/60">
+                <p className="font-host text-xs lg:text-[10px] xl:text-xs 4xl:text-sm 5xl:text-lg font-thin text-white leading-5 lg:leading-4 xl:leading-5 5xl:leading-7 tracking-wide text-left">
                   Attention follows observable patterns.
                 </p>
               </div>
-              <GlowH className="absolute -top-3 left-28 w-20 h-6" />
+              <GlowH className="absolute -top-3 right-0 w-20 h-6" />
               <GlowV className="absolute -top-0 -left-4 w-7 h-[calc(100%+0px)]" />
               <GlowCubes className="absolute -top-3 -left-7 w-7 h-10 hidden md:block" />
             </div>
           </div>
 
           {/* ── Creative Methodology (bottom-left) ── */}
-          <div className="v-card-bl relative md:absolute md:left-2 md:bottom-[clamp(-4rem,-8svh,0rem)] lg:left-8 lg:-bottom-8 xl:left-20 xl:bottom-0 z-30 pointer-events-auto overflow-visible">
-            <div className="relative w-full md:w-56 4xl:w-64 5xl:w-72 flex flex-col overflow-visible">
-              <div className="relative px-5 py-2 bg-[#1d1d1d]/90 md:bg-[#1d1d1d]/70">
-                <div className="font-bricolage text-xl 4xl:text-2xl 5xl:text-3xl text-white tracking-tight leading-5 text-left md:text-right">
+          <div className="v-card-bl relative md:absolute md:left-2 md:-bottom-16 lg:left-8 lg:bottom-0 xl:left-20 xl:bottom-0 2xl:left-14 2xl:-bottom-2 3xl:left-20 3xl:bottom-15 4xl:left-32 4xl:bottom-50 5xl:left-24 5xl:bottom-100 z-30 pointer-events-auto overflow-visible">
+            <div className="relative w-full md:w-56 lg:w-44 xl:w-56 2xl:w-56 3xl:w-60 4xl:w-68 5xl:w-104 flex flex-col overflow-visible">
+              <div className="relative px-5 lg:px-3 xl:px-5 5xl:px-8 py-2 lg:py-1.5 xl:py-2 5xl:py-4 bg-[#1d1d1d]/90 md:bg-[#1d1d1d]/70">
+                <div className="font-bricolage text-xl lg:text-base xl:text-xl 4xl:text-2xl 5xl:text-4xl text-white tracking-tight leading-5 lg:leading-4 xl:leading-5 5xl:leading-8 text-left md:text-right">
                   Creative
                   <br />
                   Methodology
                 </div>
               </div>
-              <div className="relative px-5 py-2 bg-[#101010]/90 md:bg-[#101010]/60">
-                <p className="font-host text-xs 4xl:text-sm 5xl:text-base font-thin text-white leading-5 tracking-wide text-left md:text-right">
+              <div className="relative px-5 lg:px-3 xl:px-5 5xl:px-8 py-2 lg:py-1.5 xl:py-2 5xl:py-4 bg-[#101010]/90 md:bg-[#101010]/60">
+                <p className="font-host text-xs lg:text-[10px] xl:text-xs 4xl:text-sm 5xl:text-lg font-thin text-white leading-5 lg:leading-4 xl:leading-5 5xl:leading-7 tracking-wide text-left md:text-right">
                   Creative can be developed and tested systematically.
                 </p>
               </div>
-              <GlowH className="absolute -top-3 left-28 md:left-auto md:right-0 w-20 h-6" />
+              <GlowH className="absolute -top-3 left-28 max-sm:left-auto max-sm:right-0 md:left-auto md:right-0 w-20 h-6" />
               <GlowV className="absolute -top-0 -left-4 w-7 h-[calc(100%+0px)]" />
               <GlowCubes className="absolute -top-3 -right-7 w-7 h-10 hidden md:block" />
             </div>
           </div>
 
           {/* ── Performance Outcomes (bottom-right) ── */}
-          <div className="v-card-br relative md:absolute md:right-0 md:-bottom-16 lg:right-4 lg:-bottom-8 xl:right-6 xl:-bottom-3 z-30 pointer-events-auto overflow-visible">
-            <div className="relative w-full md:w-69 4xl:w-80 5xl:w-96 flex flex-col overflow-visible">
-              <div className="relative px-5 py-2 bg-[#1d1d1d]/90 md:bg-[#1d1d1d]/70">
-                <div className="font-bricolage text-xl 4xl:text-2xl 5xl:text-3xl text-white tracking-tight leading-5 text-left">
+          <div className="v-card-br relative md:absolute md:right-0 md:-bottom-16 lg:right-4 lg:bottom-0 xl:right-6 xl:-bottom-3 2xl:right-4 2xl:-bottom-4 3xl:right-6 3xl:bottom-30 4xl:right-16 4xl:bottom-60 5xl:right-8 5xl:bottom-90 z-30 pointer-events-auto overflow-visible">
+            <div className="relative w-full md:w-69 lg:w-52 xl:w-69 2xl:w-69 3xl:w-72 4xl:w-84 5xl:w-120 flex flex-col overflow-visible">
+              <div className="relative px-5 lg:px-3 xl:px-5 5xl:px-8 py-2 lg:py-1.5 xl:py-2 5xl:py-4 bg-[#1d1d1d]/90 md:bg-[#1d1d1d]/70">
+                <div className="font-bricolage text-xl lg:text-base xl:text-xl 4xl:text-2xl 5xl:text-4xl text-white tracking-tight leading-5 lg:leading-4 xl:leading-5 5xl:leading-8 text-left">
                   Performance
                   <br />
                   Outcomes
                 </div>
               </div>
-              <div className="relative px-5 py-2 bg-[#101010]/90 md:bg-[#101010]/60">
-                <p className="font-host text-xs 4xl:text-sm 5xl:text-base font-thin text-white leading-5 tracking-wide text-left">
+              <div className="relative px-5 lg:px-3 xl:px-5 5xl:px-8 py-2 lg:py-1.5 xl:py-2 5xl:py-4 bg-[#101010]/90 md:bg-[#101010]/60">
+                <p className="font-host text-xs lg:text-[10px] xl:text-xs 4xl:text-sm 5xl:text-lg font-thin text-white leading-5 lg:leading-4 xl:leading-5 5xl:leading-7 tracking-wide text-left">
                   Growth becomes more predictable when distribution is managed as a system.
                 </p>
               </div>
-              <GlowH className="absolute -top-3 left-28 md:left-auto md:right-0 w-20 h-6" />
+              <GlowH className="absolute -top-3 left-28 max-sm:left-auto max-sm:right-0 md:left-auto md:right-0 w-20 h-6" />
               <GlowV className="absolute -top-0 -left-4 w-7 h-[calc(100%+0px)]" />
               <GlowCubes className="absolute -top-3 -left-7 w-7 h-10 hidden md:block" />
             </div>
@@ -468,11 +468,11 @@ export default function ViralitySection({ globeContainerRef }) {
 
       {/* ══ BOTTOM TEXT — lives outside the h-screen block, scrolled to after pin ══ */}
       <div ref={bottomTextRef} className="relative z-40 px-[clamp(0.75rem,3vw,3rem)] max-sm:px-2 pb-[clamp(2.5rem,5vh,10rem)] pointer-events-none">
-        <div className="flex flex-col md:flex-row items-start md:justify-between max-w-6xl mx-auto gap-6 md:gap-16 pt-10 md:pt-24">
+        <div className="flex flex-col md:flex-row items-start md:justify-around max-w-6xl 5xl:max-w-none mx-auto gap-6 md:gap-16 pt-10 md:pt-24">
 
           {/* Left column */}
-          <div className="max-w-md">
-            <p className="v-bottom-left-text font-host font-thin text-white tracking-tight 4xl:text-base 5xl:text-lg">
+          <div className="max-w-md 5xl:max-w-4xl">
+            <p className="v-bottom-left-text font-host font-thin text-white tracking-tight 4xl:text-base 5xl:text-3xl">
               <span className="font-semibold">Viral Labs</span>
               {" "}studies how attention moves through markets, channels,
               and audiences, then turns those patterns into structured distribution
@@ -490,25 +490,25 @@ export default function ViralitySection({ globeContainerRef }) {
                   className="w-[10px] h-[10px] bg-[#FF6F21] shrink-0"
                   style={{ boxShadow: "0 0 6px #FF6F21, 0 0 12px #FF6F21" }}
                 />
-                <span className="font-host font-thin text-white tracking-tight 4xl:text-base 5xl:text-lg">Signal Amplification</span>
+                <span className="font-host font-thin text-white tracking-tight 4xl:text-base 5xl:text-3xl">Signal Amplification</span>
               </div>
               <div className="v-bottom-tag flex items-center gap-3">
                 <div
                   className="w-[10px] h-[10px] bg-[#FF6F21] shrink-0"
                   style={{ boxShadow: "0 0 6px #FF6F21, 0 0 12px #FF6F21" }}
                 />
-                <span className="font-host font-thin text-white tracking-tight 4xl:text-base 5xl:text-lg">Behavioral Loops</span>
+                <span className="font-host font-thin text-white tracking-tight 4xl:text-base 5xl:text-3xl">Behavioral Loops</span>
               </div>
               <div className="v-bottom-tag flex items-center gap-3">
                 <div
                   className="w-[10px] h-[10px] bg-[#FF6F21] shrink-0"
                   style={{ boxShadow: "0 0 6px #FF6F21, 0 0 12px #FF6F21" }}
                 />
-                <span className="font-host font-thin text-white tracking-tight 4xl:text-base 5xl:text-lg">Distribution Mechanics</span>
+                <span className="font-host font-thin text-white tracking-tight 4xl:text-base 5xl:text-3xl">Distribution Mechanics</span>
               </div>
             </div>
 
-            <p className="v-bottom-most-text font-host font-thin text-white tracking-tight leading-normal max-w-xs 4xl:max-w-sm 5xl:max-w-md 4xl:text-base 5xl:text-lg">
+            <p className="v-bottom-most-text font-host font-thin text-white tracking-tight leading-normal max-w-xs 4xl:max-w-sm 5xl:max-w-lg 4xl:text-base 5xl:text-3xl">
               Most brands chase trends. We model attention. Virality follows patterns.
             </p>
           </div>
