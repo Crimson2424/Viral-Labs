@@ -143,7 +143,7 @@ const App = () => {
       <GlobeCanvas />
 
       {/* Signals — standalone fixed Canvas with bloom (4th WebGL context) */}
-      <SignalsCanvas />
+      {/* <SignalsCanvas /> */}
 
       <HeroSection />
       <CoreOperations />
