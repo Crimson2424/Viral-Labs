@@ -13,6 +13,7 @@ import GlobalGrid from "./Globalgrid";
 import { CubesSvg, GlowLineSvg, RocketThrustersSvg } from "./Svgassets";
 import { creatorGlobeState } from "./Creatorglobestate";
 import GlobalTexture from "./Globaltexture";
+import fontReady from "./fontReady";
 
 /* ══════════════════════════════════════════════════════
    CONSTANTS
@@ -111,7 +112,7 @@ export default function RocketLaunchSection() {
   const veHeadingRef = useRef(null);
   const veGlowRef = useRef(null);
   const veBody1Ref = useRef(null);
-  const veBody2Ref = useRef(null);
+
 
   const label1Ref = useRef(null);
   const label2Ref = useRef(null);
@@ -121,6 +122,11 @@ export default function RocketLaunchSection() {
   useGSAP(() => {
     const section = sectionRef.current;
     if (!section) return;
+
+    let cancelled = false;
+    const idleTweens = idleTweensRef.current;
+    fontReady.then(() => {
+      if (cancelled) return;
 
     const vw = window.innerWidth;
     const isMobile = vw < 1024; // below lg — uses mobile layout
@@ -134,7 +140,7 @@ export default function RocketLaunchSection() {
     const veSubtitleSplit = splitAndMask(veSubtitleRef.current, "lines");
     const veHeadingSplit = splitAndMask(veHeadingRef.current, "lines, chars");
     const veBody1Split = splitAndMask(veBody1Ref.current, "lines");
-    const veBody2Split = splitAndMask(veBody2Ref.current, "lines");
+
 
     /* ── INITIAL STATES ── */
     gsap.set(rocketGroup, {
@@ -149,7 +155,7 @@ export default function RocketLaunchSection() {
     gsap.set(veHeadingSplit.split.chars, { yPercent: 160, opacity: 0, filter: "blur(6px)" });
     gsap.set(veGlow, { scaleX: 0, transformOrigin: "left center", opacity: 0 });
     gsap.set(veBody1Split.elements, { yPercent: 160, filter: "blur(5px)" });
-    gsap.set(veBody2Split.elements, { yPercent: 160, filter: "blur(5px)" });
+
     labels.forEach((label) => gsap.set(label, { opacity: 0, scale: 0.85, filter: "blur(6px)" }));
 
     creatorGlobeState.globeOpacity = 0;
@@ -263,9 +269,7 @@ export default function RocketLaunchSection() {
     master.to(veBody1Split.elements, {
       yPercent: 0, filter: "blur(0px)", duration: 1, stagger: 0.2, ease: "none",
     }, 5.5);
-    master.to(veBody2Split.elements, {
-      yPercent: 0, filter: "blur(0px)", duration: 1, stagger: 0.15, ease: "none",
-    }, 6);
+
 
     /* ═══ PHASE 3 — LABELS + SEPARATION ═══ */
     const GAP = 28;
@@ -300,7 +304,9 @@ export default function RocketLaunchSection() {
     /* ═══ PHASE 4 — READING HOLD → PIN RELEASES ═══ */
     master.set({}, {}, 13);
 
+    }); // fontReady.then
     return () => {
+      cancelled = true;
       idleTweens.forEach((t) => t.kill());
       idleTweens.length = 0;
     };

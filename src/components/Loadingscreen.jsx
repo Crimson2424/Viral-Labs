@@ -238,6 +238,7 @@ export default function LoadingScreen({ videoSrc = "/videos/loader.webm" }) {
   useEffect(() => {
     const mgr = THREE.DefaultLoadingManager;
     let threeStarted = false;
+    let threeForcedComplete = false;
     const origOnStart = mgr.onStart;
 
     mgr.onStart = (url, loaded, total) => {
@@ -247,6 +248,7 @@ export default function LoadingScreen({ videoSrc = "/videos/loader.webm" }) {
 
     mgr.onProgress = (url, loaded, total) => {
       threeStarted = true;
+      if (threeForcedComplete) return;
       progressSources.current.three = total > 0 ? loaded / total : 0;
       updateProgress();
       tryComplete();
@@ -258,16 +260,28 @@ export default function LoadingScreen({ videoSrc = "/videos/loader.webm" }) {
       tryComplete();
     };
 
-    const fallback = setTimeout(() => {
+    // 2s: if nothing started loading, mark three done.
+    // 8s: if loading started but hasn't finished, force-complete.
+    const earlyFallback = setTimeout(() => {
       if (!threeStarted) {
+        threeForcedComplete = true;
         progressSources.current.three = 1;
         updateProgress();
         tryComplete();
       }
     }, 2000);
+    const lateFallback = setTimeout(() => {
+      if (progressSources.current.three < 1) {
+        threeForcedComplete = true;
+        progressSources.current.three = 1;
+        updateProgress();
+        tryComplete();
+      }
+    }, 8000);
 
     return () => {
-      clearTimeout(fallback);
+      clearTimeout(earlyFallback);
+      clearTimeout(lateFallback);
       mgr.onStart = origOnStart || null;
       mgr.onProgress = null;
       mgr.onLoad = null;
@@ -276,19 +290,25 @@ export default function LoadingScreen({ videoSrc = "/videos/loader.webm" }) {
 
   // ── Fonts ──
   useEffect(() => {
+    let fontsResolved = false;
+
     if (document.fonts.status === "loaded") {
+      fontsResolved = true;
       progressSources.current.fonts = 1;
       updateProgress();
       tryComplete();
     }
 
     document.fonts.ready.then(() => {
+      fontsResolved = true;
+      clearInterval(interval);
       progressSources.current.fonts = 1;
       updateProgress();
       tryComplete();
     });
 
     const interval = setInterval(() => {
+      if (fontsResolved) return;
       const entries = [...document.fonts.values()];
       const total = entries.length || 1;
       const loaded = entries.filter((f) => f.status === "loaded").length;
@@ -360,7 +380,7 @@ export default function LoadingScreen({ videoSrc = "/videos/loader.webm" }) {
           }
         }, 50);
       }
-    }, 10000);
+    }, 8000);
 
     return () => clearTimeout(maxWait);
   }, [runExitAnimation]);

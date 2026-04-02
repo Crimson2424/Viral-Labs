@@ -16,6 +16,7 @@ import { useRef, useState } from "react";
 import { gsap, ScrollTrigger, SplitText, useGSAP } from "./Gsapconfig";
 import GlobalGrid from "./Globalgrid";
 import { creatorGlobeState } from "./Creatorglobestate";
+import fontReady from "./fontReady";
 
 // ════════════════════════════════════════════════
 // TOOLTIP CARD (frosted glass)
@@ -176,6 +177,10 @@ export default function CreatorNetwork({ viewRef }) {
   useGSAP(() => {
     const section = sectionRef.current;
     if (!section) return;
+
+    let cancelled = false;
+    fontReady.then(() => {
+      if (cancelled) return;
 
     // ── Grab DOM elements ──
     const label = labelRef.current;
@@ -387,6 +392,8 @@ export default function CreatorNetwork({ viewRef }) {
       ease: "power3.out",
     }, 0.85);
 
+    }); // fontReady.then
+    return () => { cancelled = true; };
   }, { scope: sectionRef });
 
   // ════════════════════════════════════════════════

@@ -29,6 +29,7 @@ import { entranceState } from "./Entrancestate";
 import MissionStats from "./Missionstats";
 import { loadingState } from "./Loadingstate";
 import GlobalTexture from "./Globaltexture";
+import fontReady from "./fontReady";
 
 export default function HeroSection() {
   const sectionRef = useRef();
@@ -51,6 +52,10 @@ export default function HeroSection() {
 
   useGSAP(
     () => {
+      let cancelled = false;
+      fontReady.then(() => {
+        if (cancelled) return;
+
       // ═══════════════════════════════════════
       // STEP 0 — SPLITTEXT + GRADIENT SETUP
       // ═══════════════════════════════════════
@@ -433,6 +438,9 @@ export default function HeroSection() {
       });
 
       loadingState.onReady = () => entrance.play();
+
+      }); // fontReady.then
+      return () => { cancelled = true; };
     },
     { scope: sectionRef }
   );
@@ -626,7 +634,6 @@ export default function HeroSection() {
                       className="cta-border-path"
                       d="M1,1 L161,1 L161,41 L1,41 Z"
                       stroke="white" strokeWidth="1"
-                      vectorEffect="non-scaling-stroke"
                     />
                   </svg>
                   <span className="cta-text font-host font-medium text-base 4xl:text-lg 5xl:text-2xl text-white text-center tracking-[-0.32px] leading-normal whitespace-nowrap">

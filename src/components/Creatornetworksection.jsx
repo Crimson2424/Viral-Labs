@@ -18,6 +18,7 @@ import GlobalGrid from "./Globalgrid";
 import { creatorGlobeState } from "./Creatorglobestate";
 import { NUDGE_3D, GLOBE_ENTRY_Y, GLOBE_ENTRY_X } from "./Globecanvas";
 import GlobalTexture from "./Globaltexture";
+import fontReady from "./fontReady";
 
 /* ══════════════════════════════════════════════════════
    CONSTANTS
@@ -87,6 +88,10 @@ export default function CreatorNetworkSection() {
   useGSAP(() => {
     const section = sectionRef.current;
     if (!section) return;
+
+    let cancelled = false;
+    fontReady.then(() => {
+      if (cancelled) return;
 
     /* ── SplitText ── */
     const cnLabelSplit = splitAndMask(cnLabelRef.current, "lines");
@@ -180,6 +185,8 @@ export default function CreatorNetworkSection() {
     /* ═══ READING HOLD ═══ */
     master.set({}, {}, 8);
 
+    }); // fontReady.then
+    return () => { cancelled = true; };
   }, { scope: sectionRef });
 
   /* ══════════════════════════════════════════════

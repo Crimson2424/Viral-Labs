@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import GlobalTexture from "./Globaltexture";
 import { gsap, SplitText, useGSAP } from "./Gsapconfig";
+import fontReady from "./fontReady";
 
 /* ─── SVG paths (served from public/svgs/) ─── */
 const QuoteIcon = "/svgs/Quote_Icon.svg";
@@ -206,6 +207,10 @@ const BridgeTestimonial = () => {
     () => {
       if (!sectionRef.current) return;
 
+      let cancelled = false;
+      fontReady.then(() => {
+        if (cancelled) return;
+
       gsap.set(quoteRef.current, { opacity: 1 });
 
       /* ── Measure all testimonials, lock to tallest ── */
@@ -241,7 +246,9 @@ const BridgeTestimonial = () => {
         },
       });
 
+      }); // fontReady.then
       return () => {
+        cancelled = true;
         if (cycleTimer.current) clearTimeout(cycleTimer.current);
         revertSplits();
       };
