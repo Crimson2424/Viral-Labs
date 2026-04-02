@@ -4,6 +4,7 @@ import GlobalGrid from "./Globalgrid";
 import { gsap, ScrollTrigger, SplitText, useGSAP } from "../components/Gsapconfig";
 import { viralityState } from "./Viralitystate";
 import GlobalTexture from "./Globaltexture";
+import fontReady from "./fontReady";
 
 const LINE_BLURS = [0.5, 0.5, 3, 3, 5.5];
 const CUBE_BLURS = [0, 5, 5];
@@ -59,6 +60,9 @@ export default function ViralitySection({ globeContainerRef }) {
 
   useGSAP(
     () => {
+      let cancelled = false;
+      fontReady.then(() => {
+        if (cancelled) return;
       // ═══════════════════════════════════════
       // SPLITTEXT — LABEL + HEADING (mask lines)
       // ═══════════════════════════════════════
@@ -303,6 +307,8 @@ export default function ViralitySection({ globeContainerRef }) {
         opacity: 1, scale: 1, transformOrigin: "center center", stagger: 1, duration: 5, ease: "back.out(1.7)",
       }, 87);
 
+      }); // fontReady.then
+      return () => { cancelled = true; };
     },
     { scope: sectionRef }
   );

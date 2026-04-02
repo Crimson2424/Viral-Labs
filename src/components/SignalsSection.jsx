@@ -19,6 +19,7 @@ import { useGSAP } from "@gsap/react";
 import { gsap, SplitText, ScrollTrigger } from "./Gsapconfig";
 import GlobalTexture from "./Globaltexture";
 import { signalsCanvasState } from "./SignalsCanvas";
+import fontReady from "./fontReady";
 
 /* ─── ASCII chars for scramble effect ─── */
 const ASCII_CHARS = "!@#$%^&*()_+-=[]{}|;:,.<>?/~`01";
@@ -46,26 +47,31 @@ function SignalsCTA() {
     useGSAP(
         () => {
             if (!btnRef.current) return;
-            const textEl = btnRef.current.querySelector(".cta-scramble-text");
-            if (!textEl) return;
+            let cancelled = false;
+            fontReady.then(() => {
+                if (cancelled) return;
+                const textEl = btnRef.current.querySelector(".cta-scramble-text");
+                if (!textEl) return;
 
-            const split = SplitText.create(textEl, {
-                type: "chars",
-                charsClass: "btn-char",
-            });
+                const split = SplitText.create(textEl, {
+                    type: "chars",
+                    charsClass: "btn-char",
+                });
 
-            const chars = split.chars;
-            const originals = chars.map((c) => c.textContent);
+                const chars = split.chars;
+                const originals = chars.map((c) => c.textContent);
 
-            // Lock each char width so scramble doesn't cause layout shift
-            chars.forEach((char) => {
-                const w = char.offsetWidth;
-                char.style.display = "inline-block";
-                char.style.width = `${w}px`;
-                char.style.textAlign = "center";
-            });
+                // Lock each char width so scramble doesn't cause layout shift
+                chars.forEach((char) => {
+                    const w = char.offsetWidth;
+                    char.style.display = "inline-block";
+                    char.style.width = `${w}px`;
+                    char.style.textAlign = "center";
+                });
 
-            scrambleDataRef.current = { chars, originals };
+                scrambleDataRef.current = { chars, originals };
+            }); // fontReady.then
+            return () => { cancelled = true; };
         },
         { scope: btnRef }
     );
@@ -175,7 +181,10 @@ export default function SignalsSection() {
         () => {
             if (!headingGroupRef.current || !bottomGroupRef.current) return;
 
+            let cancelled = false;
             const splitInstances = [];
+            fontReady.then(() => {
+                if (cancelled) return;
 
             /* ── 1. Heading group: subtitle + h2 ── */
             const headingEls = Array.from(headingGroupRef.current.children);
@@ -267,8 +276,10 @@ export default function SignalsSection() {
                 });
             }
 
+            }); // fontReady.then
             // Cleanup: revert all SplitText instances
             return () => {
+                cancelled = true;
                 splitInstances.forEach((split) => split && split.revert());
             };
         },

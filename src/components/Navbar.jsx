@@ -30,6 +30,7 @@ import { useRef, useState, useEffect } from "react";
 import { gsap, SplitText, DrawSVGPlugin, useGSAP } from "./Gsapconfig";
 import { ViralLabsLogo, ArrowIcon, NavGlowLine } from "./Svgassets";
 import { entranceState } from "./Entrancestate";
+import fontReady from "./fontReady";
 
 /* ─── Config ─── */
 const NAV_ITEMS = [
@@ -168,6 +169,11 @@ export default function Navbar({ entranceDelay = 0.3 }) {
 
   useGSAP(
     () => {
+      let cancelled = false;
+      let cleanupListeners = null;
+      fontReady.then(() => {
+        if (cancelled) return;
+
       // ── Audio setup ──
       if (!audioRef.current) {
         const audio = new Audio("/audio/music.mp3.mpeg");
@@ -294,10 +300,16 @@ export default function Navbar({ entranceDelay = 0.3 }) {
 
       entranceState.playNavbar = () => tl.play();
 
-      // ── Cleanup ──
-      return () => {
+      cleanupListeners = () => {
         ctaEl.removeEventListener("mouseenter", onCtaEnter);
         ctaEl.removeEventListener("mouseleave", onCtaLeave);
+      };
+
+      }); // fontReady.then
+      // ── Cleanup ──
+      return () => {
+        cancelled = true;
+        if (cleanupListeners) cleanupListeners();
 
         // Audio cleanup
         if (audioRef.current) {
