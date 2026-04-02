@@ -221,7 +221,7 @@ const FooterSection = () => {
 
   return (
     <footer ref={sectionRef} className="footer-section relative w-full overflow-hidden" style={{ minHeight: "calc(100vw * 1484 / 1440)" }}>
-      <style>{`@media(max-width:639px){.footer-section{min-height:100svh!important}}`}</style>
+      <style>{`@media(max-width:639px){.footer-section{min-height:100vh!important}}`}</style>
       <GlobalTexture />
 
       {/* ─── Background image ─── */}

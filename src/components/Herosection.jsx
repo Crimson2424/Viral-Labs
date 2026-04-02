@@ -18,7 +18,7 @@
  *   HOLD (0.93 → 1.00)
  */
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { gsap, ScrollTrigger, SplitText, DrawSVGPlugin, useGSAP } from "./Gsapconfig";
 import GridOverlay from "./Gridoverlay";
 import GlobalGrid from "./Globalgrid";
@@ -49,6 +49,18 @@ export default function HeroSection() {
   const ctaScrambleRef = useRef(null);
   const missionStatsRef = useRef();
   const lastTriggeredStepRef = useRef(0);
+
+  useEffect(() => {
+    const setHeight = () => {
+      if (heroContentRef.current) {
+        heroContentRef.current.style.height = window.innerHeight + "px";
+      }
+    };
+    setHeight();
+    const onOrient = () => setTimeout(setHeight, 100);
+    window.addEventListener("orientationchange", onOrient);
+    return () => window.removeEventListener("orientationchange", onOrient);
+  }, []);
 
   useGSAP(
     () => {
@@ -543,7 +555,7 @@ export default function HeroSection() {
     <section
       ref={sectionRef}
       id="home"
-      className="relative z-20 w-full min-h-svh"
+      className="relative z-20 w-full min-h-screen"
     >
       {/* ═══ GlobalGrid — topClass aligns exactly with grid-line-top ═══ */}
       <GlobalGrid animated topClass="top-[56px] 5xl:top-[80px]" />
@@ -553,7 +565,7 @@ export default function HeroSection() {
       {/* ═══ Hero Content ═══ */}
       <div
         ref={heroContentRef}
-        className="absolute inset-x-0 top-0 z-[10] h-svh min-h-svh md:min-h-[945px] overflow-hidden"
+        className="absolute inset-x-0 top-0 z-[10] min-h-svh md:min-h-[945px] overflow-hidden"
       >
         <GridOverlay ref={gridOverlayRef} showTexture={true}>
           <Navbar entranceDelay={6.2} />

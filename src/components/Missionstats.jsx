@@ -347,7 +347,7 @@ export default forwardRef(function MissionStats(props, ref) {
   }));
 
   return (
-    <div ref={wrapperRef} className="relative w-full min-h-svh overflow-visible">
+    <div ref={wrapperRef} className="relative w-full min-h-screen overflow-visible">
      <div className="relative mx-auto w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem] min-h-svh flex flex-col">
 
       {/* Grid lines */}

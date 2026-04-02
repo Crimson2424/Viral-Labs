@@ -289,7 +289,7 @@ export default function SignalsSection() {
     return (
         <section
             ref={sectionRef}
-            className="signals-section relative z-25 w-full h-auto min-h-svh md:h-[130vh] bg-[#121212]"
+            className="signals-section relative z-25 w-full h-auto min-h-screen md:h-[130vh] bg-[#121212]"
         >
             <GlobalTexture />
 
