@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { gsap, SplitText, useGSAP } from "./Gsapconfig";
 import GlobalGrid from "./Globalgrid";
 import GlobalTexture from "./Globaltexture";
+import fontReady from "./fontReady";
 
 // ── Orange corner marker SVGs ──
 
@@ -65,6 +66,10 @@ export default function CoreOperations() {
     () => {
       const el = sectionRef.current;
       if (!el) return;
+
+      let cancelled = false;
+      fontReady.then(() => {
+        if (cancelled) return;
 
       // Factory — every tween gets its OWN fresh config object.
       // GSAP mutates the scrollTrigger config internally, so
@@ -224,6 +229,9 @@ export default function CoreOperations() {
           },
         });
       });
+
+      }); // fontReady.then
+      return () => { cancelled = true; };
     },
     { scope: sectionRef }
   );

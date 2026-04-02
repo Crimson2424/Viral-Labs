@@ -1,6 +1,7 @@
 import { useRef, useState, useCallback, useEffect } from "react";
 import { gsap, SplitText, ScrollTrigger, useGSAP } from "../components/Gsapconfig";
 import GlobalTexture from "./Globaltexture";
+import fontReady from "./fontReady";
 
 /* ─── Glow Line Blur Values (matches site pattern) ─── */
 const LINE_BLURS = [0.5, 0.5, 3, 3, 5.5];
@@ -53,26 +54,31 @@ function CornerBracketButton({ label = "Go Viral", href = "#", className = "", c
   useGSAP(
     () => {
       if (!btnRef.current) return;
-      const textEl = btnRef.current.querySelector(".cta-scramble-text");
-      if (!textEl) return;
+      let cancelled = false;
+      fontReady.then(() => {
+        if (cancelled) return;
+        const textEl = btnRef.current.querySelector(".cta-scramble-text");
+        if (!textEl) return;
 
-      const split = SplitText.create(textEl, {
-        type: "chars",
-        charsClass: "btn-char",
-      });
+        const split = SplitText.create(textEl, {
+          type: "chars",
+          charsClass: "btn-char",
+        });
 
-      const chars = split.chars;
-      const originals = chars.map((c) => c.textContent);
+        const chars = split.chars;
+        const originals = chars.map((c) => c.textContent);
 
-      // Lock each char width so scramble doesn't resize
-      chars.forEach((char) => {
-        const w = char.offsetWidth;
-        char.style.display = "inline-block";
-        char.style.width = `${w}px`;
-        char.style.textAlign = "center";
-      });
+        // Lock each char width so scramble doesn't resize
+        chars.forEach((char) => {
+          const w = char.offsetWidth;
+          char.style.display = "inline-block";
+          char.style.width = `${w}px`;
+          char.style.textAlign = "center";
+        });
 
-      scrambleDataRef.current = { chars, originals };
+        scrambleDataRef.current = { chars, originals };
+      }); // fontReady.then
+      return () => { cancelled = true; };
     },
     { scope: btnRef }
   );
@@ -257,6 +263,10 @@ function AccordionItem({ data, isActive, onEnter, onLeave, onClick }) {
 
   useGSAP(
     () => {
+      let cancelled = false;
+      fontReady.then(() => {
+        if (cancelled) return;
+
       const bgLayers = bgLayersRef.current?.querySelectorAll(".bg-wipe-layer") || [];
       const statItems = statsRef.current?.querySelectorAll(".stat-item") || [];
 
@@ -299,6 +309,9 @@ function AccordionItem({ data, isActive, onEnter, onLeave, onClick }) {
       tl.to(statItems, { opacity: 1, y: 0, duration: 0.55, stagger: 0.06, ease: "back.out(1.4)" }, "-=0.45");
 
       tlRef.current = tl;
+
+      }); // fontReady.then
+      return () => { cancelled = true; };
     },
     { scope: containerRef }
   );
@@ -376,6 +389,10 @@ export default function MissionReports() {
   useGSAP(
     () => {
       if (!headerContentRef.current) return;
+
+      let cancelled = false;
+      fontReady.then(() => {
+        if (cancelled) return;
 
       // Split "Mission Reports" heading
       const headingSplit = SplitText.create(".mr-heading", {
@@ -486,6 +503,9 @@ export default function MissionReports() {
           once: true,
         },
       });
+
+      }); // fontReady.then
+      return () => { cancelled = true; };
     },
     { scope: sectionRef }
   );

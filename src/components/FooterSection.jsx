@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import { gsap, SplitText, useGSAP } from "./Gsapconfig";
 import GlobalTexture from "./Globaltexture";
+import fontReady from "./fontReady";
 
 /* ─── BG image (drop Footer_BG.png into public/images/) ─── */
 const FooterBG = "/images/Footer_BG.png";
@@ -112,7 +113,10 @@ const FooterSection = () => {
     () => {
       if (!sectionRef.current) return;
 
+      let cancelled = false;
       const splits = [];
+      fontReady.then(() => {
+        if (cancelled) return;
 
       /* ── CTA heading split ── */
       const headingSplit = SplitText.create(headingRef.current, {
@@ -206,7 +210,9 @@ const FooterSection = () => {
         .to(copyLSplit.lines, { y: "0%", duration: 0.7, ease: "power4.out" }, 0.5)
         .to(copyRSplit.lines, { y: "0%", duration: 0.7, ease: "power4.out" }, 0.55);
 
+      }); // fontReady.then
       return () => {
+        cancelled = true;
         splits.forEach((s) => s && s.revert());
       };
     },
