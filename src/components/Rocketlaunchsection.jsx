@@ -317,7 +317,7 @@ export default function RocketLaunchSection() {
      RENDER
      ══════════════════════════════════════════════ */
   return (
-    <section ref={sectionRef} className="rocket-launch-section relative z-25 w-full h-svh">
+    <section ref={sectionRef} className="rocket-launch-section relative z-25 w-full h-screen">
       {/* <GlobalGrid /> */}
 
       <div ref={rocketTextureRef} className="opacity-0">
@@ -355,21 +355,21 @@ export default function RocketLaunchSection() {
           </div>
 
           {/* VE LEFT-SIDE TEXT — title + subtitle only */}
-          <div className="absolute z-40 pointer-events-none flex flex-col left-3 top-[2%] max-w-[50vw] sm:left-6 sm:max-w-56 md:max-w-64 lg:left-16 lg:max-w-72 xl:left-24 xl:max-w-80 2xl:left-32 2xl:max-w-[24rem] 3xl:left-40 3xl:max-w-[28.75rem] 4xl:left-48 4xl:max-w-[36rem] 5xl:left-56 5xl:max-w-[44rem]">
+          <div className="absolute z-40 pointer-events-none flex flex-col left-3 top-[2%] max-w-[50vw] max-mob:max-w-[45vw] sm:left-6 sm:max-w-56 md:max-w-64 lg:left-16 lg:max-w-72 xl:left-24 xl:max-w-80 2xl:left-32 2xl:max-w-[24rem] 3xl:left-40 3xl:max-w-[28.75rem] 4xl:left-48 4xl:max-w-[36rem] 5xl:left-56 5xl:max-w-[44rem]">
             <div className="flex flex-col gap-0">
               <p ref={veSubtitleRef} className="font-host text-[0.625rem] sm:text-xs lg:text-xs xl:text-sm 3xl:text-sm 4xl:text-base 5xl:text-3xl text-vl-orange uppercase tracking-wide">
                 STRUCTURED IN. VIRAL OUT.
               </p>
-              <h2 ref={veHeadingRef} className="font-host text-xl sm:text-2xl lg:text-3xl xl:text-4xl 3xl:text-5xl 4xl:text-6xl 5xl:text-7xl tracking-tight leading-[1.06]">
+              <h2 ref={veHeadingRef} className="font-host text-xl max-mob:text-lg sm:text-2xl lg:text-3xl xl:text-4xl 3xl:text-5xl 4xl:text-6xl 5xl:text-7xl tracking-tight leading-[1.06]">
                 Inside The<br />Viral Engine
               </h2>
             </div>
           </div>
 
           {/* VE BODY — bottom-left on sm/md, right side on lg+ */}
-          <div className="absolute z-40 pointer-events-none flex flex-col gap-0 left-2 bottom-[6%] max-w-[65vw] sm:left-4 sm:bottom-[4%] sm:max-w-56 md:max-w-64 lg:left-auto lg:bottom-auto lg:right-[8%] lg:top-[72%] lg:max-w-72 xl:max-w-80 2xl:max-w-[22rem] 3xl:max-w-[26.25rem] 4xl:max-w-[32rem] 5xl:right-[0%] 5xl:max-w-[40rem]">
+          <div className="absolute z-40 pointer-events-none flex flex-col gap-0 left-2 bottom-[6%] max-w-[65vw] max-mob:max-w-[58vw] sm:left-4 sm:bottom-[4%] sm:max-w-56 md:max-w-64 lg:left-auto lg:bottom-auto lg:right-[8%] lg:top-[72%] lg:max-w-72 xl:max-w-80 2xl:max-w-[22rem] 3xl:max-w-[26.25rem] 4xl:max-w-[32rem] 5xl:right-[0%] 5xl:max-w-[40rem]">
             <GlowLineSvg ref={veGlowRef} className="w-20 sm:w-28 lg:w-36 xl:w-44 3xl:w-48 4xl:w-56 5xl:w-80 h-auto -ml-2.5" />
-            <p ref={veBody1Ref} className="font-host text-sm sm:text-xs lg:text-xs xl:text-sm 3xl:text-sm 4xl:text-base 5xl:text-2xl font-thin text-white tracking-tighter leading-snug mt-0.5">
+            <p ref={veBody1Ref} className="font-host text-sm max-mob:text-xs sm:text-xs lg:text-xs xl:text-sm 3xl:text-sm 4xl:text-base 5xl:text-2xl font-thin text-white tracking-tighter leading-snug mt-0.5">
               Behind every <span className="font-medium">Engagement</span> is a structured distribution system. It starts with <span className="font-medium">Audience</span> and <span className="font-medium">Market signals</span>, converts them into content and <span className="font-medium">Message systems</span>, and executes them through coordinated <span className="font-medium">Publishing</span> and <span className="font-medium">Amplification infrastructure</span>.
             </p>
           </div>
@@ -377,19 +377,19 @@ export default function RocketLaunchSection() {
           {/* ── STAGE LABELS ── */}
 
           {/* LABEL 1 — Signal Input (RIGHT side, all sizes) */}
-          <div ref={label1Ref} className="absolute z-40 pointer-events-none right-2 top-[15%] w-36 sm:right-[8%] sm:w-44 md:right-[8%] md:w-52 lg:right-[21%] lg:w-56 xl:right-[23%] xl:w-64 2xl:right-[24%] 2xl:w-72 3xl:right-[21%] 3xl:w-[26.25rem] 4xl:right-[16%] 4xl:w-[32rem] 5xl:right-[4%] 5xl:w-[40rem]">
+          <div ref={label1Ref} className="absolute z-40 pointer-events-none right-2 max-mob:right-1 top-[15%] w-36 max-mob:w-28 sm:right-[8%] sm:w-44 md:right-[8%] md:w-52 lg:right-[21%] lg:w-56 xl:right-[23%] xl:w-64 2xl:right-[24%] 2xl:w-72 3xl:right-[21%] 3xl:w-[26.25rem] 4xl:right-[16%] 4xl:w-[32rem] 5xl:right-[4%] 5xl:w-[40rem]">
             <ConnectorLine className="block w-full h-auto -mb-2 lg:-mb-4 scale-x-[-1] " />
             <div className="flex items-start gap-1 w-fit ml-auto">
               <CubesSvg className="w-3 sm:w-4 lg:w-5 4xl:w-6 5xl:w-9 h-auto mt-0.5 shrink-0" />
               <div>
                 <h4 className="font-bricolage text-xs font-semibold sm:text-sm sm:font-normal lg:text-base xl:text-lg 3xl:text-lg 4xl:text-xl 5xl:text-3xl text-white tracking-tighter leading-tight">{PIPELINE_STAGES[0].title}</h4>
-                <p className="font-host text-[0.625rem] sm:text-xs lg:text-xs xl:text-sm 3xl:text-sm 4xl:text-base 5xl:text-xl text-[#a1a1a1] tracking-tighter leading-tight mt-0 max-w-28 sm:max-w-40 lg:max-w-48 xl:max-w-56 2xl:max-w-64 3xl:max-w-[17.5rem] 4xl:max-w-80 5xl:max-w-[40rem]">{PIPELINE_STAGES[0].description}</p>
+                <p className="font-host text-[0.625rem] sm:text-xs lg:text-xs xl:text-sm 3xl:text-sm 4xl:text-base 5xl:text-xl text-[#a1a1a1] tracking-tighter leading-tight mt-0 max-w-28 max-mob:max-w-24 sm:max-w-40 lg:max-w-48 xl:max-w-56 2xl:max-w-64 3xl:max-w-[17.5rem] 4xl:max-w-80 5xl:max-w-[40rem]">{PIPELINE_STAGES[0].description}</p>
               </div>
             </div>
           </div>
 
           {/* LABEL 2 — Processing Layer (RIGHT on mobile → LEFT on lg+) */}
-          <div ref={label2Ref} className="absolute z-40 pointer-events-none right-2 top-[26%] w-36 sm:right-[8%] sm:w-44 md:right-[8%] md:w-52 lg:right-auto lg:left-[21%] lg:w-56 xl:left-[23%] xl:w-64 2xl:left-[24%] 2xl:w-72 3xl:left-[21%] 3xl:w-[26.25rem] 4xl:left-[16%] 4xl:w-[32rem] 5xl:left-[3%] 5xl:w-[40rem]">
+          <div ref={label2Ref} className="absolute z-40 pointer-events-none right-2 max-mob:right-1 top-[26%] w-36 max-mob:w-28 sm:right-[8%] sm:w-44 md:right-[8%] md:w-52 lg:right-auto lg:left-[21%] lg:w-56 xl:left-[23%] xl:w-64 2xl:left-[24%] 2xl:w-72 3xl:left-[21%] 3xl:w-[26.25rem] 4xl:left-[16%] 4xl:w-[32rem] 5xl:left-[3%] 5xl:w-[40rem]">
             <ConnectorLine className="block w-full h-auto -mb-2 lg:-mb-4 scale-x-[-1] lg:scale-x-100" />
             <div className="flex items-start gap-1 w-fit ml-auto lg:ml-2">
               <CubesSvg className="w-3 sm:w-4 lg:w-5 4xl:w-6 5xl:w-9 h-auto mt-0.5 shrink-0" />
@@ -401,7 +401,7 @@ export default function RocketLaunchSection() {
           </div>
 
           {/* LABEL 3 — Distribution Layer (RIGHT on all screens) */}
-          <div ref={label3Ref} className="absolute z-40 pointer-events-none right-2 top-[50%] w-36 sm:right-[8%] sm:w-44 md:right-[8%] md:w-52 lg:right-[21%] lg:w-56 xl:right-[23%] xl:w-64 2xl:right-[24%] 2xl:w-72 3xl:right-[21%] 3xl:w-[26.25rem] 4xl:right-[13%] 4xl:w-[32rem] 5xl:right-0 5xl:w-[40rem]">
+          <div ref={label3Ref} className="absolute z-40 pointer-events-none right-2 max-mob:right-1 top-[50%] w-36 max-mob:w-28 sm:right-[8%] sm:w-44 md:right-[8%] md:w-52 lg:right-[21%] lg:w-56 xl:right-[23%] xl:w-64 2xl:right-[24%] 2xl:w-72 3xl:right-[21%] 3xl:w-[26.25rem] 4xl:right-[13%] 4xl:w-[32rem] 5xl:right-0 5xl:w-[40rem]">
             <ConnectorLine className="block w-full h-auto -mb-2 lg:-mb-4 scale-x-[-1]" />
             <div className="flex items-start gap-1 w-fit ml-auto">
               <CubesSvg className="w-3 sm:w-4 lg:w-5 4xl:w-6 5xl:w-9 h-auto mt-0.5 shrink-0" />
@@ -413,7 +413,7 @@ export default function RocketLaunchSection() {
           </div>
 
           {/* LABEL 4 — Amplification Layer (RIGHT on mobile → LEFT on lg+) */}
-          <div ref={label4Ref} className="absolute z-40 pointer-events-none right-2 top-[68%] w-36 sm:right-[8%] sm:w-44 md:right-[8%] md:w-52 lg:right-auto lg:left-[21%] lg:w-56 xl:left-[23%] xl:w-64 2xl:left-[24%] 2xl:w-72 3xl:left-[21%] 3xl:w-[26.25rem] 4xl:left-[12%] 4xl:w-[32rem] 5xl:left-0 5xl:w-[40rem]">
+          <div ref={label4Ref} className="absolute z-40 pointer-events-none right-2 max-mob:right-1 top-[68%] w-36 max-mob:w-28 sm:right-[8%] sm:w-44 md:right-[8%] md:w-52 lg:right-auto lg:left-[21%] lg:w-56 xl:left-[23%] xl:w-64 2xl:left-[24%] 2xl:w-72 3xl:left-[21%] 3xl:w-[26.25rem] 4xl:left-[12%] 4xl:w-[32rem] 5xl:left-0 5xl:w-[40rem]">
             <ConnectorLine className="block w-full h-auto -mb-2 lg:-mb-4 scale-x-[-1] lg:scale-x-100" />
             <div className="flex items-start gap-1 w-fit ml-auto lg:ml-2">
               <CubesSvg className="w-3 sm:w-4 lg:w-5 4xl:w-6 5xl:w-9 h-auto mt-0.5 shrink-0" />

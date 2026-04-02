@@ -154,6 +154,19 @@ export default function CoreOperations() {
       const cardEls = el.querySelectorAll(".co-card");
       const CARD_OFFSET = 0.12;
 
+      // ── Card container staggered entrance ──
+      gsap.set(cardEls, { opacity: 0, y: 40 });
+      cardEls.forEach((card, i) => {
+        gsap.to(card, {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power3.out",
+          delay: 0.2 + i * CARD_OFFSET,
+          scrollTrigger: trigger(),
+        });
+      });
+
       cardEls.forEach((card, i) => {
         const d = 0.3 + i * CARD_OFFSET;
         const cardImg = card.querySelector(".co-card-img");

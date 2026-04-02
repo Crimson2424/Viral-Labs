@@ -18,7 +18,7 @@
  *   HOLD (0.93 → 1.00)
  */
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { gsap, ScrollTrigger, SplitText, DrawSVGPlugin, useGSAP } from "./Gsapconfig";
 import GridOverlay from "./Gridoverlay";
 import GlobalGrid from "./Globalgrid";
@@ -49,6 +49,18 @@ export default function HeroSection() {
   const ctaScrambleRef = useRef(null);
   const missionStatsRef = useRef();
   const lastTriggeredStepRef = useRef(0);
+
+  useEffect(() => {
+    const setHeight = () => {
+      if (heroContentRef.current) {
+        heroContentRef.current.style.height = window.innerHeight + "px";
+      }
+    };
+    setHeight();
+    const onOrient = () => setTimeout(setHeight, 100);
+    window.addEventListener("orientationchange", onOrient);
+    return () => window.removeEventListener("orientationchange", onOrient);
+  }, []);
 
   useGSAP(
     () => {
@@ -543,7 +555,7 @@ export default function HeroSection() {
     <section
       ref={sectionRef}
       id="home"
-      className="relative z-20 w-full min-h-svh"
+      className="relative z-20 w-full min-h-screen"
     >
       {/* ═══ GlobalGrid — topClass aligns exactly with grid-line-top ═══ */}
       <GlobalGrid animated topClass="top-[56px] 5xl:top-[80px]" />
@@ -553,7 +565,7 @@ export default function HeroSection() {
       {/* ═══ Hero Content ═══ */}
       <div
         ref={heroContentRef}
-        className="absolute inset-x-0 top-0 z-[10] h-svh min-h-svh md:min-h-[945px] overflow-hidden"
+        className="absolute inset-x-0 top-0 z-[10] min-h-svh overflow-hidden"
       >
         <GridOverlay ref={gridOverlayRef} showTexture={true}>
           <Navbar entranceDelay={6.2} />
@@ -568,12 +580,12 @@ export default function HeroSection() {
             <GridCrosshair className="hero-grid grid-crosshair pointer-events-none absolute top-[52px] 5xl:top-[76px] -left-1 z-50 5xl:scale-150" aria-hidden="true" />
             <GridCrosshair className="hero-grid grid-crosshair pointer-events-none absolute top-[52px] 5xl:top-[76px] -right-1 z-50 5xl:scale-150" aria-hidden="true" />
 
-            <div className="relative z-40 flex flex-col items-start justify-center md:items-center h-full pt-14 pl-3 md:pl-0">
+            <div className="absolute inset-0 z-40 flex flex-col items-start justify-center md:items-center pl-3 md:pl-0">
               <div className="mb-6 h-[30px] 4xl:h-[50px] 5xl:h-[70px] hidden md:block" />
 
               <h1
                 ref={headingRef}
-                className="hero-heading font-bricolage font-medium text-left md:text-center mb-6 5xl:mb-10 tracking-normal max-w-[70%] md:max-w-none"
+                className="hero-heading font-bricolage font-medium text-left md:text-center mb-6 5xl:mb-10 tracking-normal max-w-[70%] max-mob:max-w-[85%] md:max-w-none"
                 style={{
                   fontSize: "clamp(90px, 6.5vw, 130px)",
                   lineHeight: 0.83,
@@ -603,19 +615,19 @@ export default function HeroSection() {
 
               <p
                 ref={subheadingRef}
-                className="hero-subheading font-host text-base 4xl:text-lg 5xl:text-2xl text-[#a1a1aa] text-left md:text-center tracking-[-0.32px] leading-tight max-w-[75%] md:max-w-[540px] 4xl:max-w-[700px] 5xl:max-w-[1000px] mb-5 5xl:mb-8"
+                className="hero-subheading font-host text-base max-mob:text-sm max-mob:max-w-[85%] max-mob:mb-4 4xl:text-lg 5xl:text-2xl text-[#a1a1aa] text-left md:text-center tracking-[-0.32px] leading-tight max-w-[75%] md:max-w-[540px] 4xl:max-w-[700px] 5xl:max-w-[1000px] mb-5 5xl:mb-8"
               >
                 We build short-form content systems that turn attention into
                 installs consistently, at scale, without relying on luck.
               </p>
 
-              <div ref={ctaRef} className="flex flex-col items-center gap-2 5xl:gap-4">
+              <div ref={ctaRef} className="flex flex-col items-center gap-2 max-mob:gap-4 5xl:gap-4 max-mob:mt-2">
               <div className="cta-inner overflow-visible">
                 <a
                   href="#results"
                   onMouseEnter={handleCtaHover}
                   onMouseLeave={handleCtaLeave}
-                  className="relative flex items-center justify-center gap-3 w-40 h-10 4xl:w-48 4xl:h-12 5xl:w-64 5xl:h-16 px-1.5 py-2 overflow-visible hover:bg-white/10 transition-colors duration-300"
+                  className="relative flex items-center justify-center gap-3 w-40 h-10 max-mob:w-36 max-mob:h-11 4xl:w-48 4xl:h-12 5xl:w-64 5xl:h-16 px-1.5 py-2 overflow-visible hover:bg-white/10 transition-colors duration-300"
                 >
                   {/* Orange corner brackets */}
                   <span ref={ctaTLRef} className="pointer-events-none absolute" style={{ top: -10, left: -10, width: 8, height: 8, borderTop: "1.7px solid #FF6F21", borderLeft: "1.7px solid #FF6F21" }} aria-hidden="true" />
