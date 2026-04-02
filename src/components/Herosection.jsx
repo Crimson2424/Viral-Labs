@@ -585,7 +585,7 @@ export default function HeroSection() {
 
               <h1
                 ref={headingRef}
-                className="hero-heading font-bricolage font-medium text-left md:text-center mb-6 5xl:mb-10 tracking-normal max-w-[70%] md:max-w-none"
+                className="hero-heading font-bricolage font-medium text-left md:text-center mb-6 5xl:mb-10 tracking-normal max-w-[70%] max-mob:max-w-[85%] md:max-w-none"
                 style={{
                   fontSize: "clamp(90px, 6.5vw, 130px)",
                   lineHeight: 0.83,
@@ -615,7 +615,7 @@ export default function HeroSection() {
 
               <p
                 ref={subheadingRef}
-                className="hero-subheading font-host text-base 4xl:text-lg 5xl:text-2xl text-[#a1a1aa] text-left md:text-center tracking-[-0.32px] leading-tight max-w-[75%] md:max-w-[540px] 4xl:max-w-[700px] 5xl:max-w-[1000px] mb-5 5xl:mb-8"
+                className="hero-subheading font-host text-base max-mob:text-sm max-mob:max-w-[85%] max-mob:mb-4 4xl:text-lg 5xl:text-2xl text-[#a1a1aa] text-left md:text-center tracking-[-0.32px] leading-tight max-w-[75%] md:max-w-[540px] 4xl:max-w-[700px] 5xl:max-w-[1000px] mb-5 5xl:mb-8"
               >
                 We build short-form content systems that turn attention into
                 installs consistently, at scale, without relying on luck.
@@ -627,7 +627,7 @@ export default function HeroSection() {
                   href="#results"
                   onMouseEnter={handleCtaHover}
                   onMouseLeave={handleCtaLeave}
-                  className="relative flex items-center justify-center gap-3 w-40 h-10 4xl:w-48 4xl:h-12 5xl:w-64 5xl:h-16 px-1.5 py-2 overflow-visible hover:bg-white/10 transition-colors duration-300"
+                  className="relative flex items-center justify-center gap-3 w-40 h-10 max-mob:w-36 max-mob:h-11 4xl:w-48 4xl:h-12 5xl:w-64 5xl:h-16 px-1.5 py-2 overflow-visible hover:bg-white/10 transition-colors duration-300"
                 >
                   {/* Orange corner brackets */}
                   <span ref={ctaTLRef} className="pointer-events-none absolute" style={{ top: -10, left: -10, width: 8, height: 8, borderTop: "1.7px solid #FF6F21", borderLeft: "1.7px solid #FF6F21" }} aria-hidden="true" />

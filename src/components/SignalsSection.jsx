@@ -314,12 +314,12 @@ export default function SignalsSection() {
                 {/* Center heading group */}
                 <div
                     ref={headingGroupRef}
-                    className="relative md:absolute md:top-[36%] md:left-[48%] md:-translate-x-1/2 md:-translate-y-1/2 flex flex-col items-center pt-[20vh] md:pt-0 px-6 md:px-0"
+                    className="relative md:absolute md:top-[36%] md:left-[48%] md:-translate-x-1/2 md:-translate-y-1/2 flex flex-col items-center pt-[20vh] max-mob:pt-[16vh] md:pt-0 px-6 max-mob:px-4 md:px-0"
                 >
                     <p className="font-host text-xs md:text-sm 4xl:text-base 5xl:text-2xl text-[#FF6F21] uppercase tracking-wide">
                         STREAM OF DATA
                     </p>
-                    <h2 className="font-host text-center text-[clamp(1.75rem,6vw,3.375rem)] md:text-[54px] 4xl:text-[4rem] 5xl:text-[6.5rem] tracking-[-2px] leading-tight md:leading-[64px] 5xl:leading-[1.05] text-white">
+                    <h2 className="font-host text-center text-[clamp(1.75rem,6vw,3.375rem)] max-mob:text-[1.5rem] max-mob:leading-tight max-mob:tracking-[-1.5px] md:text-[54px] 4xl:text-[4rem] 5xl:text-[6.5rem] tracking-[-2px] leading-tight md:leading-[64px] 5xl:leading-[1.05] text-white">
                         Signals drive<br />everything
                     </h2>
                 </div>
@@ -330,11 +330,11 @@ export default function SignalsSection() {
                 {/* Bottom-right content — pointer-events-auto so CTA is interactive */}
                 <div
                     ref={bottomGroupRef}
-                    className="relative md:absolute md:bottom-[22%] md:right-[8%] flex flex-col items-center md:items-end gap-4 5xl:gap-8 pointer-events-auto px-6 md:px-0 pb-16 md:pb-0 5xl:scale-150 5xl:origin-bottom-right"
+                    className="relative md:absolute md:bottom-[22%] md:right-[8%] flex flex-col items-center md:items-end gap-4 max-mob:gap-3 5xl:gap-8 pointer-events-auto px-6 max-mob:px-4 md:px-0 pb-16 max-mob:pb-10 md:pb-0 5xl:scale-150 5xl:origin-bottom-right"
                 >
 
                     {/* Results label */}
-                    <div className="flex flex-col items-center md:items-end gap-1 mb-6 pointer-events-none">
+                    <div className="flex flex-col items-center md:items-end gap-1 mb-6 max-mob:mb-4 pointer-events-none">
                         <span className="font-host text-sm 4xl:text-base 5xl:text-2xl font-thin text-white/50 uppercase tracking-tight">
                             WHAT RESULTS CAN I EXPECT?
                         </span>
