@@ -23,7 +23,6 @@ import SignalsSection from "./components/SignalsSection";
 import SignalsCanvas from "./components/SignalsCanvas";
 import BridgeTestimonial from "./components/BridgeTestimonial";
 import FooterSection from "./components/FooterSection";
-import VideoTransition from "./components/VideoTransition";
 
 function DummySection() {
   return (
@@ -151,7 +150,6 @@ const App = () => {
       <CoreOperations />
       <ViralitySection globeContainerRef={globeContainerRef} />
       <MissionReports />
-      <VideoTransition />
       <RocketLaunchSection />
       <CreatorNetworkSection />
       <SignalsSection />

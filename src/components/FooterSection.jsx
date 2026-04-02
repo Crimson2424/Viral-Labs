@@ -301,7 +301,7 @@ const FooterSection = () => {
           {/* Right column on mobile: clocks stacked vertically */}
           <div
             ref={clocksRowRef}
-            className="order-2 max-sm:order-2 sm:order-none flex flex-col items-center gap-6 max-mob:gap-4 py-4 sm:grid sm:grid-cols-2 sm:justify-items-center sm:gap-6 sm:pb-10 md:pb-40 lg:flex lg:flex-row lg:flex-wrap lg:justify-center lg:gap-10 xl:gap-12 2xl:gap-14 3xl:gap-16 4xl:gap-28 5xl:gap-36 lg:pb-60 xl:pb-68 2xl:pb-72 3xl:pb-80 4xl:pb-104 5xl:pb-128"
+            className="order-2 max-sm:order-2 sm:order-none flex flex-col items-center gap-6 max-mob:gap-4 py-4 max-mob:pt-8 max-mob:scale-90 max-mob:origin-top sm:grid sm:grid-cols-2 sm:justify-items-center sm:gap-6 sm:pb-10 md:pb-40 lg:flex lg:flex-row lg:flex-wrap lg:justify-center lg:gap-10 xl:gap-12 2xl:gap-14 3xl:gap-16 4xl:gap-28 5xl:gap-36 lg:pb-60 xl:pb-68 2xl:pb-72 3xl:pb-80 4xl:pb-104 5xl:pb-128"
             style={{ opacity: 0 }}
           >
             {CLOCKS.map((clock) => (
@@ -311,7 +311,7 @@ const FooterSection = () => {
 
           {/* Left column on mobile: logo + nav */}
           <div className="order-1 max-sm:order-1 sm:order-none">
-            <div ref={footerBarRef} className="py-8 max-mob:py-5 sm:py-8 md:py-12 lg:py-22 xl:py-24 2xl:py-26 3xl:py-28 4xl:py-40 5xl:py-52">
+            <div ref={footerBarRef} className="py-8 max-mob:pt-10 max-mob:pb-5 sm:py-8 md:py-12 lg:py-22 xl:py-24 2xl:py-26 3xl:py-28 4xl:py-40 5xl:py-52">
               <div className="flex flex-col items-start sm:flex-row sm:items-start sm:justify-center gap-8 max-mob:gap-5 sm:gap-12 md:gap-16 lg:gap-38 xl:gap-40 2xl:gap-42 3xl:gap-44 4xl:gap-64 5xl:gap-80">
                 {/* Logo + tagline */}
                 <div className="flex flex-col gap-1">
@@ -355,7 +355,6 @@ const FooterSection = () => {
                   {/* Social icons — hidden on mobile */}
                   <div ref={socialsRef} className="hidden sm:flex items-center gap-8 4xl:gap-14 5xl:gap-18" style={{ opacity: 0 }}>
                     {[
-                      { key: "ig", href: "https://www.instagram.com", content: <img src="/svgs/insta.svg" alt="Instagram" className="h-3 w-3 4xl:h-5 4xl:w-5 5xl:h-7 5xl:w-7" draggable={false} /> },
                       { key: "x", href: "https://x.com/EashanShetty", content: <span className="font-host text-xs 4xl:text-base 5xl:text-lg font-thin text-white transition-colors duration-200">X</span> },
                       { key: "in", href: "https://www.linkedin.com/company/virallabs/", content: <span className="font-host text-xs 4xl:text-base 5xl:text-lg font-thin text-white transition-colors duration-200">In</span> },
                     ].map(({ key, href, content }) => (
@@ -383,7 +382,6 @@ const FooterSection = () => {
           {/* ═══ MOBILE SOCIALS — visible only below sm ═══ */}
           <div className="order-3 sm:hidden col-span-2 flex items-center gap-8 max-mob:gap-6 pt-4 max-mob:pt-3">
             {[
-              { key: "ig", href: "https://www.instagram.com", content: <img src="/svgs/insta.svg" alt="Instagram" className="h-3 w-3" draggable={false} /> },
               { key: "x", href: "https://x.com/EashanShetty", content: <span className="font-host text-xs font-thin text-white">X</span> },
               { key: "in", href: "https://www.linkedin.com/company/virallabs/", content: <span className="font-host text-xs font-thin text-white">In</span> },
             ].map(({ key, href, content }) => (

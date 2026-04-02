@@ -394,7 +394,7 @@ export default forwardRef(function MissionStats(props, ref) {
         <FrameCorner className="frame-corner absolute -bottom-5 left-0 max-sm:size-3.5 z-10 max-sm:z-51 opacity-0" style={{ transform: "scaleY(-1)" }} />
         <FrameCorner className="frame-corner absolute -bottom-5 right-0 max-sm:size-3.5 z-10 max-sm:z-51 opacity-0" style={{ transform: "scale(-1, -1)" }} />
 
-        <div className="relative overflow-hidden py-10 w-[99.5%] mx-auto">
+        <div className="relative overflow-hidden py-10 max-mob:py-6 w-[99.5%] mx-auto">
           <div
             className="marquee-fade absolute inset-y-0 left-0 w-40 z-10 pointer-events-none opacity-0"
             style={{ background: "linear-gradient(to right, #121212 0%, transparent 100%)" }}

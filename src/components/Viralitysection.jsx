@@ -383,11 +383,11 @@ export default function ViralitySection({ globeContainerRef }) {
 
         <div className="relative mx-auto max-w-6xl 3xl:max-w-7xl 4xl:max-w-[90rem] 5xl:max-w-[120rem] min-h-0 md:min-h-[31.25rem] h-auto md:h-[calc(100svh-10rem)] xl:h-[calc(100svh-12.5rem)]">
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-mob:gap-2 px-4 md:px-0 md:contents bg-[#121212]/80 md:bg-transparent p-3 max-mob:p-2 md:p-0 rounded-lg md:rounded-none overflow-visible">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-mob:gap-5 px-4 md:px-0 md:contents bg-[#121212]/80 md:bg-transparent p-3 max-mob:p-2 md:p-0 rounded-lg md:rounded-none overflow-visible">
 
           {/* ── Distribution Architecture (top-left) ── */}
           <div className="v-card-tl relative md:absolute md:left-2 md:-top-2 lg:left-8 lg:top-0 xl:left-26 xl:top-3 2xl:left-20 2xl:top-2 3xl:left-26 3xl:top-3 4xl:left-36 4xl:top-30 5xl:left-48 5xl:top-50 z-30 pointer-events-auto overflow-visible">
-            <div className="relative w-full md:w-48 lg:w-40 xl:w-48 2xl:w-48 3xl:w-52 4xl:w-60 5xl:w-96 flex flex-col overflow-visible">
+            <div className="relative w-full max-mob:w-[85%] max-mob:mr-auto md:w-48 lg:w-40 xl:w-48 2xl:w-48 3xl:w-52 4xl:w-60 5xl:w-96 flex flex-col overflow-visible">
               <div className="relative px-5 max-mob:px-3 lg:px-3 xl:px-5 5xl:px-8 py-2 max-mob:py-1.5 lg:py-1.5 xl:py-2 5xl:py-4 bg-[#1d1d1d]/90 md:bg-[#1d1d1d]/70">
                 <div className="font-bricolage text-xl max-mob:text-lg max-mob:leading-[1.15] lg:text-base xl:text-xl 4xl:text-2xl 5xl:text-4xl text-white tracking-tight leading-5 lg:leading-4 xl:leading-5 5xl:leading-8 text-left md:text-right">
                   Distribution
@@ -408,7 +408,7 @@ export default function ViralitySection({ globeContainerRef }) {
 
           {/* ── Attention Dynamics (top-right) ── */}
           <div className="v-card-tr relative md:absolute md:right-0 md:-top-2 lg:right-4 lg:top-4 xl:right-15 xl:top-20 2xl:right-10 2xl:top-16 3xl:right-15 3xl:top-20 4xl:right-24 4xl:top-50 5xl:right-16 5xl:top-76 z-30 pointer-events-auto overflow-visible">
-            <div className="relative w-full md:w-48 lg:w-40 xl:w-48 2xl:w-48 3xl:w-52 4xl:w-60 5xl:w-96 flex flex-col overflow-visible">
+            <div className="relative w-full max-mob:w-[85%] max-mob:ml-auto md:w-48 lg:w-40 xl:w-48 2xl:w-48 3xl:w-52 4xl:w-60 5xl:w-96 flex flex-col overflow-visible">
               <div className="relative px-5 max-mob:px-3 lg:px-3 xl:px-5 5xl:px-8 py-2 max-mob:py-1.5 lg:py-1.5 xl:py-2 5xl:py-4 bg-[#1d1d1d]/90 md:bg-[#1d1d1d]/70">
                 <div className="font-bricolage text-xl max-mob:text-lg max-mob:leading-[1.15] lg:text-base xl:text-xl 4xl:text-2xl 5xl:text-4xl text-white tracking-tight leading-5 lg:leading-4 xl:leading-5 5xl:leading-8 text-left">
                   Attention
@@ -429,7 +429,7 @@ export default function ViralitySection({ globeContainerRef }) {
 
           {/* ── Creative Methodology (bottom-left) ── */}
           <div className="v-card-bl relative md:absolute md:left-2 md:bottom-26 lg:left-8 lg:bottom-0 xl:left-20 xl:bottom-0 2xl:left-14 2xl:-bottom-2 3xl:left-20 3xl:bottom-15 4xl:left-32 4xl:bottom-50 5xl:left-24 5xl:bottom-100 z-30 pointer-events-auto overflow-visible">
-            <div className="relative w-full md:w-56 lg:w-44 xl:w-56 2xl:w-56 3xl:w-60 4xl:w-68 5xl:w-104 flex flex-col overflow-visible">
+            <div className="relative w-full max-mob:w-[85%] max-mob:mr-auto md:w-56 lg:w-44 xl:w-56 2xl:w-56 3xl:w-60 4xl:w-68 5xl:w-104 flex flex-col overflow-visible">
               <div className="relative px-5 max-mob:px-3 lg:px-3 xl:px-5 5xl:px-8 py-2 max-mob:py-1.5 lg:py-1.5 xl:py-2 5xl:py-4 bg-[#1d1d1d]/90 md:bg-[#1d1d1d]/70">
                 <div className="font-bricolage text-xl max-mob:text-lg max-mob:leading-[1.15] lg:text-base xl:text-xl 4xl:text-2xl 5xl:text-4xl text-white tracking-tight leading-5 lg:leading-4 xl:leading-5 5xl:leading-8 text-left md:text-right">
                   Creative
@@ -450,7 +450,7 @@ export default function ViralitySection({ globeContainerRef }) {
 
           {/* ── Performance Outcomes (bottom-right) ── */}
           <div className="v-card-br relative md:absolute md:right-0 md:bottom-30 lg:right-4 lg:bottom-0 xl:right-6 xl:-bottom-3 2xl:right-4 2xl:-bottom-4 3xl:right-6 3xl:bottom-30 4xl:right-16 4xl:bottom-60 5xl:right-8 5xl:bottom-90 z-30 pointer-events-auto overflow-visible">
-            <div className="relative w-full md:w-69 lg:w-52 xl:w-69 2xl:w-69 3xl:w-72 4xl:w-84 5xl:w-120 flex flex-col overflow-visible">
+            <div className="relative w-full max-mob:w-[85%] max-mob:ml-auto md:w-69 lg:w-52 xl:w-69 2xl:w-69 3xl:w-72 4xl:w-84 5xl:w-120 flex flex-col overflow-visible">
               <div className="relative px-5 max-mob:px-3 lg:px-3 xl:px-5 5xl:px-8 py-2 max-mob:py-1.5 lg:py-1.5 xl:py-2 5xl:py-4 bg-[#1d1d1d]/90 md:bg-[#1d1d1d]/70">
                 <div className="font-bricolage text-xl max-mob:text-lg max-mob:leading-[1.15] lg:text-base xl:text-xl 4xl:text-2xl 5xl:text-4xl text-white tracking-tight leading-5 lg:leading-4 xl:leading-5 5xl:leading-8 text-left">
                   Performance

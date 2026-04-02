@@ -565,7 +565,7 @@ export default function HeroSection() {
       {/* ═══ Hero Content ═══ */}
       <div
         ref={heroContentRef}
-        className="absolute inset-x-0 top-0 z-[10] min-h-svh md:min-h-[945px] overflow-hidden"
+        className="absolute inset-x-0 top-0 z-[10] min-h-svh overflow-hidden"
       >
         <GridOverlay ref={gridOverlayRef} showTexture={true}>
           <Navbar entranceDelay={6.2} />
@@ -580,7 +580,7 @@ export default function HeroSection() {
             <GridCrosshair className="hero-grid grid-crosshair pointer-events-none absolute top-[52px] 5xl:top-[76px] -left-1 z-50 5xl:scale-150" aria-hidden="true" />
             <GridCrosshair className="hero-grid grid-crosshair pointer-events-none absolute top-[52px] 5xl:top-[76px] -right-1 z-50 5xl:scale-150" aria-hidden="true" />
 
-            <div className="relative z-40 flex flex-col items-start justify-center md:items-center h-full pt-14 pl-3 md:pl-0">
+            <div className="absolute inset-0 z-40 flex flex-col items-start justify-center md:items-center pl-3 md:pl-0">
               <div className="mb-6 h-[30px] 4xl:h-[50px] 5xl:h-[70px] hidden md:block" />
 
               <h1
@@ -621,7 +621,7 @@ export default function HeroSection() {
                 installs consistently, at scale, without relying on luck.
               </p>
 
-              <div ref={ctaRef} className="flex flex-col items-center gap-2 5xl:gap-4">
+              <div ref={ctaRef} className="flex flex-col items-center gap-2 max-mob:gap-4 5xl:gap-4 max-mob:mt-2">
               <div className="cta-inner overflow-visible">
                 <a
                   href="#results"
