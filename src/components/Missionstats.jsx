@@ -369,16 +369,16 @@ export default forwardRef(function MissionStats(props, ref) {
           className="impact-header flex flex-col gap-6 lg:flex-row lg:justify-between items-start max-sm:gap-6 max-mob:gap-3"
           style={{ marginBottom: "clamp(4rem, 9.5vh, 8.5rem)" }}
         >
-          <div className="flex flex-col gap-1 w-full lg:max-w-[22.5rem] 4xl:max-w-[28rem] 5xl:max-w-[34rem] max-sm:w-full">
-            <p className="impact-label font-bricolage font-normal text-base max-mob:text-sm 4xl:text-lg 5xl:text-xl text-[#ff6f21] uppercase leading-normal"
+          <div className="flex flex-col gap-0 w-full lg:max-w-[22.5rem] 4xl:max-w-[28rem] 5xl:max-w-[34rem] max-sm:w-full">
+            <p className="impact-label font-bricolage font-normal text-base max-mob:text-sm 2xl:text-sm 4xl:text-lg 5xl:text-xl text-[#ff6f21] uppercase leading-tight"
               style={{ fontVariationSettings: "'opsz' 14, 'wdth' 100" }}>
               Performance deployed at scale
             </p>
-            <h2 className="impact-heading font-host font-medium text-[clamp(2rem,4.5vw,3.375rem)] max-sm:text-4xl max-mob:text-[1.875rem] max-mob:leading-[1.05] max-mob:tracking-[-1.5px] 4xl:text-[4rem] 5xl:text-[5rem] text-[#f1f1f1] tracking-[-2.16px] leading-[1.1]">
+            <h2 className="impact-heading font-host font-medium text-[clamp(2rem,4.5vw,3.375rem)] max-sm:text-4xl max-mob:text-[1.875rem] max-mob:leading-[1.05] max-mob:tracking-[-1.5px] 4xl:text-[4rem] 5xl:text-[5rem] text-[#f1f1f1] tracking-[-2.16px] leading-[1.0]">
               Proven Impact
             </h2>
           </div>
-          <p className="impact-desc font-host font-light text-base max-mob:text-sm max-mob:leading-[1.35] 4xl:text-lg 5xl:text-xl text-white tracking-tight leading-5 w-full lg:max-w-[18.25rem] 4xl:max-w-[24rem] 5xl:max-w-[28rem] lg:mt-12 max-sm:w-full max-sm:mt-0">
+          <p className="impact-desc font-host font-light text-base max-mob:text-sm max-mob:leading-[1.35] 4xl:text-lg 5xl:text-xl text-white tracking-tight leading-[1.0] w-full lg:max-w-[18.25rem] 4xl:max-w-[24rem] 5xl:max-w-[28rem] lg:mt-12 lg:-translate-y-6 max-sm:w-full max-sm:mt-0">
             These are outcomes from real deployments across platforms, creators, and content systems.
           </p>
         </div>
@@ -427,7 +427,7 @@ export default forwardRef(function MissionStats(props, ref) {
           className="flex justify-center"
           style={{ marginBottom: "clamp(2.5rem, 5.5vh, 5rem)" }}
         >
-          <p className="impact-quote font-host text-[clamp(1.5rem,3.3vw,2.5rem)] max-sm:text-2xl max-mob:text-[1.375rem] max-mob:leading-[1.15] max-mob:tracking-[-0.5px] 4xl:text-[3rem] 5xl:text-[3.5rem] text-[#f1f1f1] text-center tracking-[-1.6px] leading-[1.1] w-full max-w-[26.25rem] 4xl:max-w-[32rem] 5xl:max-w-[38rem] max-sm:w-full">
+          <p className="impact-quote font-host text-[clamp(1.5rem,3.3vw,2.5rem)] max-sm:text-2xl max-mob:text-[1.375rem] max-mob:leading-[1.15] max-mob:tracking-[-0.5px] 4xl:text-[3rem] 5xl:text-[3.5rem] text-[#f1f1f1] text-center tracking-[-1.6px] leading-[0.95] w-full max-w-[26.25rem] 4xl:max-w-[32rem] 5xl:max-w-[38rem] max-sm:w-full">
             Performance isn't accidental. It's deployed.
           </p>
         </div>
@@ -468,7 +468,7 @@ export default forwardRef(function MissionStats(props, ref) {
                   <span>M+</span>
                 </div>
 
-                <span className="stat-sub font-host font-medium text-lg 4xl:text-xl 5xl:text-2xl text-white tracking-tight leading-none opacity-0 translate-y-4">
+                <span className="stat-sub font-host  text-lg 4xl:text-xl 5xl:text-2xl text-white tracking-tight leading-none opacity-0 translate-y-4">
                   <span className="block overflow-hidden" style={{ height: "1.4em" }}>
                     <span ref={statLabelRef} className="block">
                       Viral Impressions

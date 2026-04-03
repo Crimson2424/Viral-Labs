@@ -78,7 +78,7 @@ export default function ViralitySection({ globeContainerRef }) {
         type: "lines", mask: "lines", linesClass: "v-heading-line",
       });
       headingSplit.lines.forEach((line) => {
-        if (line.parentElement) line.parentElement.style.paddingBottom = "0.1em";
+        if (line.parentElement) line.parentElement.style.paddingBottom = "0.25em";
       });
 
       // ═══════════════════════════════════════
@@ -366,10 +366,10 @@ export default function ViralitySection({ globeContainerRef }) {
       <div className="relative z-40 px-[clamp(0.75rem,3vw,3rem)] max-sm:px-2 max-mob:px-3 pt-8 pointer-events-none h-auto min-h-svh md:h-svh md:pb-20">
 
         <div ref={headerRef} className="flex flex-col items-center gap-1 mb-4 md:mb-6 xl:mb-12" style={{ perspective: "600px" }}>
-          <p className="v-label virality-label font-host text-sm md:text-base lg:text-xs xl:text-base 4xl:text-lg 5xl:text-xl text-[#ff6f21] text-center leading-none">
+          <p className="v-label virality-label font-host text-xs md:text-base lg:text-xs xl:text-xs 4xl:text-lg 5xl:text-xl text-[#ff6f21] text-center leading-none">
             WHY VIRALITY CAN BE ENGINEERED
           </p>
-          <h2 className="v-heading virality-heading font-host text-[clamp(1.75rem,5vw,3rem)] max-mob:text-[1.625rem] max-mob:leading-none lg:text-[1.5rem] xl:text-[3rem] 4xl:text-[4rem] 5xl:text-[5rem] text-[#f1f1f1] tracking-tighter leading-none text-center">
+          <h2 className="v-heading virality-heading font-host text-[clamp(1.75rem,5vw,3rem)] max-mob:text-[1.4rem] max-mob:leading-none lg:text-[1.5rem] xl:text-[3rem] 4xl:text-[4rem] 5xl:text-[5rem] text-[#f1f1f1] tracking-tighter leading-[0.75] text-center">
             Distribution isn't luck. It
             <br />
             can be engineered.
@@ -383,7 +383,7 @@ export default function ViralitySection({ globeContainerRef }) {
 
         <div className="relative mx-auto max-w-6xl 3xl:max-w-7xl 4xl:max-w-[90rem] 5xl:max-w-[120rem] min-h-0 md:min-h-[31.25rem] h-auto md:h-[calc(100svh-10rem)] xl:h-[calc(100svh-12.5rem)]">
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-mob:gap-5 px-4 md:px-0 md:contents bg-[#121212]/80 md:bg-transparent p-3 max-mob:p-2 md:p-0 rounded-lg md:rounded-none overflow-visible">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3  max-mob:gap-8 px-4 md:px-0 md:contents  md:bg-transparent p-3 max-mob:p-2 md:p-0 rounded-lg md:rounded-none overflow-visible">
 
           {/* ── Distribution Architecture (top-left) ── */}
           <div className="v-card-tl relative md:absolute md:left-2 md:-top-2 lg:left-8 lg:top-0 xl:left-26 xl:top-3 2xl:left-20 2xl:top-2 3xl:left-26 3xl:top-3 4xl:left-36 4xl:top-30 5xl:left-48 5xl:top-50 z-30 pointer-events-auto overflow-visible">
@@ -396,7 +396,7 @@ export default function ViralitySection({ globeContainerRef }) {
                 </div>
               </div>
               <div className="relative px-5 max-mob:px-3 lg:px-3 xl:px-5 5xl:px-8 py-2 max-mob:py-1.5 lg:py-1.5 xl:py-2 5xl:py-4 bg-[#101010]/90 md:bg-[#101010]/60">
-                <p className="font-host text-xs lg:text-[10px] xl:text-xs 4xl:text-sm 5xl:text-lg font-thin text-white leading-5 lg:leading-4 xl:leading-5 5xl:leading-7 tracking-wide text-left md:text-right">
+                <p className="font-host text-xs lg:text-[10px] xl:text-xs 4xl:text-sm 5xl:text-lg font-thin text-white leading-4 lg:leading-3.5 xl:leading-4 5xl:leading-6 tracking-wide text-left md:text-right">
                   Distribution systems amplify signal.
                 </p>
               </div>
@@ -417,7 +417,7 @@ export default function ViralitySection({ globeContainerRef }) {
                 </div>
               </div>
               <div className="relative px-5 max-mob:px-3 lg:px-3 xl:px-5 5xl:px-8 py-2 max-mob:py-1.5 lg:py-1.5 xl:py-2 5xl:py-4 bg-[#101010]/90 md:bg-[#101010]/60">
-                <p className="font-host text-xs lg:text-[10px] xl:text-xs 4xl:text-sm 5xl:text-lg font-thin text-white leading-5 lg:leading-4 xl:leading-5 5xl:leading-7 tracking-wide text-left">
+                <p className="font-host text-xs lg:text-[10px] xl:text-xs 4xl:text-sm 5xl:text-lg font-thin text-white leading-4 lg:leading-3.5 xl:leading-4 5xl:leading-6 tracking-wide text-left">
                   Attention follows observable patterns.
                 </p>
               </div>
@@ -438,7 +438,7 @@ export default function ViralitySection({ globeContainerRef }) {
                 </div>
               </div>
               <div className="relative px-5 max-mob:px-3 lg:px-3 xl:px-5 5xl:px-8 py-2 max-mob:py-1.5 lg:py-1.5 xl:py-2 5xl:py-4 bg-[#101010]/90 md:bg-[#101010]/60">
-                <p className="font-host text-xs lg:text-[10px] xl:text-xs 4xl:text-sm 5xl:text-lg font-thin text-white leading-5 lg:leading-4 xl:leading-5 5xl:leading-7 tracking-wide text-left md:text-right">
+                <p className="font-host text-xs lg:text-[10px] xl:text-xs 4xl:text-sm 5xl:text-lg font-thin text-white leading-4 lg:leading-3.5 xl:leading-4 5xl:leading-6 tracking-wide text-left md:text-right">
                   Creative can be developed and tested systematically.
                 </p>
               </div>
@@ -459,7 +459,7 @@ export default function ViralitySection({ globeContainerRef }) {
                 </div>
               </div>
               <div className="relative px-5 max-mob:px-3 lg:px-3 xl:px-5 5xl:px-8 py-2 max-mob:py-1.5 lg:py-1.5 xl:py-2 5xl:py-4 bg-[#101010]/90 md:bg-[#101010]/60">
-                <p className="font-host text-xs lg:text-[10px] xl:text-xs 4xl:text-sm 5xl:text-lg font-thin text-white leading-5 lg:leading-4 xl:leading-5 5xl:leading-7 tracking-wide text-left">
+                <p className="font-host text-xs lg:text-[10px] xl:text-xs 4xl:text-sm 5xl:text-lg font-thin text-white leading-4 lg:leading-3.5 xl:leading-4 5xl:leading-6 tracking-wide text-left">
                   Growth becomes more predictable when distribution is managed as a system.
                 </p>
               </div>
@@ -480,7 +480,7 @@ export default function ViralitySection({ globeContainerRef }) {
 
           {/* Left column */}
           <div className="max-w-md 5xl:max-w-4xl">
-            <p className="v-bottom-left-text font-host font-thin text-sm max-mob:text-sm text-white tracking-tight 4xl:text-base 5xl:text-3xl">
+            <p className="v-bottom-left-text font-host font-thin text-sm max-mob:text-sm text-white leading-[1.2] tracking-tight 4xl:text-base 5xl:text-3xl">
               <span className="font-semibold">Viral Labs</span>
               {" "}studies how attention moves through markets, channels,
               and audiences, then turns those patterns into structured distribution
@@ -516,7 +516,7 @@ export default function ViralitySection({ globeContainerRef }) {
               </div>
             </div>
 
-            <p className="v-bottom-most-text font-host font-thin text-sm max-mob:text-sm max-mob:max-w-none text-white tracking-tight leading-normal max-w-xs 4xl:max-w-sm 5xl:max-w-lg 4xl:text-base 5xl:text-3xl">
+            <p className="v-bottom-most-text font-host font-thin text-sm max-mob:text-sm max-mob:max-w-none text-white tracking-tight leading-[1.2] max-w-xs 4xl:max-w-sm 5xl:max-w-lg 4xl:text-base 5xl:text-3xl">
               Most brands chase trends. We model attention. Virality follows patterns.
             </p>
           </div>

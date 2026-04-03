@@ -55,7 +55,7 @@ function HeaderRowContent({ data, bgClass = "", textClass = "text-white" }) {
       <span className={`sm:col-span-3 font-bricolage ${textClass}`} style={{ fontSize: "clamp(1.25rem, 2.8vw, 3.25rem)" }}>
         {data.id}
       </span>
-      <h3 className={`sm:col-span-7 sm:col-start-4 font-bricolage ${textClass}`} style={{ fontSize: "clamp(1.4rem, 3.2vw, 3.75rem)" }}>
+      <h3 className={`sm:col-span-7 sm:col-start-4 font-bricolage leading-none ${textClass}`} style={{ fontSize: "clamp(1.4rem, 3.2vw, 3.75rem)" }}>
         {data.brand}
       </h3>
       <div className="sm:col-span-2 flex justify-end">
@@ -212,18 +212,18 @@ function AccordionItem({ data, isActive, onEnter, onLeave, onClick }) {
         <div ref={contentInnerRef} className="relative z-10" style={{ padding: `1.25rem ${INNER_PAD} 3rem` }}>
           <div className="grid grid-cols-12 gap-x-6 gap-y-6 mb-16 md:mb-20">
             <div ref={taglineRef} className="col-span-12 md:col-span-3 pt-4">
-              <p className="font-host text-sm 4xl:text-base 5xl:text-lg font-thin text-white/50 whitespace-pre-line leading-relaxed tracking-tight">{data.tagline}</p>
+              <p className="font-host text-sm 4xl:text-base 5xl:text-lg font-thin text-white/50 whitespace-pre-line leading-none tracking-tight">{data.tagline}</p>
             </div>
             <div className="col-span-12 md:col-span-8 md:col-start-4">
               <span ref={objLabelRef} className="inline-block font-host text-sm 4xl:text-base 5xl:text-lg tracking-[0.15em] uppercase text-white mb-1.5">OBJECTIVE</span>
-              <p ref={objTextRef} className="mr-obj-text font-host text-white/80 leading-snug" style={{ fontSize: "clamp(1.25rem, 1.9vw, 2rem)" }}>{data.objective}</p>
+              <p ref={objTextRef} className="mr-obj-text font-host text-white/80 leading-none" style={{ fontSize: "clamp(1.25rem, 1.9vw, 2rem)" }}>{data.objective}</p>
             </div>
           </div>
 
           <div className="grid grid-cols-12 gap-x-6 gap-y-8">
             <div className="col-span-12 md:col-span-3">
               <span ref={execLabelRef} className="inline-block font-host text-xs 4xl:text-sm 5xl:text-base tracking-[0.15em] uppercase text-white mb-3">EXECUTION</span>
-              <p ref={execTextRef} className="font-host text-sm 4xl:text-base 5xl:text-lg font-thin text-white/50 leading-relaxed tracking-tight mb-4">{data.execution}</p>
+              <p ref={execTextRef} className="font-host text-sm 4xl:text-base 5xl:text-lg font-thin text-white/50 leading-none tracking-tight mb-0">{data.execution}</p>
               <a ref={linkRef} href={data.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 font-host text-sm text-white/40 hover:text-[#FF6F21] transition-colors duration-300 underline underline-offset-4 decoration-white/15 hover:decoration-[#FF6F21]/50">
                 View full case study <span className="text-xs">→</span>
               </a>
@@ -417,7 +417,7 @@ export default function MissionReports() {
             </div>
           </div>
           <div className="col-span-12 md:col-span-5 md:col-start-8">
-            <p className="mr-para font-bricolage text-white leading-[1.15] font-light tracking-tight" style={{ fontSize: "clamp(1.6rem, 2.8vw, 3.2rem)" }}>
+            <p className="mr-para font-bricolage text-white leading-[0.95] font-light tracking-tight" style={{ fontSize: "clamp(1.6rem, 2.8vw, 3.2rem)" }}>
               Every mission is executed through high&#8209;volume content, precise signals, and engineered feedback loops turning attention into traffic, and traffic into results.
             </p>
           </div>
