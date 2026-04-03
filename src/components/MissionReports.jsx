@@ -24,132 +24,6 @@ function GlowLine() {
 }
 
 /* ─── Arrow SVG ─── */
-function ArrowIcon({ className = "" }) {
-  return (
-    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-      <path d="M0.75 8.75L8.75 0.75M8.75 0.75H0.75M8.75 0.75V8.75" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-/* ─── Corner-bracket CTA Button with hover micro-interactions ─── */
-function CornerBracketButton({ label = "Go Viral", href = "#", className = "", children }) {
-  const size = "8px";
-  const thickness = "1.7px";
-  const color = "#FF6F21";
-  const offsetDefault = -10;
-  const offsetHover = -14;
-  const base = { position: "absolute", width: size, height: size };
-
-  const btnRef = useRef(null);
-  const tlCornerRef = useRef(null);
-  const trCornerRef = useRef(null);
-  const blCornerRef = useRef(null);
-  const brCornerRef = useRef(null);
-  const scrambleDataRef = useRef(null);
-
-  const asciiChars = "!@#$%^&*()_+-=[]{}|;:,.<>?/~`01";
-
-  /* Set up SplitText on the label once */
-  useGSAP(
-    () => {
-      if (!btnRef.current) return;
-      let cancelled = false;
-      fontReady.then(() => {
-        if (cancelled) return;
-        const textEl = btnRef.current.querySelector(".cta-scramble-text");
-        if (!textEl) return;
-
-        const split = SplitText.create(textEl, {
-          type: "chars",
-          charsClass: "btn-char",
-        });
-
-        const chars = split.chars;
-        const originals = chars.map((c) => c.textContent);
-
-        // Lock each char width so scramble doesn't resize
-        chars.forEach((char) => {
-          const w = char.offsetWidth;
-          char.style.display = "inline-block";
-          char.style.width = `${w}px`;
-          char.style.textAlign = "center";
-        });
-
-        scrambleDataRef.current = { chars, originals };
-      }); // fontReady.then
-      return () => { cancelled = true; };
-    },
-    { scope: btnRef }
-  );
-
-  const handleEnter = useCallback(() => {
-    // Corners move outward
-    gsap.to(tlCornerRef.current, { top: offsetHover, left: offsetHover, duration: 0.3, ease: "power2.out" });
-    gsap.to(trCornerRef.current, { top: offsetHover, right: offsetHover, duration: 0.3, ease: "power2.out" });
-    gsap.to(blCornerRef.current, { bottom: offsetHover, left: offsetHover, duration: 0.3, ease: "power2.out" });
-    gsap.to(brCornerRef.current, { bottom: offsetHover, right: offsetHover, duration: 0.3, ease: "power2.out" });
-
-    // Text scramble — GSAP proxy per char (same as HeroSection)
-    const data = scrambleDataRef.current;
-    if (!data) return;
-
-    const { chars, originals } = data;
-    const tl = gsap.timeline();
-
-    chars.forEach((char, i) => {
-      const original = originals[i];
-      if (original.trim() === "") return;
-
-      const proxy = { progress: 0 };
-      tl.to(proxy, {
-        progress: 1,
-        duration: 0.3,
-        ease: "none",
-        onUpdate: () => {
-          if (proxy.progress < 0.6) {
-            char.textContent = asciiChars[Math.floor(Math.random() * asciiChars.length)];
-          } else {
-            char.textContent = original;
-          }
-        },
-      }, i * 0.02);
-    });
-  }, [offsetHover]);
-
-  const handleLeave = useCallback(() => {
-    // Corners return
-    gsap.to(tlCornerRef.current, { top: offsetDefault, left: offsetDefault, duration: 0.3, ease: "power2.out" });
-    gsap.to(trCornerRef.current, { top: offsetDefault, right: offsetDefault, duration: 0.3, ease: "power2.out" });
-    gsap.to(blCornerRef.current, { bottom: offsetDefault, left: offsetDefault, duration: 0.3, ease: "power2.out" });
-    gsap.to(brCornerRef.current, { bottom: offsetDefault, right: offsetDefault, duration: 0.3, ease: "power2.out" });
-
-    // Reset chars to original
-    const data = scrambleDataRef.current;
-    if (!data) return;
-    data.chars.forEach((char, i) => {
-      char.textContent = data.originals[i];
-    });
-  }, [offsetDefault]);
-
-  return (
-    <a
-      ref={btnRef}
-      href={href}
-      className={`relative inline-flex items-center gap-2.5 border border-white/45 px-8 py-2 font-host text-md text-white transition-colors duration-300 ${className}`}
-      onMouseEnter={handleEnter}
-      onMouseLeave={handleLeave}
-    >
-      <span ref={tlCornerRef} style={{ ...base, top: offsetDefault, left: offsetDefault, borderTop: `${thickness} solid ${color}`, borderLeft: `${thickness} solid ${color}` }} aria-hidden="true" />
-      <span ref={trCornerRef} style={{ ...base, top: offsetDefault, right: offsetDefault, borderTop: `${thickness} solid ${color}`, borderRight: `${thickness} solid ${color}` }} aria-hidden="true" />
-      <span ref={blCornerRef} style={{ ...base, bottom: offsetDefault, left: offsetDefault, borderBottom: `${thickness} solid ${color}`, borderLeft: `${thickness} solid ${color}` }} aria-hidden="true" />
-      <span ref={brCornerRef} style={{ ...base, bottom: offsetDefault, right: offsetDefault, borderBottom: `${thickness} solid ${color}`, borderRight: `${thickness} solid ${color}` }} aria-hidden="true" />
-      <span className="cta-scramble-text">{label}</span>
-      {children}
-    </a>
-  );
-}
-
 /* ─── Brand Logo SVGs ─── */
 function TNFLogo({ className = "" }) {
   return (
@@ -181,7 +55,7 @@ function HeaderRowContent({ data, bgClass = "", textClass = "text-white" }) {
       <span className={`sm:col-span-3 font-bricolage ${textClass}`} style={{ fontSize: "clamp(1.25rem, 2.8vw, 3.25rem)" }}>
         {data.id}
       </span>
-      <h3 className={`sm:col-span-7 sm:col-start-4 font-bricolage ${textClass}`} style={{ fontSize: "clamp(1.4rem, 3.2vw, 3.75rem)" }}>
+      <h3 className={`sm:col-span-7 sm:col-start-4 font-bricolage leading-none ${textClass}`} style={{ fontSize: "clamp(1.4rem, 3.2vw, 3.75rem)" }}>
         {data.brand}
       </h3>
       <div className="sm:col-span-2 flex justify-end">
@@ -338,18 +212,18 @@ function AccordionItem({ data, isActive, onEnter, onLeave, onClick }) {
         <div ref={contentInnerRef} className="relative z-10" style={{ padding: `1.25rem ${INNER_PAD} 3rem` }}>
           <div className="grid grid-cols-12 gap-x-6 gap-y-6 mb-16 md:mb-20">
             <div ref={taglineRef} className="col-span-12 md:col-span-3 pt-4">
-              <p className="font-host text-sm 4xl:text-base 5xl:text-lg font-thin text-white/50 whitespace-pre-line leading-relaxed tracking-tight">{data.tagline}</p>
+              <p className="font-host text-sm 4xl:text-base 5xl:text-lg font-thin text-white/50 whitespace-pre-line leading-none tracking-tight">{data.tagline}</p>
             </div>
             <div className="col-span-12 md:col-span-8 md:col-start-4">
               <span ref={objLabelRef} className="inline-block font-host text-sm 4xl:text-base 5xl:text-lg tracking-[0.15em] uppercase text-white mb-1.5">OBJECTIVE</span>
-              <p ref={objTextRef} className="mr-obj-text font-host text-white/80 leading-snug" style={{ fontSize: "clamp(1.25rem, 1.9vw, 2rem)" }}>{data.objective}</p>
+              <p ref={objTextRef} className="mr-obj-text font-host text-white/80 leading-none" style={{ fontSize: "clamp(1.25rem, 1.9vw, 2rem)" }}>{data.objective}</p>
             </div>
           </div>
 
           <div className="grid grid-cols-12 gap-x-6 gap-y-8">
             <div className="col-span-12 md:col-span-3">
               <span ref={execLabelRef} className="inline-block font-host text-xs 4xl:text-sm 5xl:text-base tracking-[0.15em] uppercase text-white mb-3">EXECUTION</span>
-              <p ref={execTextRef} className="font-host text-sm 4xl:text-base 5xl:text-lg font-thin text-white/50 leading-relaxed tracking-tight mb-4">{data.execution}</p>
+              <p ref={execTextRef} className="font-host text-sm 4xl:text-base 5xl:text-lg font-thin text-white/50 leading-none tracking-tight mb-0">{data.execution}</p>
               <a ref={linkRef} href={data.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 font-host text-sm text-white/40 hover:text-[#FF6F21] transition-colors duration-300 underline underline-offset-4 decoration-white/15 hover:decoration-[#FF6F21]/50">
                 View full case study <span className="text-xs">→</span>
               </a>
@@ -425,15 +299,11 @@ export default function MissionReports() {
         if (line.parentElement) line.parentElement.style.paddingBottom = "0.08em";
       });
 
-      // CTA button
-      const ctaEl = headerContentRef.current.querySelector(".mr-cta");
-
       // Initial states — everything hidden below mask
       gsap.set(headingSplit.lines, { y: "100%" });
       gsap.set(labelSplit.lines, { y: "100%" });
       gsap.set(tagLines, { y: "100%" });
       gsap.set(paraSplit.lines, { y: "100%" });
-      gsap.set(ctaEl, { opacity: 0, y: 20 });
 
       // Heading reveal
       gsap.to(headingSplit.lines, {
@@ -490,19 +360,6 @@ export default function MissionReports() {
         },
       });
 
-      // CTA fade in
-      gsap.to(ctaEl, {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: "power4.out",
-        delay: 0.5,
-        scrollTrigger: {
-          trigger: headerContentRef.current,
-          start: "top 75%",
-          once: true,
-        },
-      });
 
       }); // fontReady.then
       return () => { cancelled = true; };
@@ -558,12 +415,9 @@ export default function MissionReports() {
                 <span key={tag} className="mr-tag font-host text-sm 4xl:text-base 5xl:text-lg font-thin text-white tracking-tight">{tag}</span>
               ))}
             </div>
-            <div className="mr-cta self-start mt-12 md:mt-16">
-              <CornerBracketButton href="#" label="Go Viral"><ArrowIcon /></CornerBracketButton>
-            </div>
           </div>
           <div className="col-span-12 md:col-span-5 md:col-start-8">
-            <p className="mr-para font-bricolage text-white leading-[1.15] font-light tracking-tight" style={{ fontSize: "clamp(1.6rem, 2.8vw, 3.2rem)" }}>
+            <p className="mr-para font-bricolage text-white leading-[0.95] font-light tracking-tight" style={{ fontSize: "clamp(1.6rem, 2.8vw, 3.2rem)" }}>
               Every mission is executed through high&#8209;volume content, precise signals, and engineered feedback loops turning attention into traffic, and traffic into results.
             </p>
           </div>

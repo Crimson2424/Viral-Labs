@@ -154,6 +154,19 @@ export default function CoreOperations() {
       const cardEls = el.querySelectorAll(".co-card");
       const CARD_OFFSET = 0.12;
 
+      // ── Card container staggered entrance ──
+      gsap.set(cardEls, { opacity: 0, y: 40 });
+      cardEls.forEach((card, i) => {
+        gsap.to(card, {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power3.out",
+          delay: 0.2 + i * CARD_OFFSET,
+          scrollTrigger: trigger(),
+        });
+      });
+
       cardEls.forEach((card, i) => {
         const d = 0.3 + i * CARD_OFFSET;
         const cardImg = card.querySelector(".co-card-img");
@@ -270,7 +283,7 @@ export default function CoreOperations() {
               What We Do
             </p>
             <h2
-              className="co-title font-bricolage text-white tracking-tighter leading-[1.1]"
+              className="co-title font-bricolage text-white tracking-tighter leading-[1.0]"
               style={{ fontSize: "clamp(1.85rem, 3vw, 3rem)" }}
             >
               Core Operations
@@ -330,20 +343,21 @@ export default function CoreOperations() {
                 <div className="h-px bg-white/20" />
 
                 <div
-                  className="flex flex-1 flex-col gap-4 bg-[#1C1C1C]"
+                  className="flex flex-1 flex-col gap-4 lg:gap-0 bg-[#1C1C1C]"
                   style={{
                     padding: "clamp(1rem, 2vw, 1.75rem)",
                     paddingInline: "clamp(0.75rem, 1.5vw, 1.25rem)",
+                    paddingBottom: "clamp(3rem, 6vw, 6rem)",
                   }}
                 >
                   <h3
-                    className="co-card-title font-host uppercase tracking-tighter leading-[1.1] text-white min-h-0 sm:min-h-[2.8em]"
+                    className="co-card-title font-host uppercase tracking-tighter leading-[0.95] text-white min-h-0 sm:min-h-[2.8em]"
                     style={{ fontSize: "clamp(1.1rem, 1.8vw, 1.75rem)" }}
                   >
                     {card.title}
                   </h3>
                   <p
-                    className="co-card-desc font-host tracking-tight leading-relaxed text-[hsla(0,0%,63%,1)]"
+                    className="co-card-desc font-host tracking-tight leading-none text-[hsla(0,0%,63%,1)]"
                     style={{ fontSize: "clamp(0.85rem, 1.1vw, 1.15rem)" }}
                   >
                     {card.desc}

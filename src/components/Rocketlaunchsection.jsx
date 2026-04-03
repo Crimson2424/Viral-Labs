@@ -114,6 +114,10 @@ export default function RocketLaunchSection() {
   const veBody1Ref = useRef(null);
 
 
+  const mobileBodyRef = useRef(null);
+  const mobileBodyTextRef = useRef(null);
+  const mobileGlowRef = useRef(null);
+
   const label1Ref = useRef(null);
   const label2Ref = useRef(null);
   const label3Ref = useRef(null);
@@ -146,9 +150,9 @@ export default function RocketLaunchSection() {
     gsap.set(rocketGroup, {
       xPercent: -50, yPercent: -50, x: 0, y: 0,
       rotation: 0,
-      scale: isMobile ? 0.55 : ROCKET_START_SCALE,
-      left: isMobile ? "22%" : "50%",
-      top: isMobile ? "48%" : ROCKET_START_TOP,
+      scale: isMobile ? 0.85 : ROCKET_START_SCALE,
+      left: "50%",
+      top: isMobile ? "50%" : ROCKET_START_TOP,
     });
     frames.forEach((frame) => gsap.set(frame, { y: 0 }));
     gsap.set(veSubtitleSplit.elements, { yPercent: 160, filter: "blur(6px)" });
@@ -232,13 +236,13 @@ export default function RocketLaunchSection() {
       duration: 1.5,
       ease: "power1.inOut",
     }, 0);
-    master.to(rocketGroup, { scale: isMobile ? 0.57 : ROCKET_START_SCALE + 0.03, duration: 1, ease: "none" }, 0);
+    master.to(rocketGroup, { scale: isMobile ? 0.87 : ROCKET_START_SCALE + 0.03, duration: 1, ease: "none" }, 0);
 
     /* ═══ PHASE 1A — ROCKET RISES ═══ */
     master.call(startIdleFlicker, [], 0.8);
     master.to(rocketGroup, {
-      top: isMobile ? "44%" : ROCKET_RISE_TOP,
-      scale: isMobile ? 0.58 : ROCKET_START_SCALE + (ROCKET_FULL_SCALE - ROCKET_START_SCALE) * 0.4,
+      top: isMobile ? "46%" : ROCKET_RISE_TOP,
+      scale: isMobile ? 0.88 : ROCKET_START_SCALE + (ROCKET_FULL_SCALE - ROCKET_START_SCALE) * 0.4,
       duration: 1.5, ease: "none",
     }, 1);
     master.to(flames, {
@@ -253,8 +257,8 @@ export default function RocketLaunchSection() {
 
     /* ═══ PHASE 1B — SCALE UP (stays centered, no tilt) ═══ */
     master.to(rocketGroup, {
-      top: isMobile ? "42%" : ROCKET_FINAL_TOP,
-      scale: isMobile ? 0.6 : ROCKET_FULL_SCALE,
+      top: isMobile ? "44%" : ROCKET_FINAL_TOP,
+      scale: isMobile ? 0.9 : ROCKET_FULL_SCALE,
       duration: 1.5, ease: "none",
     }, 2.5);
 
@@ -265,14 +269,16 @@ export default function RocketLaunchSection() {
     master.to(veHeadingSplit.split.chars, {
       yPercent: 0, opacity: 1, filter: "blur(0px)", duration: 1.5, stagger: 0.05, ease: "none",
     }, 4.3);
-    master.to(veGlow, { scaleX: 1, opacity: 1, duration: 1, ease: "none" }, 5.2);
-    master.to(veBody1Split.elements, {
-      yPercent: 0, filter: "blur(0px)", duration: 1, stagger: 0.2, ease: "none",
-    }, 5.5);
+    if (!isMobile) {
+      master.to(veGlow, { scaleX: 1, opacity: 1, duration: 1, ease: "none" }, 5.2);
+      master.to(veBody1Split.elements, {
+        yPercent: 0, filter: "blur(0px)", duration: 1, stagger: 0.2, ease: "none",
+      }, 5.5);
+    }
 
 
     /* ═══ PHASE 3 — LABELS + SEPARATION ═══ */
-    const GAP = 28;
+    const GAP = isMobile ? 40 : 28;
 
     /* Label 1 — Signal Input (RIGHT) */
     master.to(labels[0], { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.8, ease: "none" }, 6.5);
@@ -304,6 +310,25 @@ export default function RocketLaunchSection() {
     /* ═══ PHASE 4 — READING HOLD → PIN RELEASES ═══ */
     master.set({}, {}, 13);
 
+    /* ═══ MOBILE BODY TEXT — standalone ScrollTrigger ═══ */
+    if (isMobile) {
+      const mobileBody = mobileBodyRef.current;
+      const mobileText = mobileBodyTextRef.current;
+      const mobileGlow = mobileGlowRef.current;
+      if (mobileBody && mobileText && mobileGlow) {
+        gsap.set(mobileText, { yPercent: 40, opacity: 0, filter: "blur(5px)" });
+        gsap.set(mobileGlow, { scaleX: 0, transformOrigin: "left center", opacity: 0 });
+        gsap.to(mobileGlow, {
+          scaleX: 1, opacity: 1, duration: 0.8, ease: "none",
+          scrollTrigger: { trigger: mobileBody, start: "top 85%" },
+        });
+        gsap.to(mobileText, {
+          yPercent: 0, opacity: 1, filter: "blur(0px)", duration: 0.8, ease: "none",
+          scrollTrigger: { trigger: mobileBody, start: "top 85%" },
+        });
+      }
+    }
+
     }); // fontReady.then
     return () => {
       cancelled = true;
@@ -317,7 +342,8 @@ export default function RocketLaunchSection() {
      RENDER
      ══════════════════════════════════════════════ */
   return (
-    <section ref={sectionRef} className="rocket-launch-section relative z-25 w-full h-svh">
+    <>
+    <section ref={sectionRef} className="rocket-launch-section relative z-25 w-full h-screen">
       {/* <GlobalGrid /> */}
 
       <div ref={rocketTextureRef} className="opacity-0">
@@ -329,12 +355,12 @@ export default function RocketLaunchSection() {
 
         
 
-        <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0 overflow-x-clip">
 
           {/* ROCKET ASSEMBLY — stays centered */}
           <div
             ref={rocketGroupRef}
-            className="absolute z-40 flex flex-col items-center max-w-[60vw] sm:max-w-[45vw] lg:max-w-none"
+            className="absolute z-40 flex flex-col items-center max-w-none"
             style={{
               width: `calc(82vh * ${FRAME_WIDTH} / ${TOTAL_HEIGHT})`,
               left: "50%",
@@ -355,21 +381,21 @@ export default function RocketLaunchSection() {
           </div>
 
           {/* VE LEFT-SIDE TEXT — title + subtitle only */}
-          <div className="absolute z-40 pointer-events-none flex flex-col left-3 top-[2%] max-w-[50vw] sm:left-6 sm:max-w-56 md:max-w-64 lg:left-16 lg:max-w-72 xl:left-24 xl:max-w-80 2xl:left-32 2xl:max-w-[24rem] 3xl:left-40 3xl:max-w-[28.75rem] 4xl:left-48 4xl:max-w-[36rem] 5xl:left-56 5xl:max-w-[44rem]">
+          <div className="absolute z-40 pointer-events-none flex flex-col left-3 top-[2%] max-w-[50vw] max-mob:max-w-[45vw] sm:left-6 sm:max-w-56 md:max-w-64 lg:left-16 lg:max-w-72 xl:left-24 xl:max-w-80 2xl:left-32 2xl:max-w-[24rem] 3xl:left-40 3xl:max-w-[28.75rem] 4xl:left-48 4xl:max-w-[36rem] 5xl:left-56 5xl:max-w-[44rem]">
             <div className="flex flex-col gap-0">
               <p ref={veSubtitleRef} className="font-host text-[0.625rem] sm:text-xs lg:text-xs xl:text-sm 3xl:text-sm 4xl:text-base 5xl:text-3xl text-vl-orange uppercase tracking-wide">
                 STRUCTURED IN. VIRAL OUT.
               </p>
-              <h2 ref={veHeadingRef} className="font-host text-xl sm:text-2xl lg:text-3xl xl:text-4xl 3xl:text-5xl 4xl:text-6xl 5xl:text-7xl tracking-tight leading-[1.06]">
+              <h2 ref={veHeadingRef} className="font-host text-xl max-mob:text-lg sm:text-2xl lg:text-3xl xl:text-4xl 3xl:text-5xl 4xl:text-6xl 5xl:text-7xl tracking-tight leading-[1.06]">
                 Inside The<br />Viral Engine
               </h2>
             </div>
           </div>
 
-          {/* VE BODY — bottom-left on sm/md, right side on lg+ */}
-          <div className="absolute z-40 pointer-events-none flex flex-col gap-0 left-2 bottom-[6%] max-w-[65vw] sm:left-4 sm:bottom-[4%] sm:max-w-56 md:max-w-64 lg:left-auto lg:bottom-auto lg:right-[8%] lg:top-[72%] lg:max-w-72 xl:max-w-80 2xl:max-w-[22rem] 3xl:max-w-[26.25rem] 4xl:max-w-[32rem] 5xl:right-[0%] 5xl:max-w-[40rem]">
-            <GlowLineSvg ref={veGlowRef} className="w-20 sm:w-28 lg:w-36 xl:w-44 3xl:w-48 4xl:w-56 5xl:w-80 h-auto -ml-2.5" />
-            <p ref={veBody1Ref} className="font-host text-sm sm:text-xs lg:text-xs xl:text-sm 3xl:text-sm 4xl:text-base 5xl:text-2xl font-thin text-white tracking-tighter leading-snug mt-0.5">
+          {/* VE BODY — desktop only (inside pinned section) */}
+          <div className="absolute z-40 pointer-events-none hidden lg:flex flex-col gap-0 left-2 bottom-[6%] max-w-[65vw] max-mob:max-w-[58vw] sm:left-4 sm:bottom-[4%] sm:max-w-56 md:max-w-64 lg:left-auto lg:bottom-auto lg:right-[8%] lg:top-[72%] lg:max-w-72 xl:max-w-80 2xl:max-w-[22rem] 3xl:max-w-[26.25rem] 4xl:max-w-[32rem] 5xl:right-[0%] 5xl:max-w-[40rem]">
+            <GlowLineSvg ref={veGlowRef} className="w-20 sm:w-28 lg:w-36 xl:w-44 3xl:w-48 4xl:w-56 5xl:w-80 h-auto -ml-2.5 5xl:-ml-4.5" />
+            <p ref={veBody1Ref} className="font-host text-sm max-mob:text-xs sm:text-xs lg:text-xs xl:text-sm 3xl:text-sm 4xl:text-base 5xl:text-2xl font-thin text-white tracking-tighter leading-snug mt-0.5">
               Behind every <span className="font-medium">Engagement</span> is a structured distribution system. It starts with <span className="font-medium">Audience</span> and <span className="font-medium">Market signals</span>, converts them into content and <span className="font-medium">Message systems</span>, and executes them through coordinated <span className="font-medium">Publishing</span> and <span className="font-medium">Amplification infrastructure</span>.
             </p>
           </div>
@@ -377,55 +403,65 @@ export default function RocketLaunchSection() {
           {/* ── STAGE LABELS ── */}
 
           {/* LABEL 1 — Signal Input (RIGHT side, all sizes) */}
-          <div ref={label1Ref} className="absolute z-40 pointer-events-none right-2 top-[15%] w-36 sm:right-[8%] sm:w-44 md:right-[8%] md:w-52 lg:right-[21%] lg:w-56 xl:right-[23%] xl:w-64 2xl:right-[24%] 2xl:w-72 3xl:right-[21%] 3xl:w-[26.25rem] 4xl:right-[16%] 4xl:w-[32rem] 5xl:right-[4%] 5xl:w-[40rem]">
-            <ConnectorLine className="block w-full h-auto -mb-2 lg:-mb-4 scale-x-[-1] " />
-            <div className="flex items-start gap-1 w-fit ml-auto">
-              <CubesSvg className="w-3 sm:w-4 lg:w-5 4xl:w-6 5xl:w-9 h-auto mt-0.5 shrink-0" />
+          <div ref={label1Ref} className="absolute z-40 pointer-events-none right-0 max-mob:right-0 top-[8%] lg:top-[12%] w-40 max-mob:w-35 sm:right-[2%] sm:w-48 md:right-[4%] md:w-56 lg:right-[20%] lg:w-56 xl:right-[18%] xl:w-80 2xl:right-[20%] 2xl:w-82 3xl:right-[21%] 3xl:w-[26.25rem] 4xl:right-[16%] 4xl:w-[32rem] 5xl:right-[4%] 5xl:w-[40rem]">
+            <ConnectorLine className="block w-full h-auto max-h-3 sm:max-h-4 lg:max-h-none -mb-2 lg:-mb-4 scale-x-[-1]" />
+            <div className="flex items-start gap-1 lg:gap-1.5 w-fit ml-auto max-mob:mt-1.5 max-sm:mt-2 lg:mt-2">
+              <CubesSvg className="w-3 sm:w-4 lg:w-4 xl:w-5 4xl:w-6 5xl:w-9 h-auto mt-0.5 shrink-0" />
               <div>
-                <h4 className="font-bricolage text-xs font-semibold sm:text-sm sm:font-normal lg:text-base xl:text-lg 3xl:text-lg 4xl:text-xl 5xl:text-3xl text-white tracking-tighter leading-tight">{PIPELINE_STAGES[0].title}</h4>
-                <p className="font-host text-[0.625rem] sm:text-xs lg:text-xs xl:text-sm 3xl:text-sm 4xl:text-base 5xl:text-xl text-[#a1a1a1] tracking-tighter leading-tight mt-0 max-w-28 sm:max-w-40 lg:max-w-48 xl:max-w-56 2xl:max-w-64 3xl:max-w-[17.5rem] 4xl:max-w-80 5xl:max-w-[40rem]">{PIPELINE_STAGES[0].description}</p>
+                <h4 className="font-bricolage text-sm max-mob:text-[0.75rem] max-sm:text-[0.9rem] font-semibold sm:text-sm sm:font-normal lg:text-[0.81rem] lg:font-normal xl:text-lg xl:font-normal 3xl:text-lg 4xl:text-xl 5xl:text-3xl text-white tracking-tighter leading-tight">{PIPELINE_STAGES[0].title}</h4>
+                <p className="font-host text-[0.55rem] sm:text-xs lg:text-[0.56rem] lg:leading-snug xl:text-sm 3xl:text-sm 4xl:text-base 5xl:text-xl text-[#a1a1a1] tracking-tighter leading-tight mt-0 lg:mt-0.5 max-w-28 max-mob:max-w-25 max-sm:max-w-23 sm:max-w-40 lg:max-w-35 xl:max-w-55 2xl:max-w-64 3xl:max-w-[17.5rem] 4xl:max-w-80 5xl:max-w-[25rem]">{PIPELINE_STAGES[0].description}</p>
               </div>
             </div>
           </div>
 
-          {/* LABEL 2 — Processing Layer (RIGHT on mobile → LEFT on lg+) */}
-          <div ref={label2Ref} className="absolute z-40 pointer-events-none right-2 top-[26%] w-36 sm:right-[8%] sm:w-44 md:right-[8%] md:w-52 lg:right-auto lg:left-[21%] lg:w-56 xl:left-[23%] xl:w-64 2xl:left-[24%] 2xl:w-72 3xl:left-[21%] 3xl:w-[26.25rem] 4xl:left-[16%] 4xl:w-[32rem] 5xl:left-[3%] 5xl:w-[40rem]">
-            <ConnectorLine className="block w-full h-auto -mb-2 lg:-mb-4 scale-x-[-1] lg:scale-x-100" />
-            <div className="flex items-start gap-1 w-fit ml-auto lg:ml-2">
-              <CubesSvg className="w-3 sm:w-4 lg:w-5 4xl:w-6 5xl:w-9 h-auto mt-0.5 shrink-0" />
+          {/* LABEL 2 — Processing Layer (LEFT on mobile, LEFT on lg+) */}
+          <div ref={label2Ref} className="absolute z-40 pointer-events-none left-0 max-mob:left-0 top-[33%] lg:top-[25%] w-40 max-mob:w-35 sm:left-[2%] sm:w-48 md:left-[4%] md:w-56 lg:left-[20%] lg:w-56 xl:left-[18%] xl:w-80 2xl:left-[20%] 2xl:w-82 3xl:left-[21%] 3xl:w-[26.25rem] 4xl:left-[16%] 4xl:w-[32rem] 5xl:left-[3%] 5xl:w-[40rem]">
+            <ConnectorLine className="block w-full h-auto max-h-3 sm:max-h-4 lg:max-h-none -mb-2 lg:-mb-4 scale-x-100" />
+            <div className="flex items-start gap-1 lg:gap-1.5 w-fit ml-2 max-mob:mt-1.5 max-sm:mt-2 lg:mt-2">
+              <CubesSvg className="w-3 sm:w-4 lg:w-4 xl:w-5 4xl:w-6 5xl:w-9 h-auto mt-0.5 shrink-0" />
               <div>
-                <h4 className="font-bricolage text-xs font-semibold sm:text-sm sm:font-normal lg:text-base xl:text-lg 3xl:text-lg 4xl:text-xl 5xl:text-3xl text-white tracking-tighter leading-tight">{PIPELINE_STAGES[1].title}</h4>
-                <p className="font-host text-[0.625rem] sm:text-xs lg:text-xs xl:text-sm 3xl:text-sm 4xl:text-base 5xl:text-xl text-[#a1a1a1] tracking-tighter leading-tight mt-1 max-w-28 sm:max-w-40 lg:max-w-48 xl:max-w-56 2xl:max-w-64 3xl:max-w-[17.5rem] 4xl:max-w-80 5xl:max-w-[40rem]">{PIPELINE_STAGES[1].description}</p>
+                <h4 className="font-bricolage text-sm max-mob:text-[0.75rem] max-sm:text-[0.9rem] font-semibold max-sm:max-w-23 sm:text-sm sm:font-normal lg:text-[0.81rem] lg:font-normal xl:text-lg xl:font-normal 3xl:text-lg 4xl:text-xl 5xl:text-3xl text-white tracking-tighter leading-tight">{PIPELINE_STAGES[1].title}</h4>
+                <p className="font-host text-[0.55rem] sm:text-xs lg:text-[0.56rem] lg:leading-snug xl:text-sm 3xl:text-sm 4xl:text-base 5xl:text-xl text-[#a1a1a1] tracking-tighter leading-tight mt-1 lg:mt-0.5 max-w-28 max-mob:max-w-25 max-sm:max-w-23 sm:max-w-40 lg:max-w-35 xl:max-w-55 2xl:max-w-64 3xl:max-w-[17.5rem] 4xl:max-w-80 5xl:max-w-[25rem]">{PIPELINE_STAGES[1].description}</p>
               </div>
             </div>
           </div>
 
           {/* LABEL 3 — Distribution Layer (RIGHT on all screens) */}
-          <div ref={label3Ref} className="absolute z-40 pointer-events-none right-2 top-[50%] w-36 sm:right-[8%] sm:w-44 md:right-[8%] md:w-52 lg:right-[21%] lg:w-56 xl:right-[23%] xl:w-64 2xl:right-[24%] 2xl:w-72 3xl:right-[21%] 3xl:w-[26.25rem] 4xl:right-[13%] 4xl:w-[32rem] 5xl:right-0 5xl:w-[40rem]">
-            <ConnectorLine className="block w-full h-auto -mb-2 lg:-mb-4 scale-x-[-1]" />
-            <div className="flex items-start gap-1 w-fit ml-auto">
-              <CubesSvg className="w-3 sm:w-4 lg:w-5 4xl:w-6 5xl:w-9 h-auto mt-0.5 shrink-0" />
+          <div ref={label3Ref} className="absolute z-40 pointer-events-none right-0 max-mob:right-0 top-[55%] lg:top-[47%] w-40 max-mob:w-35 sm:right-[2%] sm:w-48 md:right-[4%] md:w-56 lg:right-[20%] lg:w-56 xl:right-[18%] xl:w-80 2xl:right-[20%] 2xl:w-82 3xl:right-[21%] 3xl:w-[26.25rem] 4xl:right-[13%] 4xl:w-[32rem] 5xl:right-0 5xl:w-[40rem]">
+            <ConnectorLine className="block w-full h-auto max-h-3 sm:max-h-4 lg:max-h-none -mb-2 lg:-mb-4 scale-x-[-1]" />
+            <div className="flex items-start gap-1 lg:gap-1.5 w-fit ml-auto max-mob:mt-1.5 max-sm:mt-2 lg:mt-2">
+              <CubesSvg className="w-3 sm:w-4 lg:w-4 xl:w-5 4xl:w-6 5xl:w-9 h-auto mt-0.5 shrink-0" />
               <div>
-                <h4 className="font-bricolage text-xs font-semibold sm:text-sm sm:font-normal lg:text-base xl:text-lg 3xl:text-lg 4xl:text-xl 5xl:text-3xl text-white tracking-tighter leading-tight">{PIPELINE_STAGES[2].title}</h4>
-                <p className="font-host text-[0.625rem] sm:text-xs lg:text-xs xl:text-sm 3xl:text-sm 4xl:text-base 5xl:text-xl text-[#a1a1a1] tracking-tighter leading-tight mt-1 max-w-28 sm:max-w-40 lg:max-w-48 xl:max-w-56 2xl:max-w-64 3xl:max-w-[17.5rem] 4xl:max-w-80 5xl:max-w-[40rem]">{PIPELINE_STAGES[2].description}</p>
+                <h4 className="font-bricolage text-sm max-mob:text-[0.75rem] max-sm:text-[0.9rem] font-semibold sm:text-sm sm:font-normal lg:text-[0.81rem] lg:font-normal xl:text-lg xl:font-normal 3xl:text-lg 4xl:text-xl 5xl:text-3xl text-white tracking-tighter leading-tight">{PIPELINE_STAGES[2].title}</h4>
+                <p className="font-host text-[0.55rem] sm:text-xs lg:text-[0.56rem] lg:leading-snug xl:text-sm 3xl:text-sm 4xl:text-base 5xl:text-xl text-[#a1a1a1] tracking-tighter leading-tight mt-1 lg:mt-0.5 max-w-28 max-mob:max-w-25 max-sm:max-w-23 sm:max-w-40 lg:max-w-35 xl:max-w-55 2xl:max-w-64 3xl:max-w-[17.5rem] 4xl:max-w-80 5xl:max-w-[25rem]">{PIPELINE_STAGES[2].description}</p>
               </div>
             </div>
           </div>
 
-          {/* LABEL 4 — Amplification Layer (RIGHT on mobile → LEFT on lg+) */}
-          <div ref={label4Ref} className="absolute z-40 pointer-events-none right-2 top-[68%] w-36 sm:right-[8%] sm:w-44 md:right-[8%] md:w-52 lg:right-auto lg:left-[21%] lg:w-56 xl:left-[23%] xl:w-64 2xl:left-[24%] 2xl:w-72 3xl:left-[21%] 3xl:w-[26.25rem] 4xl:left-[12%] 4xl:w-[32rem] 5xl:left-0 5xl:w-[40rem]">
-            <ConnectorLine className="block w-full h-auto -mb-2 lg:-mb-4 scale-x-[-1] lg:scale-x-100" />
-            <div className="flex items-start gap-1 w-fit ml-auto lg:ml-2">
-              <CubesSvg className="w-3 sm:w-4 lg:w-5 4xl:w-6 5xl:w-9 h-auto mt-0.5 shrink-0" />
+          {/* LABEL 4 — Amplification Layer (LEFT on mobile, LEFT on lg+) */}
+          <div ref={label4Ref} className="absolute z-40 pointer-events-none left-0 max-mob:left-0 top-[75%] max-mob:top-[75%] max-sm:top-[73%] lg:top-[65%] w-40 max-mob:w-35 sm:left-[2%] sm:w-48 md:left-[4%] md:w-56 lg:left-[20%] lg:w-56 xl:top-[70%] xl:left-[15%] xl:w-80 2xl:top-[65%] 2xl:left-[20%] 2xl:w-82 3xl:top-[60%] 3xl:left-[21%] 3xl:w-[26.25rem] 4xl:left-[12%] 4xl:w-[32rem] 5xl:left-0 5xl:w-[40rem]">
+            <ConnectorLine className="block w-full h-auto max-h-3 sm:max-h-4 lg:max-h-none -mb-2 lg:-mb-4 scale-x-100" />
+            <div className="flex items-start gap-1 lg:gap-1.5 w-fit ml-2 max-mob:mt-1.5 max-sm:mt-2 lg:mt-2">
+              <CubesSvg className="w-3 sm:w-4 lg:w-4 xl:w-5 4xl:w-6 5xl:w-9 h-auto mt-0.5 shrink-0" />
               <div>
-                <h4 className="font-bricolage text-xs font-semibold sm:text-sm sm:font-normal lg:text-base xl:text-lg 3xl:text-lg 4xl:text-xl 5xl:text-3xl text-white tracking-tighter leading-tight">{PIPELINE_STAGES[3].title}</h4>
-                <p className="font-host text-[0.625rem] sm:text-xs lg:text-xs xl:text-sm 3xl:text-sm 4xl:text-base 5xl:text-xl text-[#a1a1a1] tracking-tighter leading-tight mt-1 max-w-28 sm:max-w-40 lg:max-w-48 xl:max-w-56 2xl:max-w-64 3xl:max-w-[17.5rem] 4xl:max-w-80 5xl:max-w-[40rem]">{PIPELINE_STAGES[3].description}</p>
+                <h4 className="font-bricolage text-sm max-mob:text-[0.75rem] max-sm:text-[0.9rem] font-semibold sm:text-sm sm:font-normal lg:text-[0.81rem] lg:font-normal xl:text-lg xl:font-normal 3xl:text-lg 4xl:text-xl 5xl:text-3xl text-white tracking-tighter leading-tight">{PIPELINE_STAGES[3].title}</h4>
+                <p className="font-host text-[0.55rem] sm:text-xs lg:text-[0.56rem] lg:leading-snug xl:text-sm 3xl:text-sm 4xl:text-base 5xl:text-xl text-[#a1a1a1] tracking-tighter leading-tight mt-1 lg:mt-0.5 max-w-28 max-mob:max-w-25 max-sm:max-w-23 sm:max-w-40 lg:max-w-35 xl:max-w-55 2xl:max-w-64 3xl:max-w-[17.5rem] 4xl:max-w-80 5xl:max-w-[25rem]">{PIPELINE_STAGES[3].description}</p>
               </div>
             </div>
           </div>
 
         </div>
       </div>
+      {/* VE BODY — mobile only (outside pinned section, normal flow) */}
+      <div ref={mobileBodyRef} className="relative lg:hidden mx-auto w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem] py-12">
+        <GlowLineSvg ref={mobileGlowRef} className="w-20 sm:w-28 h-auto -ml-2.5" />
+        <p ref={mobileBodyTextRef} className="font-host text-sm max-mob:text-xs sm:text-xs font-thin text-white tracking-tighter leading-snug mt-0.5 max-w-[65vw] max-mob:max-w-[58vw] sm:max-w-56 md:max-w-64">
+          Behind every <span className="font-medium">Engagement</span> is a structured distribution system. It starts with <span className="font-medium">Audience</span> and <span className="font-medium">Market signals</span>, converts them into content and <span className="font-medium">Message systems</span>, and executes them through coordinated <span className="font-medium">Publishing</span> and <span className="font-medium">Amplification infrastructure</span>.
+        </p>
+      </div>
     </section>
+
+      
+    </>
   );
 }

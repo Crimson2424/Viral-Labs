@@ -347,7 +347,7 @@ export default forwardRef(function MissionStats(props, ref) {
   }));
 
   return (
-    <div ref={wrapperRef} className="relative w-full min-h-svh overflow-visible">
+    <div ref={wrapperRef} className="relative w-full min-h-screen overflow-visible">
      <div className="relative mx-auto w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem] min-h-svh flex flex-col">
 
       {/* Grid lines */}
@@ -362,23 +362,23 @@ export default forwardRef(function MissionStats(props, ref) {
 
       {/* ── Header ── */}
       <div
-        className="relative z-40 px-[clamp(0.75rem,3vw,3rem)] max-sm:px-2 4xl:px-16 5xl:px-20"
+        className="relative z-40 px-[clamp(0.75rem,3vw,3rem)] max-sm:px-2 max-mob:px-3 4xl:px-16 5xl:px-20"
         style={{ paddingTop: "clamp(3rem, 5.5vh, 5rem)" }}
       >
         <div
-          className="impact-header flex flex-col gap-6 lg:flex-row lg:justify-between items-start max-sm:gap-6"
+          className="impact-header flex flex-col gap-6 lg:flex-row lg:justify-between items-start max-sm:gap-6 max-mob:gap-3"
           style={{ marginBottom: "clamp(4rem, 9.5vh, 8.5rem)" }}
         >
-          <div className="flex flex-col gap-1 w-full lg:max-w-[22.5rem] 4xl:max-w-[28rem] 5xl:max-w-[34rem] max-sm:w-full">
-            <p className="impact-label font-bricolage font-normal text-base 4xl:text-lg 5xl:text-xl text-[#ff6f21] uppercase leading-normal"
+          <div className="flex flex-col gap-0 w-full lg:max-w-[22.5rem] 4xl:max-w-[28rem] 5xl:max-w-[34rem] max-sm:w-full">
+            <p className="impact-label font-bricolage font-normal text-base max-mob:text-sm 2xl:text-sm 4xl:text-lg 5xl:text-xl text-[#ff6f21] uppercase leading-tight"
               style={{ fontVariationSettings: "'opsz' 14, 'wdth' 100" }}>
               Performance deployed at scale
             </p>
-            <h2 className="impact-heading font-host font-medium text-[clamp(2rem,4.5vw,3.375rem)] max-sm:text-4xl 4xl:text-[4rem] 5xl:text-[5rem] text-[#f1f1f1] tracking-[-2.16px] leading-[1.1]">
+            <h2 className="impact-heading font-host font-medium text-[clamp(2rem,4.5vw,3.375rem)] max-sm:text-4xl max-mob:text-[1.875rem] max-mob:leading-[1.05] max-mob:tracking-[-1.5px] 4xl:text-[4rem] 5xl:text-[5rem] text-[#f1f1f1] tracking-[-2.16px] leading-[1.0]">
               Proven Impact
             </h2>
           </div>
-          <p className="impact-desc font-host font-light text-base 4xl:text-lg 5xl:text-xl text-white tracking-tight leading-5 w-full lg:max-w-[18.25rem] 4xl:max-w-[24rem] 5xl:max-w-[28rem] lg:mt-12 max-sm:w-full max-sm:mt-0">
+          <p className="impact-desc font-host font-light text-base max-mob:text-sm max-mob:leading-[1.35] 4xl:text-lg 5xl:text-xl text-white tracking-tight leading-[1.0] w-full lg:max-w-[18.25rem] 4xl:max-w-[24rem] 5xl:max-w-[28rem] lg:mt-12 lg:-translate-y-6 max-sm:w-full max-sm:mt-0">
             These are outcomes from real deployments across platforms, creators, and content systems.
           </p>
         </div>
@@ -394,7 +394,7 @@ export default forwardRef(function MissionStats(props, ref) {
         <FrameCorner className="frame-corner absolute -bottom-5 left-0 max-sm:size-3.5 z-10 max-sm:z-51 opacity-0" style={{ transform: "scaleY(-1)" }} />
         <FrameCorner className="frame-corner absolute -bottom-5 right-0 max-sm:size-3.5 z-10 max-sm:z-51 opacity-0" style={{ transform: "scale(-1, -1)" }} />
 
-        <div className="relative overflow-hidden py-10 w-[99.5%] mx-auto">
+        <div className="relative overflow-hidden py-10 max-mob:py-6 w-[99.5%] mx-auto">
           <div
             className="marquee-fade absolute inset-y-0 left-0 w-40 z-10 pointer-events-none opacity-0"
             style={{ background: "linear-gradient(to right, #121212 0%, transparent 100%)" }}
@@ -406,13 +406,13 @@ export default forwardRef(function MissionStats(props, ref) {
 
           <div ref={trackRef} className="flex w-max items-center max-sm:cursor-grab max-sm:active:cursor-grabbing">
             {["a", "b", "c", "d"].map((setKey) => (
-              <div key={setKey} className="marquee-set flex shrink-0 items-center justify-evenly gap-14 max-sm:gap-12" style={{ width: "max(calc(100vw - 13.125rem), 56.25rem)" }}>
+              <div key={setKey} className="marquee-set flex shrink-0 items-center justify-evenly gap-14 max-sm:gap-12 max-mob:gap-8" style={{ width: "max(calc(100vw - 13.125rem), 56.25rem)" }}>
                 {LOGOS.map((logo, i) => (
                   <img
                     key={`${setKey}-${i}`}
                     src={logo.src}
                     alt={logo.alt}
-                    className="screen-card h-15 4xl:h-20 5xl:h-24 w-auto object-contain opacity-0 grayscale brightness-75 transition-all duration-300 ease-out hover:brightness-150 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]"
+                    className="screen-card h-15 max-mob:h-10 4xl:h-20 5xl:h-24 w-auto object-contain opacity-0 grayscale brightness-75 transition-all duration-300 ease-out hover:brightness-150 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]"
                   />
                 ))}
               </div>
@@ -422,18 +422,18 @@ export default forwardRef(function MissionStats(props, ref) {
       </div>
 
       {/* ── Quote + Stats ── */}
-      <div className="relative z-40 px-[clamp(0.75rem,3vw,3rem)] max-sm:px-2 4xl:px-16 5xl:px-20 pb-10 my-auto">
+      <div className="relative z-40 px-[clamp(0.75rem,3vw,3rem)] max-sm:px-2 max-mob:px-3 4xl:px-16 5xl:px-20 pb-10 my-auto">
         <div
           className="flex justify-center"
           style={{ marginBottom: "clamp(2.5rem, 5.5vh, 5rem)" }}
         >
-          <p className="impact-quote font-host text-[clamp(1.5rem,3.3vw,2.5rem)] max-sm:text-2xl 4xl:text-[3rem] 5xl:text-[3.5rem] text-[#f1f1f1] text-center tracking-[-1.6px] leading-[1.1] w-full max-w-[26.25rem] 4xl:max-w-[32rem] 5xl:max-w-[38rem] max-sm:w-full">
+          <p className="impact-quote font-host text-[clamp(1.5rem,3.3vw,2.5rem)] max-sm:text-2xl max-mob:text-[1.375rem] max-mob:leading-[1.15] max-mob:tracking-[-0.5px] 4xl:text-[3rem] 5xl:text-[3.5rem] text-[#f1f1f1] text-center tracking-[-1.6px] leading-[0.95] w-full max-w-[26.25rem] 4xl:max-w-[32rem] 5xl:max-w-[38rem] max-sm:w-full">
             Performance isn't accidental. It's deployed.
           </p>
         </div>
 
         <div className="stats-arc relative flex flex-col items-center opacity-0 scale-90">
-          <div className="relative w-full max-w-[1064px] 4xl:max-w-[1300px] 5xl:max-w-[1500px] aspect-[1064/346] overflow-hidden max-sm:w-[115%]">
+          <div className="relative w-full max-w-[1064px] 4xl:max-w-[1300px] 5xl:max-w-[1500px] aspect-[1064/346] overflow-hidden max-sm:w-[115%] max-mob:w-[110%]">
             <DashedArc ref={arcRef} className="absolute left-0 top-1.5 w-full h-auto" />
             <div className="absolute inset-0 flex flex-col items-center justify-center pt-[clamp(1rem,2.5vw,3.5rem)] max-sm:pt-5">
               <div className="flex flex-col items-center gap-0 text-center">
@@ -443,7 +443,7 @@ export default forwardRef(function MissionStats(props, ref) {
                 </span>
 
                 <div
-                  className="stat-number flex items-center font-bricolage font-normal text-[clamp(2.5rem,6vw,5.5rem)] max-sm:text-5xl 4xl:text-[6.5rem] 5xl:text-[8rem] text-white tracking-[-0.06em] max-sm:tracking-[-2px] leading-none whitespace-nowrap opacity-0 translate-y-8"
+                  className="stat-number flex items-center font-bricolage font-normal text-[clamp(2.5rem,6vw,5.5rem)] max-sm:text-5xl max-mob:text-4xl 4xl:text-[6.5rem] 5xl:text-[8rem] text-white tracking-[-0.06em] max-sm:tracking-[-2px] max-mob:tracking-[-2px] leading-none whitespace-nowrap opacity-0 translate-y-8"
                   style={{ fontVariationSettings: "'opsz' 14, 'wdth' 100" }}
                 >
                   {[0, 1, 2].map((colIndex) => (
@@ -468,7 +468,7 @@ export default forwardRef(function MissionStats(props, ref) {
                   <span>M+</span>
                 </div>
 
-                <span className="stat-sub font-host font-medium text-lg 4xl:text-xl 5xl:text-2xl text-white tracking-tight leading-none opacity-0 translate-y-4">
+                <span className="stat-sub font-host  text-lg 4xl:text-xl 5xl:text-2xl text-white tracking-tight leading-none opacity-0 translate-y-4">
                   <span className="block overflow-hidden" style={{ height: "1.4em" }}>
                     <span ref={statLabelRef} className="block">
                       Viral Impressions

@@ -23,7 +23,6 @@ import SignalsSection from "./components/SignalsSection";
 import SignalsCanvas from "./components/SignalsCanvas";
 import BridgeTestimonial from "./components/BridgeTestimonial";
 import FooterSection from "./components/FooterSection";
-import VideoTransition from "./components/VideoTransition";
 
 function DummySection() {
   return (
@@ -129,7 +128,7 @@ const App = () => {
           top: 0,
           left: 0,
           width: "100vw",
-          height: "100svh",
+          height: "100vh",
           pointerEvents: "none",
           zIndex: 5,
         }}
@@ -151,7 +150,6 @@ const App = () => {
       <CoreOperations />
       <ViralitySection globeContainerRef={globeContainerRef} />
       <MissionReports />
-      <VideoTransition />
       <RocketLaunchSection />
       <CreatorNetworkSection />
       <SignalsSection />
