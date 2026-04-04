@@ -74,7 +74,6 @@ export default function CreatorNetworkSection() {
   const cnHeadingRef = useRef(null);
   const cnGlowRef = useRef(null);
   const cnDesc1Ref = useRef(null);
-  const cnDesc2Ref = useRef(null);
   const cnStatsRef = useRef(null);
 
   /* ── Register section element for GlobeCanvas exit tracking ── */
@@ -97,7 +96,7 @@ export default function CreatorNetworkSection() {
     const cnLabelSplit = splitAndMask(cnLabelRef.current, "lines");
     const cnHeadingSplit = splitAndMask(cnHeadingRef.current, "lines, chars");
     const cnDesc1Split = splitAndMask(cnDesc1Ref.current, "lines");
-    const cnDesc2Split = splitAndMask(cnDesc2Ref.current, "lines");
+
     const cnStatsEl = cnStatsRef.current;
 
     /* ── INITIAL STATES ── */
@@ -105,7 +104,7 @@ export default function CreatorNetworkSection() {
     gsap.set(cnHeadingSplit.split.chars, { yPercent: 160, opacity: 0, filter: "blur(6px)" });
     gsap.set(cnGlowRef.current, { scaleX: 0, transformOrigin: "right center", opacity: 0 });
     gsap.set(cnDesc1Split.elements, { yPercent: 160, filter: "blur(5px)" });
-    gsap.set(cnDesc2Split.elements, { yPercent: 160, filter: "blur(5px)" });
+
     gsap.set(cnStatsEl, { opacity: 0, y: 30, filter: "blur(6px)" });
 
     /* ── MASTER TIMELINE ── */
@@ -173,9 +172,7 @@ export default function CreatorNetworkSection() {
     master.to(cnDesc1Split.elements, {
       yPercent: 0, filter: "blur(0px)", duration: 1, stagger: 0.2, ease: "none",
     }, 3.2);
-    master.to(cnDesc2Split.elements, {
-      yPercent: 0, filter: "blur(0px)", duration: 1, stagger: 0.15, ease: "none",
-    }, 3.8);
+
 
     /* ═══ CN STATS ═══ */
     master.to(cnStatsEl, {
@@ -206,18 +203,18 @@ export default function CreatorNetworkSection() {
       <div className="absolute inset-0 overflow-hidden">
 
         {/* CN CONTENT — left on mobile, right on md+ (globe takes left side) */}
-        <div className="absolute z-40 inset-0 flex flex-col items-end justify-center px-3 pointer-events-none sm:px-6 sm:inset-auto sm:right-6 sm:top-[6%] sm:max-w-[70vw] md:right-8 md:top-[4%] md:max-w-[380px] lg:right-12 lg:max-w-[420px] xl:right-20 xl:max-w-[460px] 4xl:max-w-[560px] 5xl:max-w-[780px]">
-          <div className="flex flex-col gap-0 items-end">
-            <p ref={cnLabelRef} className="font-host font-thin text-xs sm:text-sm md:text-base lg:text-lg 4xl:text-xl 5xl:text-3xl text-[#FF6F21] text-right uppercase tracking-normal">
+        <div className="absolute z-40 inset-0 flex flex-col items-end justify-center px-3 pointer-events-none sm:px-6 sm:inset-auto sm:w-full sm:right-6 sm:top-[6%] md:right-8 md:top-[4%] lg:right-12 xl:right-20">
+          <div className="flex flex-col gap-0 items-end w-full sm:max-w-[70vw] md:max-w-[380px] lg:max-w-[25rem] xl:max-w-[31rem] 2xl:max-w-[37.5rem] 3xl:max-w-[47rem] 4xl:max-w-[62.5rem] 5xl:max-w-[93.75rem]">
+            <p ref={cnLabelRef} className="font-host font-thin text-xs sm:text-sm md:text-base lg:text-[0.66rem] xl:text-[0.82rem] 2xl:text-[0.99rem] 3xl:text-[1.24rem] 4xl:text-[1.65rem] 5xl:text-[2.5rem] text-[#FF6F21] text-right uppercase tracking-normal">
               Creator Network
             </p>
-            <h2 ref={cnHeadingRef} className="font-host font-medium text-3xl sm:text-4xl md:text-5xl lg:text-6xl 4xl:text-7xl 5xl:text-9xl tracking-tighter leading-none text-right">
+            <h2 ref={cnHeadingRef} className="font-host font-medium text-3xl sm:text-4xl md:text-5xl lg:text-4xl xl:text-[2.8rem] 2xl:text-[3.375rem] 3xl:text-[4.2rem] 4xl:text-[5.625rem] 5xl:text-[8.5rem] tracking-tighter leading-none text-right">
               Creator Operator<br />Network
             </h2>
           </div>
 
-          <div className="flex flex-col items-end gap-3 5xl:gap-6 mt-8 md:mt-12 5xl:mt-20">
-            <svg ref={cnGlowRef} width="193" height="23" viewBox="0 0 193 23" fill="none" xmlns="http://www.w3.org/2000/svg" className="mt-0 w-32 sm:w-40 md:w-48 lg:w-56 h-auto">
+          <div className="flex flex-col items-end gap-3 sm:w-full 4xl:gap-5 5xl:gap-8 mt-8 md:mt-12 lg:mt-8 xl:mt-10 2xl:mt-12 3xl:mt-16 4xl:mt-20 5xl:mt-30">
+            <svg ref={cnGlowRef} width="193" height="23" viewBox="0 0 193 23" fill="none" xmlns="http://www.w3.org/2000/svg" className="mt-0 w-32 sm:w-40 md:w-48 lg:w-39 xl:w-48 2xl:w-60 3xl:w-72 4xl:w-96 5xl:w-[37rem] h-auto -mr-2">
               <g filter="url(#cn-glow0)" style={{ mixBlendMode: "plus-lighter" }}><line x1="11" y1="11.5" x2="182" y2="11.5" stroke="#F05A1F" /></g>
               <g filter="url(#cn-glow1)" style={{ mixBlendMode: "plus-lighter" }}><line x1="11" y1="11.5" x2="182" y2="11.5" stroke="#F05A1F" /></g>
               <g filter="url(#cn-glow2)" style={{ mixBlendMode: "plus-lighter" }}><line x1="11" y1="11.5" x2="182" y2="11.5" stroke="#F05A1F" /></g>
@@ -228,23 +225,22 @@ export default function CreatorNetworkSection() {
               </defs>
             </svg>
 
-            <p ref={cnDesc1Ref} className="font-host font-thin text-sm sm:text-base md:text-lg lg:text-xl 4xl:text-2xl 5xl:text-4xl text-right leading-tight 5xl:leading-snug -mt-1">
-              We operate a coordinated network of 300+ creators, executing at a scale of 8,000+ monthly videos to meet specific category and audience objectives.
-            </p>
-            <p ref={cnDesc2Ref} className="font-host font-thin text-sm sm:text-base md:text-lg lg:text-xl 4xl:text-2xl 5xl:text-4xl text-right leading-relaxed">
-              Our distribution model cumulatively reaches 1B+ views per month, ensuring consistent output and high-impact performance across all major platforms.
+            <p ref={cnDesc1Ref} className="font-host font-thin w-full text-sm sm:text-base md:text-lg lg:max-w-[20rem] lg:text-xs xl:max-w-[25rem] xl:text-sm 2xl:max-w-[30rem] 2xl:text-lg 3xl:max-w-[37.5rem] 3xl:text-xl 4xl:max-w-[50rem] 4xl:text-3xl 5xl:max-w-[75rem] 5xl:text-[2.8rem] text-right leading-tight 5xl:leading-snug -mt-1">
+              We manage 300+ creators producing 8,000+ monthly videos. Powered by proprietary amplification, our network delivers 1B+ monthly views and high-impact performance across all major platforms.
             </p>
 
-            <div ref={cnStatsRef} className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 gap-3 md:gap-y-3 5xl:gap-y-5 w-full max-w-[180px] sm:max-w-[200px] md:max-w-[260px] lg:max-w-[300px] 4xl:max-w-[380px] 5xl:max-w-[540px] mt-2 5xl:mt-4 self-end">
+
+
+            <div ref={cnStatsRef} className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 gap-3 md:gap-y-3 4xl:gap-y-5 5xl:gap-y-8 w-full max-w-[180px] sm:max-w-[200px] md:max-w-[260px] lg:max-w-[10rem] xl:max-w-[12.5rem] 2xl:max-w-[15rem] 3xl:max-w-[19rem] 4xl:max-w-[25rem] 5xl:max-w-[37.5rem] mt-2 4xl:mt-4 5xl:mt-6 self-end">
               {CN_STATS.map((stat, i) => (
-                <div key={i} className="relative flex flex-col gap-0.5 5xl:gap-1.5 px-3 py-2 sm:px-4 sm:py-3 5xl:px-6 5xl:py-4">
-                  <svg className="absolute top-0 left-0" width="14" height="14" viewBox="0 0 10 10" fill="none"><path d="M9.36328 0.5H0.5V9.45225" stroke="#FF6F21" /></svg>
-                  <svg className="absolute top-0 right-0 scale-x-[-1]" width="14" height="14" viewBox="0 0 10 10" fill="none"><path d="M9.36328 0.5H0.5V9.45225" stroke="#FF6F21" /></svg>
-                  <svg className="absolute bottom-0 left-0 scale-y-[-1]" width="14" height="14" viewBox="0 0 10 10" fill="none"><path d="M9.36328 0.5H0.5V9.45225" stroke="#FF6F21" /></svg>
-                  <svg className="absolute bottom-0 right-0 scale-[-1]" width="14" height="14" viewBox="0 0 10 10" fill="none"><path d="M9.36328 0.5H0.5V9.45225" stroke="#FF6F21" /></svg>
-                  <span className="font-host text-lg sm:text-xl md:text-2xl lg:text-3xl 4xl:text-4xl 5xl:text-6xl tracking-tight">{stat.value}</span>
+                <div key={i} className="relative flex flex-col gap-0.5 4xl:gap-1 5xl:gap-2 px-3 py-2 sm:px-4 sm:py-3 4xl:px-8 4xl:py-5 5xl:px-12 5xl:py-8">
+                  <svg className="absolute top-0 left-0 w-3.5 h-3.5 lg:w-2 lg:h-2 xl:w-2.5 xl:h-2.5 2xl:w-3 2xl:h-3 3xl:w-3.5 3xl:h-3.5 4xl:w-5 4xl:h-5 5xl:w-7 5xl:h-7" viewBox="0 0 10 10" fill="none"><path d="M9.36328 0.5H0.5V9.45225" stroke="#FF6F21" /></svg>
+                  <svg className="absolute top-0 right-0 w-3.5 h-3.5 lg:w-2 lg:h-2 xl:w-2.5 xl:h-2.5 2xl:w-3 2xl:h-3 3xl:w-3.5 3xl:h-3.5 4xl:w-5 4xl:h-5 5xl:w-7 5xl:h-7 scale-x-[-1]" viewBox="0 0 10 10" fill="none"><path d="M9.36328 0.5H0.5V9.45225" stroke="#FF6F21" /></svg>
+                  <svg className="absolute bottom-0 left-0 w-3.5 h-3.5 lg:w-2 lg:h-2 xl:w-2.5 xl:h-2.5 2xl:w-3 2xl:h-3 3xl:w-3.5 3xl:h-3.5 4xl:w-5 4xl:h-5 5xl:w-7 5xl:h-7 scale-y-[-1]" viewBox="0 0 10 10" fill="none"><path d="M9.36328 0.5H0.5V9.45225" stroke="#FF6F21" /></svg>
+                  <svg className="absolute bottom-0 right-0 w-3.5 h-3.5 lg:w-2 lg:h-2 xl:w-2.5 xl:h-2.5 2xl:w-3 2xl:h-3 3xl:w-3.5 3xl:h-3.5 4xl:w-5 4xl:h-5 5xl:w-7 5xl:h-7 scale-[-1]" viewBox="0 0 10 10" fill="none"><path d="M9.36328 0.5H0.5V9.45225" stroke="#FF6F21" /></svg>
+                  <span className="font-host text-lg sm:text-xl md:text-2xl lg:text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl 4xl:text-5xl 5xl:text-7xl tracking-tight">{stat.value}</span>
                   <svg width="100%" height="1" viewBox="0 0 134 1" fill="none" preserveAspectRatio="none"><line y1="0.5" x2="134" y2="0.5" stroke="#A1A1A1" /></svg>
-                  <span className="font-host font-thin text-[10px] sm:text-xs md:text-sm lg:text-base 4xl:text-lg 5xl:text-2xl text-white/50">{stat.label}</span>
+                  <span className="font-host font-thin text-[10px] sm:text-xs md:text-sm lg:text-[0.68rem] xl:text-sm 2xl:text-base 3xl:text-lg 4xl:text-[1.7rem] 5xl:text-[2.6rem] text-white/50">{stat.label}</span>
                 </div>
               ))}
             </div>
