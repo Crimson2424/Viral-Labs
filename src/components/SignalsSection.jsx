@@ -314,7 +314,7 @@ export default function SignalsSection() {
                 {/* Center heading group */}
                 <div
                     ref={headingGroupRef}
-                    className="relative max-mob:absolute mob:absolute max-mob:top-[6%] mob:top-[35%] sm:top-[35%] md:top-[36%] lg:top-[35%] md:left-[48%] md:-translate-x-1/2 md:-translate-y-1/2 max-mob:right-0 mob:right-0 sm:right-20 md:right-auto lg:left-[50%] lg:items-start flex flex-col items-start max-mob:pl-[12%] mob:pl-[10%] sm:pl-[8%] md:pl-0 pt-[20vh] max-mob:pt-0 mob:pt-0 sm:pt-0 md:pt-0 px-6 max-mob:px-4 mob:px-5 sm:px-6 md:px-0"
+                    className="relative max-mob:absolute mob:absolute max-mob:top-[36%] mob:top-[35%] sm:top-[35%] md:top-[36%] lg:top-[35%] md:left-[48%] md:-translate-x-1/2 md:-translate-y-1/2 max-mob:right-0 mob:right-0 sm:right-20 md:right-auto lg:left-[50%] lg:items-start flex flex-col items-start max-mob:pl-[12%] mob:pl-[10%] sm:pl-[8%] md:pl-0 pt-[20vh] max-mob:pt-0 mob:pt-0 sm:pt-0 md:pt-0 px-6 max-mob:px-4 mob:px-5 sm:px-6 md:px-0"
                 >
                     <p className="font-host text-xs max-mob:text-sm mob:text-sm sm:text-sm md:text-sm lg:text-xs xl:text-sm 2xl:text-sm 3xl:text-base 4xl:text-lg 5xl:text-2xl text-[#FF6F21] uppercase tracking-tight">
                         STREAM OF DATA
@@ -351,7 +351,7 @@ export default function SignalsSection() {
                     </div>
 
                     {/* Disclaimer */}
-                    <p className="font-host font-thin max-mob:text-[0.6rem] mob:text-[0.65rem] sm:text-[11px] md:text-[12px] lg:text-[0.65rem] xl:text-[0.7rem] 2xl:text-xs 3xl:text-xs 4xl:text-sm 5xl:text-base text-white/50 uppercase tracking-tight max-mob:max-w-[200px] mob:max-w-[220px] sm:max-w-[260px] md:max-w-[300px] xl:max-w-[300px] 2xl:max-w-[320px] 3xl:max-w-[340px] 4xl:max-w-[380px] 5xl:max-w-[550px] leading-tight pointer-events-none max-mob:text-right mob:text-right sm:text-right md:text-right">
+                    <p className="font-host font-thin max-mob:text-[0.6rem] mob:text-[0.65rem] sm:text-[11px] md:text-[12px] lg:text-[0.65rem] xl:text-[0.7rem] 2xl:text-xs 3xl:text-xs 4xl:text-sm 5xl:text-base text-white/50 uppercase tracking-tight max-mob:max-w-[350px] mob:max-w-[220px] sm:max-w-[260px] md:max-w-[300px] xl:max-w-[300px] 2xl:max-w-[320px] 3xl:max-w-[340px] 4xl:max-w-[380px] 5xl:max-w-[550px] leading-tight pointer-events-none max-mob:text-right mob:text-right sm:text-right md:text-right">
                         SESSIONS MAY BE RECORDED. BY USING CHAT,<br />
                         YOU ACKNOWLEDGE OUR <span className="underline">PRIVACY POLICY</span>.
                     </p>
