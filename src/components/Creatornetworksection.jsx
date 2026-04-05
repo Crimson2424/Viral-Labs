@@ -17,7 +17,7 @@ import { NUDGE_3D, GLOBE_ENTRY_Y, GLOBE_ENTRY_X } from "./Globecanvas";
 import GlobalTexture from "./Globaltexture";
 import fontReady from "./fontReady";
 import useIsDesktop from "./useIsDesktop";
-import GlobeCanvasMobile from "./GlobecanvasMobile";
+import GlobeCanvasMobile from "./GlobeCanvasMobile";
 
 /* ══════════════════════════════════════════════════════
    CONSTANTS
