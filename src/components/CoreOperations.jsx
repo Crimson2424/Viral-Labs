@@ -153,6 +153,13 @@ export default function CoreOperations() {
 
       const cardEls = el.querySelectorAll(".co-card");
       const CARD_OFFSET = 0.12;
+      const isMobile = window.matchMedia("(max-width: 639px)").matches;
+
+      // On mobile, each card triggers individually on scroll.
+      // On desktop, all cards trigger together off the section.
+      const cardTrigger = (card) => isMobile
+        ? { trigger: card, start: "clamp(top 90%)", once: true }
+        : trigger();
 
       // ── Card container staggered entrance ──
       gsap.set(cardEls, { opacity: 0, y: 40 });
@@ -162,13 +169,13 @@ export default function CoreOperations() {
           y: 0,
           duration: 0.8,
           ease: "power3.out",
-          delay: 0.2 + i * CARD_OFFSET,
-          scrollTrigger: trigger(),
+          delay: isMobile ? 0 : 0.2 + i * CARD_OFFSET,
+          scrollTrigger: cardTrigger(card),
         });
       });
 
       cardEls.forEach((card, i) => {
-        const d = 0.3 + i * CARD_OFFSET;
+        const d = isMobile ? 0.1 : 0.3 + i * CARD_OFFSET;
         const cardImg = card.querySelector(".co-card-img");
         const cardGlow = card.querySelector(".co-card-glow");
         const cardBadge = card.querySelector(".co-card-badge");
@@ -182,7 +189,7 @@ export default function CoreOperations() {
           duration: 1.4,
           delay: d,
           ease: "power3.out",
-          scrollTrigger: trigger(),
+          scrollTrigger: cardTrigger(card),
         });
 
         // ── Glow line wipe ──
@@ -190,9 +197,9 @@ export default function CoreOperations() {
         gsap.to(cardGlow, {
           scaleX: 1,
           duration: 0.6,
-          delay: d + 0.2,
+          delay: d + 0.1,
           ease: "power3.inOut",
-          scrollTrigger: trigger(),
+          scrollTrigger: cardTrigger(card),
         });
 
         // ── Number badge ──
@@ -201,9 +208,9 @@ export default function CoreOperations() {
           yPercent: 0,
           opacity: 1,
           duration: 0.5,
-          delay: d + 0.25,
+          delay: d + 0.15,
           ease: "power4.out",
-          scrollTrigger: trigger(),
+          scrollTrigger: cardTrigger(card),
         });
 
         // ── Card title: SplitText mask ──
@@ -217,9 +224,9 @@ export default function CoreOperations() {
               yPercent: 0,
               duration: 0.8,
               stagger: 0.08,
-              delay: d + 0.15,
+              delay: d + 0.05,
               ease: "expo.out",
-              scrollTrigger: trigger(),
+              scrollTrigger: cardTrigger(card),
             });
           },
         });
@@ -235,9 +242,9 @@ export default function CoreOperations() {
               yPercent: 0,
               duration: 0.7,
               stagger: 0.04,
-              delay: d + 0.3,
+              delay: d + 0.2,
               ease: "expo.out",
-              scrollTrigger: trigger(),
+              scrollTrigger: cardTrigger(card),
             });
           },
         });
