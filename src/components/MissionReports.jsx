@@ -3,10 +3,9 @@ import { gsap, SplitText, ScrollTrigger, useGSAP } from "../components/Gsapconfi
 import GlobalTexture from "./Globaltexture";
 import fontReady from "./fontReady";
 
-/* ─── Glow Line Blur Values (matches site pattern) ─── */
+/* ─── Glow Line Blur Values ─── */
 const LINE_BLURS = [0.5, 0.5, 3, 3, 5.5];
 
-/* ─── CSS-replicated orange glow line ─── */
 function GlowLine() {
   return (
     <div className="relative w-full h-[23px]">
@@ -23,7 +22,6 @@ function GlowLine() {
   );
 }
 
-/* ─── Arrow SVG ─── */
 /* ─── Brand Logo SVGs ─── */
 function TNFLogo({ className = "" }) {
   return (
@@ -65,7 +63,7 @@ function HeaderRowContent({ data, bgClass = "", textClass = "text-white" }) {
   );
 }
 
-/* ─── Corner marks for line intersections ─── */
+/* ─── Corner marks ─── */
 function CornerLeft({ className = "" }) {
   return (
     <svg width="5" height="9" viewBox="0 0 5 9" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
@@ -82,11 +80,9 @@ function CornerRight({ className = "" }) {
   );
 }
 
-/* Bg wipe cascade colors */
 const HOVER_BG = "#1a1a1a";
 const BG_WIPE_COLORS = ["#3a3a3a", "#252525", "#171717", HOVER_BG];
 
-/* ─── Case Study Data ─── */
 const caseStudies = [
   {
     id: "01", brand: "The North Face", logo: "tnf",
@@ -111,12 +107,18 @@ const INNER_PAD = "clamp(1rem, 4vw, 3rem)";
 /* ─────────────────────────────────────────────
    Accordion Item
    ───────────────────────────────────────────── */
-function AccordionItem({ data, isActive, onEnter, onLeave, onClick }) {
-  const containerRef = useRef(null);
-  const headerClipRef = useRef(null);
-  const contentWrapRef = useRef(null);
+function AccordionItem({
+  data,
+  isActive,
+  onClick,
+  containerRef,
+  headerRef,
+  contentWrapRef,
+  contentInnerRef,
+  expandedHeight, // number (desktop target) or null (mobile -> use "auto")
+  absolutePos,    // { top: number } on desktop, null on mobile
+}) {
   const bgLayersRef = useRef(null);
-  const contentInnerRef = useRef(null);
   const taglineRef = useRef(null);
   const objLabelRef = useRef(null);
   const objTextRef = useRef(null);
@@ -125,77 +127,134 @@ function AccordionItem({ data, isActive, onEnter, onLeave, onClick }) {
   const linkRef = useRef(null);
   const statsRef = useRef(null);
   const tlRef = useRef(null);
+  const closeTlRef = useRef(null);
+  // Store resolved elements + split instances so the close handler can access them.
+  const closeTargetsRef = useRef(null);
 
+  // Play forward for open, run custom synchronized close for close.
   useEffect(() => {
-    if (!tlRef.current) return;
+    if (!tlRef.current || !closeTargetsRef.current) return;
+
+    const t = closeTargetsRef.current;
+
     if (isActive) {
-      tlRef.current.timeScale(1).play();
+      // Kill any running close timeline (doesn't touch forward timeline's tweens),
+      // then re-record starting values from current element state and play forward.
+      closeTlRef.current?.kill();
+      closeTlRef.current = null;
+      tlRef.current.invalidate().restart();
     } else {
-      tlRef.current.timeScale(2.5).reverse();
+      // Stop forward timeline, kill any previous close, build synchronized close.
+      tlRef.current.pause();
+      closeTlRef.current?.kill();
+
+      const D = 0.5;
+      const closeTl = gsap.timeline();
+      closeTl.to(t.contentWrap, { height: 0, duration: D, ease: "power4.inOut" }, 0);
+      closeTl.to(t.bgLayers, {
+        scaleY: 0, duration: D * 0.85,
+        stagger: { amount: 0.1, from: "end" },
+        ease: "power3.inOut",
+      }, 0);
+      closeTl.to(t.contentInner, {
+        clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)",
+        duration: D * 0.7, ease: "power3.inOut",
+      }, 0);
+      closeTl.to([t.tagline, t.objLabel, t.execLabel, t.link], {
+        opacity: 0, y: 10, duration: D * 0.4, ease: "power2.in",
+      }, 0);
+      closeTl.to(t.objLines, { yPercent: 110, duration: D * 0.5, stagger: 0.02, ease: "power3.in" }, 0);
+      closeTl.to(t.execLines, { yPercent: 110, duration: D * 0.5, stagger: 0.02, ease: "power3.in" }, 0);
+      closeTl.to(t.statItems, { opacity: 0, y: 20, duration: D * 0.4, stagger: 0.03, ease: "power2.in" }, 0);
+
+      closeTlRef.current = closeTl;
     }
   }, [isActive]);
 
+  // Build (and rebuild) the content expansion timeline.
+  // Rebuilds whenever expandedHeight changes (e.g. viewport resize).
   useGSAP(
     () => {
       let cancelled = false;
       fontReady.then(() => {
         if (cancelled) return;
 
-      const bgLayers = bgLayersRef.current?.querySelectorAll(".bg-wipe-layer") || [];
-      const statItems = statsRef.current?.querySelectorAll(".stat-item") || [];
+        const bgLayers = bgLayersRef.current?.querySelectorAll(".bg-wipe-layer") || [];
+        const statItems = statsRef.current?.querySelectorAll(".stat-item") || [];
 
-      const objSplit = SplitText.create(objTextRef.current, {
-        type: "lines", mask: "lines", linesClass: "mr-obj-line",
+        const objSplit = SplitText.create(objTextRef.current, {
+          type: "lines", mask: "lines", linesClass: "mr-obj-line",
+        });
+        objSplit.lines.forEach((line) => {
+          if (line.parentElement) line.parentElement.style.paddingBottom = "0.08em";
+        });
+
+        const execSplit = SplitText.create(execTextRef.current, {
+          type: "lines", mask: "lines", linesClass: "mr-exec-line",
+        });
+        execSplit.lines.forEach((line) => {
+          if (line.parentElement) line.parentElement.style.paddingBottom = "0.05em";
+        });
+
+        gsap.set(bgLayers, { scaleY: 0, transformOrigin: "top" });
+        gsap.set(contentWrapRef.current, { height: 0, overflow: "hidden" });
+        gsap.set(contentInnerRef.current, { clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)" });
+        gsap.set(objSplit.lines, { yPercent: 110 });
+        gsap.set(execSplit.lines, { yPercent: 110 });
+        gsap.set(taglineRef.current, { opacity: 0, y: 20 });
+        gsap.set(objLabelRef.current, { opacity: 0, y: 14 });
+        gsap.set(execLabelRef.current, { opacity: 0, y: 14 });
+        gsap.set(linkRef.current, { opacity: 0, y: 10 });
+        gsap.set(statItems, { opacity: 0, y: 30 });
+
+        // Stash all elements + split results for the custom close handler.
+        closeTargetsRef.current = {
+          bgLayers,
+          contentWrap: contentWrapRef.current,
+          contentInner: contentInnerRef.current,
+          tagline: taglineRef.current,
+          objLabel: objLabelRef.current,
+          execLabel: execLabelRef.current,
+          link: linkRef.current,
+          statItems,
+          objLines: objSplit.lines,
+          execLines: execSplit.lines,
+        };
+
+        const heightTarget = expandedHeight != null ? expandedHeight : "auto";
+        const tl = gsap.timeline({ paused: true });
+
+        tl.to(bgLayers, { scaleY: 1, duration: 0.6, stagger: 0.08, ease: "power3.inOut" });
+        tl.to(contentWrapRef.current, { height: heightTarget, duration: 0.65, ease: "power4.inOut" }, "<0.15");
+        tl.to(contentInnerRef.current, { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)", duration: 0.65, ease: "power3.inOut" }, "-=0.45");
+        tl.to(taglineRef.current, { opacity: 1, y: 0, duration: 0.5, ease: "power4.out" }, "-=0.3");
+        tl.to(objLabelRef.current, { opacity: 1, y: 0, duration: 0.4, ease: "power4.out" }, "-=0.35");
+        tl.to(objSplit.lines, { yPercent: 0, duration: 0.65, stagger: 0.04, ease: "power3.out" }, "-=0.3");
+        tl.to(execLabelRef.current, { opacity: 1, y: 0, duration: 0.4, ease: "power4.out" }, "-=0.35");
+        tl.to(execSplit.lines, { yPercent: 0, duration: 0.6, stagger: 0.04, ease: "power3.out" }, "-=0.3");
+        tl.to(linkRef.current, { opacity: 1, y: 0, duration: 0.4, ease: "power4.out" }, "-=0.25");
+        tl.to(statItems, { opacity: 1, y: 0, duration: 0.55, stagger: 0.06, ease: "back.out(1.4)" }, "-=0.45");
+
+        tlRef.current = tl;
+
+        // If item was already active when rebuild triggered (e.g. resize), replay from start.
+        if (isActive) tl.invalidate().restart();
       });
-      objSplit.lines.forEach((line) => {
-        if (line.parentElement) line.parentElement.style.paddingBottom = "0.08em";
-      });
-
-      const execSplit = SplitText.create(execTextRef.current, {
-        type: "lines", mask: "lines", linesClass: "mr-exec-line",
-      });
-      execSplit.lines.forEach((line) => {
-        if (line.parentElement) line.parentElement.style.paddingBottom = "0.05em";
-      });
-
-      gsap.set(bgLayers, { scaleY: 0, transformOrigin: "top" });
-      gsap.set(contentWrapRef.current, { height: 0, overflow: "hidden" });
-      gsap.set(contentInnerRef.current, { clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)" });
-      gsap.set(objSplit.lines, { yPercent: 110 });
-      gsap.set(execSplit.lines, { yPercent: 110 });
-      gsap.set(taglineRef.current, { opacity: 0, y: 20 });
-      gsap.set(objLabelRef.current, { opacity: 0, y: 14 });
-      gsap.set(execLabelRef.current, { opacity: 0, y: 14 });
-      gsap.set(linkRef.current, { opacity: 0, y: 10 });
-      gsap.set(statItems, { opacity: 0, y: 30 });
-
-      const tl = gsap.timeline({ paused: true });
-
-      tl.to(bgLayers, { scaleY: 1, duration: 0.6, stagger: 0.08, ease: "power3.inOut" });
-      tl.to(contentWrapRef.current, { height: "auto", duration: 0.65, ease: "power4.inOut" }, "<0.15");
-      tl.to(contentInnerRef.current, { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)", duration: 0.65, ease: "power3.inOut" }, "-=0.45");
-      tl.to(taglineRef.current, { opacity: 1, y: 0, duration: 0.5, ease: "power4.out" }, "-=0.3");
-      tl.to(objLabelRef.current, { opacity: 1, y: 0, duration: 0.4, ease: "power4.out" }, "-=0.35");
-      tl.to(objSplit.lines, { yPercent: 0, duration: 0.65, stagger: 0.04, ease: "power3.out" }, "-=0.3");
-      tl.to(execLabelRef.current, { opacity: 1, y: 0, duration: 0.4, ease: "power4.out" }, "-=0.35");
-      tl.to(execSplit.lines, { yPercent: 0, duration: 0.6, stagger: 0.04, ease: "power3.out" }, "-=0.3");
-      tl.to(linkRef.current, { opacity: 1, y: 0, duration: 0.4, ease: "power4.out" }, "-=0.25");
-      tl.to(statItems, { opacity: 1, y: 0, duration: 0.55, stagger: 0.06, ease: "back.out(1.4)" }, "-=0.45");
-
-      tlRef.current = tl;
-
-      }); // fontReady.then
       return () => { cancelled = true; };
     },
-    { scope: containerRef }
+    { scope: containerRef, dependencies: [expandedHeight] }
   );
+
+  const itemStyle = absolutePos
+    ? { position: "absolute", top: absolutePos.top, left: 0, right: 0 }
+    : undefined;
 
   return (
     <div
       ref={containerRef}
-      className="relative"
-      onMouseEnter={onEnter}
-      onMouseLeave={onLeave}
+      className="relative cursor-pointer"
+      onClick={onClick}
+      style={itemStyle}
     >
       <div ref={bgLayersRef} className="absolute inset-0 z-0 pointer-events-none">
         {BG_WIPE_COLORS.map((color, i) => (
@@ -203,12 +262,11 @@ function AccordionItem({ data, isActive, onEnter, onLeave, onClick }) {
         ))}
       </div>
 
-      <div ref={headerClipRef} className="cursor-pointer relative z-10" onClick={onClick}>
+      <div ref={headerRef} className="relative z-10">
         <HeaderRowContent data={data} bgClass="border-t border-[#FF6F21]/70" textClass="text-white" />
       </div>
 
       <div ref={contentWrapRef} className="relative z-10 -mt-px">
-
         <div ref={contentInnerRef} className="relative z-10" style={{ padding: `1.25rem ${INNER_PAD} 3rem` }}>
           <div className="grid grid-cols-12 gap-x-6 gap-y-6 mb-16 md:mb-20">
             <div ref={taglineRef} className="col-span-12 md:col-span-3 pt-4">
@@ -224,7 +282,14 @@ function AccordionItem({ data, isActive, onEnter, onLeave, onClick }) {
             <div className="col-span-12 md:col-span-3">
               <span ref={execLabelRef} className="inline-block font-host text-xs 4xl:text-sm 5xl:text-base tracking-[0.15em] uppercase text-white mb-3">EXECUTION</span>
               <p ref={execTextRef} className="font-host text-sm 4xl:text-base 5xl:text-lg font-thin text-white/50 leading-none tracking-tight mb-0">{data.execution}</p>
-              <a ref={linkRef} href={data.link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 font-host text-sm text-white/40 hover:text-[#FF6F21] transition-colors duration-300 underline underline-offset-4 decoration-white/15 hover:decoration-[#FF6F21]/50">
+              <a
+                ref={linkRef}
+                href={data.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-1.5 font-host text-sm text-white/40 hover:text-[#FF6F21] transition-colors duration-300 underline underline-offset-4 decoration-white/15 hover:decoration-[#FF6F21]/50"
+              >
                 View full case study <span className="text-xs">→</span>
               </a>
             </div>
@@ -249,123 +314,220 @@ function AccordionItem({ data, isActive, onEnter, onLeave, onClick }) {
 export default function MissionReports() {
   const sectionRef = useRef(null);
   const headerContentRef = useRef(null);
-  const [activeIndex, setActiveIndex] = useState(-1);
-  const isTouchRef = useRef(false);
+  const stageRef = useRef(null);
+  const paragraphAreaRef = useRef(null);
 
-  const handleTouchStart = useCallback(() => { isTouchRef.current = true; }, []);
-  const handleEnter = useCallback((i) => { if (!isTouchRef.current) setActiveIndex(i); }, []);
-  const handleLeave = useCallback(() => { if (!isTouchRef.current) setActiveIndex(-1); }, []);
+  // Item refs (owned by parent so we can drive translations + measure)
+  const item1ContainerRef = useRef(null);
+  const item1HeaderRef = useRef(null);
+  const item1ContentWrapRef = useRef(null);
+  const item1ContentInnerRef = useRef(null);
+
+  const item2ContainerRef = useRef(null);
+  const item2HeaderRef = useRef(null);
+  const item2ContentWrapRef = useRef(null);
+  const item2ContentInnerRef = useRef(null);
+
+  const [activeIndex, setActiveIndex] = useState(-1);
+  // { reservedH, headerH, isDesktop } — null until measured
+  const [dims, setDims] = useState(null);
+
   const handleClick = useCallback((i) => {
-    if (isTouchRef.current) setActiveIndex((prev) => (prev === i ? -1 : i));
+    setActiveIndex((prev) => (prev === i ? -1 : i));
   }, []);
+
+  /* ── Measurement: after fonts load and on resize ── */
+  useEffect(() => {
+    let cancelled = false;
+    let onResize = null;
+
+    fontReady.then(() => {
+      if (cancelled) return;
+
+      const measure = () => {
+        if (!paragraphAreaRef.current || !item1HeaderRef.current) return;
+
+        // contentInner renders at natural height even though its parent (contentWrap)
+        // is clipped via height:0 — so offsetHeight gives us what we need.
+        const paragraphH = paragraphAreaRef.current.offsetHeight || 0;
+        const item1H = item1ContentInnerRef.current?.offsetHeight || 0;
+        const item2H = item2ContentInnerRef.current?.offsetHeight || 0;
+        const headerH = item1HeaderRef.current.offsetHeight || 0;
+
+        // contentH = natural height of the taller case study's expanded content.
+        // This is exactly how far items translate up to make room below.
+        const contentH = Math.max(item1H, item2H);
+
+        const isDesktop = true; // translate-up enabled on all screen sizes
+        setDims({ contentH, paragraphH, headerH, isDesktop });
+      };
+
+      measure();
+      onResize = () => measure();
+      window.addEventListener("resize", onResize);
+    });
+
+    return () => {
+      cancelled = true;
+      if (onResize) window.removeEventListener("resize", onResize);
+    };
+  }, []);
+
+  // Track previous active index to determine direction of each item's translate
+  const prevActiveRef = useRef(-1);
+
+  /* ── Animation coordinator: translate items when activeIndex changes (desktop only) ── */
+  useEffect(() => {
+    if (!dims || !dims.isDesktop) return;
+
+    const { contentH } = dims;
+    const prev = prevActiveRef.current;
+    prevActiveRef.current = activeIndex;
+
+    // Rule: item i translates up by contentH if i <= activeIndex.
+    const newItem1Y = activeIndex >= 0 ? -contentH : 0;
+    const newItem2Y = activeIndex >= 1 ? -contentH : 0;
+    const prevItem1Y = prev >= 0 ? -contentH : 0;
+    const prevItem2Y = prev >= 1 ? -contentH : 0;
+
+    // Sync with content timeline:
+    //   OPEN  → forward timeline's height tween runs 0.15s to 0.80s of its timeline.
+    //           Delay 0.15 so translate starts when the container begins growing.
+    //   CLOSE → custom synchronized close runs over 0.5s with height tween driving motion.
+    //           Delay 0 so translate starts immediately alongside everything else.
+    const OPEN_DELAY = 0.15;
+    const OPEN_DURATION = 0.65;
+    const CLOSE_DELAY = 0;
+    const CLOSE_DURATION = 0.5;
+
+    const animate = (target, from, to) => {
+      if (from === to) return;
+      const goingUp = to < from;
+      gsap.to(target, {
+        y: to,
+        duration: goingUp ? OPEN_DURATION : CLOSE_DURATION,
+        delay: goingUp ? OPEN_DELAY : CLOSE_DELAY,
+        ease: "power4.inOut",
+        overwrite: "auto",
+      });
+    };
+
+    animate(item1ContainerRef.current, prevItem1Y, newItem1Y);
+    animate(item2ContainerRef.current, prevItem2Y, newItem2Y);
+
+    // Fade paragraph area out when accordion opens, in when it closes.
+    // Synced with the translate so they feel like one motion.
+    if (paragraphAreaRef.current) {
+      const wasActive = prev !== -1;
+      const isActive = activeIndex !== -1;
+      if (wasActive !== isActive) {
+        gsap.to(paragraphAreaRef.current, {
+          opacity: isActive ? 0 : 1,
+          duration: isActive ? OPEN_DURATION : CLOSE_DURATION,
+          delay: isActive ? OPEN_DELAY : CLOSE_DELAY,
+          ease: "power4.inOut",
+          overwrite: "auto",
+        });
+      }
+    }
+  }, [activeIndex, dims]);
+
+  /* ── Reset any translates if we swap from desktop to mobile on resize ── */
+  useEffect(() => {
+    if (!dims) return;
+    if (!dims.isDesktop) {
+      gsap.set([item1ContainerRef.current, item2ContainerRef.current], { y: 0, clearProps: "transform" });
+    }
+  }, [dims]);
 
   /* ── Scroll-triggered text reveal on header content ── */
   useGSAP(
     () => {
-      if (!headerContentRef.current) return;
+      if (!sectionRef.current) return;
 
       let cancelled = false;
       fontReady.then(() => {
         if (cancelled) return;
 
-      // Split "Mission Reports" heading
-      const headingSplit = SplitText.create(".mr-heading", {
-        type: "lines", mask: "lines", linesClass: "mr-h-line",
-      });
-      headingSplit.lines.forEach((line) => {
-        if (line.parentElement) line.parentElement.style.paddingBottom = "0.1em";
-      });
-
-      // Split "CASE STUDIES" label
-      const labelSplit = SplitText.create(".mr-label", {
-        type: "lines", mask: "lines", linesClass: "mr-l-line",
-      });
-
-      // Split tag texts
-      const tagSplits = [];
-      headerContentRef.current.querySelectorAll(".mr-tag").forEach((el) => {
-        const split = SplitText.create(el, {
-          type: "lines", mask: "lines", linesClass: "mr-t-line",
+        const headingSplit = SplitText.create(".mr-heading", {
+          type: "lines", mask: "lines", linesClass: "mr-h-line",
         });
-        tagSplits.push(split);
-      });
-      const tagLines = tagSplits.flatMap((s) => s.lines);
+        headingSplit.lines.forEach((line) => {
+          if (line.parentElement) line.parentElement.style.paddingBottom = "0.1em";
+        });
 
-      // Split the big paragraph
-      const paraSplit = SplitText.create(".mr-para", {
-        type: "lines", mask: "lines", linesClass: "mr-p-line",
-      });
-      paraSplit.lines.forEach((line) => {
-        if (line.parentElement) line.parentElement.style.paddingBottom = "0.08em";
-      });
+        const labelSplit = SplitText.create(".mr-label", {
+          type: "lines", mask: "lines", linesClass: "mr-l-line",
+        });
 
-      // Initial states — everything hidden below mask
-      gsap.set(headingSplit.lines, { y: "100%" });
-      gsap.set(labelSplit.lines, { y: "100%" });
-      gsap.set(tagLines, { y: "100%" });
-      gsap.set(paraSplit.lines, { y: "100%" });
+        const tagSplits = [];
+        sectionRef.current.querySelectorAll(".mr-tag").forEach((el) => {
+          const split = SplitText.create(el, {
+            type: "lines", mask: "lines", linesClass: "mr-t-line",
+          });
+          tagSplits.push(split);
+        });
+        const tagLines = tagSplits.flatMap((s) => s.lines);
 
-      // Heading reveal
-      gsap.to(headingSplit.lines, {
-        y: "0%",
-        duration: 1,
-        stagger: 0.1,
-        ease: "power4.out",
-        scrollTrigger: {
-          trigger: headerContentRef.current,
-          start: "top 75%",
-          once: true,
-        },
-      });
+        const paraSplit = SplitText.create(".mr-para", {
+          type: "lines", mask: "lines", linesClass: "mr-p-line",
+        });
+        paraSplit.lines.forEach((line) => {
+          if (line.parentElement) line.parentElement.style.paddingBottom = "0.08em";
+        });
 
-      // Label reveal (slight delay)
-      gsap.to(labelSplit.lines, {
-        y: "0%",
-        duration: 1,
-        stagger: 0.1,
-        ease: "power4.out",
-        delay: 0.15,
-        scrollTrigger: {
-          trigger: headerContentRef.current,
-          start: "top 75%",
-          once: true,
-        },
-      });
+        gsap.set(headingSplit.lines, { y: "100%" });
+        gsap.set(labelSplit.lines, { y: "100%" });
+        gsap.set(tagLines, { y: "100%" });
+        gsap.set(paraSplit.lines, { y: "100%" });
 
-      // Tags reveal
-      gsap.to(tagLines, {
-        y: "0%",
-        duration: 1,
-        stagger: 0.1,
-        ease: "power4.out",
-        delay: 0.3,
-        scrollTrigger: {
-          trigger: headerContentRef.current,
-          start: "top 75%",
-          once: true,
-        },
+        gsap.to(headingSplit.lines, {
+          y: "0%", duration: 1, stagger: 0.1, ease: "power4.out",
+          scrollTrigger: { trigger: headerContentRef.current, start: "top 75%", once: true },
+        });
+        gsap.to(labelSplit.lines, {
+          y: "0%", duration: 1, stagger: 0.1, ease: "power4.out", delay: 0.15,
+          scrollTrigger: { trigger: headerContentRef.current, start: "top 75%", once: true },
+        });
+        gsap.to(tagLines, {
+          y: "0%", duration: 1, stagger: 0.1, ease: "power4.out", delay: 0.3,
+          scrollTrigger: { trigger: ".mr-para", start: "top 85%", once: true },
+        });
+        gsap.to(paraSplit.lines, {
+          y: "0%", duration: 1, stagger: 0.1, ease: "power4.out", delay: 0.3,
+          scrollTrigger: { trigger: ".mr-para", start: "top 80%", once: true },
+        });
       });
 
-      // Big paragraph reveal
-      gsap.to(paraSplit.lines, {
-        y: "0%",
-        duration: 1,
-        stagger: 0.1,
-        ease: "power4.out",
-        delay: 0.3,
-        scrollTrigger: {
-          trigger: ".mr-para",
-          start: "top 80%",
-          once: true,
-        },
-      });
-
-
-      }); // fontReady.then
       return () => { cancelled = true; };
     },
     { scope: sectionRef }
   );
+
+  // Derived values for the layout
+  const isDesktopLayout = !!(dims && dims.isDesktop);
+  // GAP = space between the bottom of the paragraph area and the first accordion header.
+  const GAP = 140; // px — adjust to taste
+  // layoutH is the space reserved above the items (paragraph area).
+  // Must be >= contentH - GAP so translated items don't go above stage top.
+  const layoutH = isDesktopLayout ? Math.max(dims.paragraphH, dims.contentH - GAP) : 0;
+  // Content expands to its natural height (auto).
+  const expandedHeight = null;
+
+  const stageStyle = isDesktopLayout
+    ? { position: "relative", height: layoutH + GAP + 2 * dims.headerH }
+    : undefined;
+
+  const paragraphStyle = isDesktopLayout
+    ? { position: "absolute", top: 0, left: 0, right: 0, height: layoutH }
+    : undefined;
+
+  const item1AbsolutePos = isDesktopLayout ? { top: layoutH + GAP } : null;
+  const item2AbsolutePos = isDesktopLayout ? { top: layoutH + GAP + dims.headerH } : null;
+
+  const bottomBorderStyle = isDesktopLayout
+    ? { position: "absolute", bottom: 0, left: 0, right: 0 }
+    : undefined;
 
   return (
     <>
@@ -389,47 +551,93 @@ export default function MissionReports() {
         .mr-header-content { padding-left: 5rem !important; padding-right: 5rem !important; }
       }
     `}</style>
-    <section ref={sectionRef} id="reports" className="mission-reports-section relative w-full" onTouchStart={handleTouchStart}>
+    <section ref={sectionRef} id="reports" className="mission-reports-section relative w-full">
       <GlobalTexture />
       <div className="relative mx-auto w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem]">
-      <div className="pointer-events-none absolute top-0 left-0 w-px h-full bg-white/20 z-50" aria-hidden="true" />
-      <div className="pointer-events-none absolute top-0 right-0 w-px h-full bg-white/20 z-50" aria-hidden="true" />
-      <div className="pointer-events-none absolute top-0 left-0 right-0 h-px bg-white/20 z-50" aria-hidden="true" />
-      <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-px bg-white/20 z-50" aria-hidden="true" />
+        <div className="pointer-events-none absolute top-0 left-0 w-px h-full bg-white/20 z-50" aria-hidden="true" />
+        <div className="pointer-events-none absolute top-0 right-0 w-px h-full bg-white/20 z-50" aria-hidden="true" />
+        <div className="pointer-events-none absolute top-0 left-0 right-0 h-px bg-white/20 z-50" aria-hidden="true" />
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-px bg-white/20 z-50" aria-hidden="true" />
 
-      <CornerLeft className="pointer-events-none absolute z-50 top-0 left-0 -translate-y-1/2" />
-      <CornerRight className="pointer-events-none absolute z-50 top-0 right-0 -translate-y-1/2" />
-      <CornerLeft className="pointer-events-none absolute z-50 bottom-0 left-0 translate-y-1/2" />
-      <CornerRight className="pointer-events-none absolute z-50 bottom-0 right-0 translate-y-1/2" />
+        <CornerLeft className="pointer-events-none absolute z-50 top-0 left-0 -translate-y-1/2" />
+        <CornerRight className="pointer-events-none absolute z-50 top-0 right-0 -translate-y-1/2" />
+        <CornerLeft className="pointer-events-none absolute z-50 bottom-0 left-0 translate-y-1/2" />
+        <CornerRight className="pointer-events-none absolute z-50 bottom-0 right-0 translate-y-1/2" />
 
-      <div ref={headerContentRef} className="mr-header-content relative z-40" style={{ padding: "clamp(4rem, 6vw, 6rem) clamp(0.75rem, 3vw, 3rem) 0" }}>
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between mb-3">
-          <h2 className="mr-heading font-host text-white leading-none tracking-tight" style={{ fontSize: "clamp(2.25rem, 3.2vw, 3.75rem)" }}>Mission Reports</h2>
-          <span className="mr-label font-host text-xs md:text-sm 4xl:text-base 5xl:text-lg tracking-tight uppercase text-[#FF6F21] shrink-0 sm:ml-4">CASE STUDIES</span>
+        {/* Heading + glow line */}
+        <div
+          ref={headerContentRef}
+          className="mr-header-content relative z-40"
+          style={{ padding: "clamp(4rem, 6vw, 6rem) clamp(0.75rem, 3vw, 3rem) 0" }}
+        >
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between mb-3">
+            <h2 className="mr-heading font-host text-white leading-none tracking-tight" style={{ fontSize: "clamp(2.25rem, 3.2vw, 3.75rem)" }}>Mission Reports</h2>
+            <span className="mr-label font-host text-xs md:text-sm 4xl:text-base 5xl:text-lg tracking-tight uppercase text-[#FF6F21] shrink-0 sm:ml-4">CASE STUDIES</span>
+          </div>
+          <GlowLine />
         </div>
-        <GlowLine />
-        <div className="grid grid-cols-12 gap-x-4 sm:gap-x-10 gap-y-8 mt-8 md:mt-10 mb-20 md:mb-28">
-          <div className="col-span-12 md:col-span-5 flex flex-col">
-            <div className="flex flex-wrap gap-x-8 gap-y-2 mb-auto justify-between">
-              {["Real distribution", "Real operations", "Measurable outcomes"].map((tag) => (
-                <span key={tag} className="mr-tag font-host text-sm 4xl:text-base 5xl:text-lg font-thin text-white tracking-tight">{tag}</span>
-              ))}
+
+        {/* Stage: paragraph + accordion items. Overflow hidden clips translated items to the stage bounds. */}
+        <div
+          ref={stageRef}
+          className="relative z-40 overflow-hidden"
+          style={stageStyle}
+        >
+          {/* Paragraph area — inside the stage on desktop, in flow on mobile */}
+          <div
+            ref={paragraphAreaRef}
+            style={paragraphStyle}
+            className={isDesktopLayout ? "" : "mr-header-content px-4 sm:px-6 md:px-8"}
+          >
+            <div
+              className={
+                isDesktopLayout
+                  ? "grid grid-cols-12 gap-x-4 sm:gap-x-10 gap-y-4 md:gap-y-5 lg:gap-y-8 h-full"
+                  : "grid grid-cols-12 gap-x-4 sm:gap-x-10 gap-y-8 mt-8 md:mt-10 mb-20 md:mb-28"
+              }
+              style={isDesktopLayout ? { padding: "2rem clamp(1.25rem, 3vw, 3rem)" } : undefined}
+            >
+              <div className="col-span-12 lg:col-span-5 flex flex-col">
+                <div className="flex flex-wrap max-md:flex-col md:flex-row gap-x-8 gap-y-2 mb-auto justify-between">
+                  {["Real distribution", "Real operations", "Measurable outcomes"].map((tag) => (
+                    <span key={tag} className="mr-tag font-host text-sm 4xl:text-base 5xl:text-lg font-thin text-white tracking-tight">{tag}</span>
+                  ))}
+                </div>
+              </div>
+              <div className="col-span-12 lg:col-span-5 lg:col-start-8">
+                <p className="mr-para font-bricolage text-white leading-[0.95] font-light tracking-tight" style={{ fontSize: "clamp(2.3rem, 2.8vw, 3.2rem)" }}>
+                  Every mission is executed through high&#8209;volume content, precise signals, and engineered feedback loops turning attention into traffic, and traffic into results.
+                </p>
+              </div>
             </div>
           </div>
-          <div className="col-span-12 md:col-span-5 md:col-start-8">
-            <p className="mr-para font-bricolage text-white leading-[0.95] font-light tracking-tight" style={{ fontSize: "clamp(1.6rem, 2.8vw, 3.2rem)" }}>
-              Every mission is executed through high&#8209;volume content, precise signals, and engineered feedback loops turning attention into traffic, and traffic into results.
-            </p>
-          </div>
-        </div>
-      </div>
 
-      <div className="relative z-40">
-        {caseStudies.map((study, index) => (
-          <AccordionItem key={study.id} data={study} isActive={activeIndex === index} onEnter={() => handleEnter(index)} onLeave={handleLeave} onClick={() => handleClick(index)} />
-        ))}
-        <div className="h-px bg-[#FF6F21]/70" />
-      </div>
+          {/* Accordion items */}
+          <AccordionItem
+            data={caseStudies[0]}
+            isActive={activeIndex === 0}
+            onClick={() => handleClick(0)}
+            containerRef={item1ContainerRef}
+            headerRef={item1HeaderRef}
+            contentWrapRef={item1ContentWrapRef}
+            contentInnerRef={item1ContentInnerRef}
+            expandedHeight={expandedHeight}
+            absolutePos={item1AbsolutePos}
+          />
+          <AccordionItem
+            data={caseStudies[1]}
+            isActive={activeIndex === 1}
+            onClick={() => handleClick(1)}
+            containerRef={item2ContainerRef}
+            headerRef={item2HeaderRef}
+            contentWrapRef={item2ContentWrapRef}
+            contentInnerRef={item2ContentInnerRef}
+            expandedHeight={expandedHeight}
+            absolutePos={item2AbsolutePos}
+          />
+
+          <div className="h-px bg-[#FF6F21]/70" style={bottomBorderStyle} />
+        </div>
       </div>
     </section>
     </>
