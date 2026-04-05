@@ -368,12 +368,12 @@ export default function RocketLaunchSection() {
               transform: "translate(-50%, -50%)",
             }}
           >
-            <img ref={f2Ref} src="/svgs/Rocket frame 2.svg" alt="" className="w-full h-auto block" draggable={false} />
-            <img ref={f3Ref} src="/svgs/Rocket frame 3.svg" alt="" className="w-full h-auto block" style={{ marginTop: "-4px" }} draggable={false} />
-            <img ref={f4Ref} src="/svgs/Rocket frame 4.svg" alt="" className="w-full h-auto block" style={{ marginTop: "-4px" }} draggable={false} />
-            <img ref={f5Ref} src="/svgs/Rocket Frame 5.svg" alt="" className="w-full h-auto block" style={{ marginTop: "-4px" }} draggable={false} />
-            <img ref={f6Ref} src="/svgs/Rocket frame 6.svg" alt="" className="w-full h-auto block" style={{ marginTop: "-4px" }} draggable={false} />
-            <img ref={f7Ref} src="/svgs/Rocket Frame 7.svg" alt="" className="w-full h-auto block" style={{ marginTop: "-4px" }} draggable={false} />
+            <img ref={f2Ref} src="/images/rocket/rocket-frame-2.png" alt="" className="w-full h-auto block" draggable={false} />
+            <img ref={f3Ref} src="/images/rocket/rocket-frame-3.png" alt="" className="w-full h-auto block" style={{ marginTop: "-4px" }} draggable={false} />
+            <img ref={f4Ref} src="/images/rocket/rocket-frame-4.png" alt="" className="w-full h-auto block" style={{ marginTop: "-4px" }} draggable={false} />
+            <img ref={f5Ref} src="/images/rocket/rocket-frame-5.png" alt="" className="w-full h-auto block" style={{ marginTop: "-4px" }} draggable={false} />
+            <img ref={f6Ref} src="/images/rocket/rocket-frame-6.png" alt="" className="w-full h-auto block" style={{ marginTop: "-4px" }} draggable={false} />
+            <img ref={f7Ref} src="/images/rocket/rocket-frame-7.png" alt="" className="w-full h-auto block" style={{ marginTop: "-4px" }} draggable={false} />
             <RocketThrustersSvg
               ref={thrusterRef}
               className="block h-auto pointer-events-none w-[36%] -mt-2.5 relative z-[1]"

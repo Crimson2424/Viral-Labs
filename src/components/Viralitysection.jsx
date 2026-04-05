@@ -56,7 +56,6 @@ export default function ViralitySection({ globeContainerRef }) {
   const glowRef = useRef();
   const bottomTextRef = useRef();
   const mobileGlobeRef = useRef();
-  const glowGlobeRef = useRef();
 
   useGSAP(
     () => {
@@ -109,9 +108,8 @@ export default function ViralitySection({ globeContainerRef }) {
       // Globe glow — hidden
       gsap.set(glowRef.current, { opacity: 0, scale: 0.6 });
 
-      // Mobile globe image — hidden
+      // Mobile globe video — hidden
       gsap.set(mobileGlobeRef.current, { opacity: 0, scale: 0.85, filter: "blur(10px)" });
-      gsap.set(glowGlobeRef.current, { opacity: 0, scale: 0.85, filter: "blur(10px)" });
 
       // Cards — hidden, offset from their final positions
       gsap.set(".v-card-tl", {
@@ -265,10 +263,6 @@ export default function ViralitySection({ globeContainerRef }) {
         opacity: 1, scale: 1, filter: "blur(0px)",
         duration: 20, ease: "power3.out",
       }, 22);
-      tl.to(glowGlobeRef.current, {
-        opacity: 1, scale: 1, filter: "blur(0px)",
-        duration: 20, ease: "power3.out",
-      }, 22);
 
       // ── PHASE B — GLOBE GLOW ──
       tl.to(glowRef.current, {
@@ -332,23 +326,16 @@ export default function ViralitySection({ globeContainerRef }) {
         {isDesktop && <div ref={globeContainerRef} className="absolute -top-40 bottom-0 w-full -translate-y-12" />}
       </div>
 
-      {/* Glow-globe layer — above red glow, below globe-mobile */}
-      <img
-        ref={glowGlobeRef}
-        src="/images/glow-globe.png"
-        alt=""
-        aria-hidden="true"
-        className="absolute left-1/2 -translate-x-1/2 top-[12%] w-[90vw] max-w-md md:max-w-xl object-contain lg:hidden pointer-events-none z-[9]"
-        style={{ mixBlendMode: "lighten" }}
-      />
-
-      {/* Static globe image for small screens */}
-      <img
+      {/* Globe video for small screens */}
+      <video
         ref={mobileGlobeRef}
-        src="/images/globe-mobile.png"
-        alt=""
+        src="/videos/globevideo.webm"
+        autoPlay
+        loop
+        muted
+        playsInline
         aria-hidden="true"
-        className="absolute left-1/2 -translate-x-1/2 top-[18.5%] max-sm:top-[14%] max-mob:top-[12%] w-[90vw] max-w-md md:max-w-xl object-contain lg:hidden pointer-events-none z-10"
+        className="absolute left-1/2 -translate-x-1/2 top-[18.5%] max-sm:top-[14%] max-mob:top-[10%] mob:top-[9%] md:top-[15%] w-[90vw] max-mob:w-[200vw] mob:w-[205vw] sm:w-[140vw] md:w-[160vw] max-mob:max-w-none mob:max-w-none sm:max-w-none md:max-w-none object-contain lg:hidden pointer-events-none z-10"
         style={{ mixBlendMode: "lighten" }}
       />
 
@@ -379,7 +366,7 @@ export default function ViralitySection({ globeContainerRef }) {
         {/* Spacer — pushes cards below globe on mobile */}
         <div className="h-[55vh] sm:h-[50vh] max-mob:h-[50vh] md:hidden" aria-hidden="true" />
 
-        <div className="relative md:hidden w-full h-16 -mt-16 z-20 pointer-events-none" style={{ background: "linear-gradient(to bottom, transparent 0%, #121212 100%)" }} />
+        <div className="relative md:hidden w-full h-16 -mt-16 z-20 pointer-events-none" />
 
         <div className="relative mx-auto max-w-6xl 3xl:max-w-7xl 4xl:max-w-[90rem] 5xl:max-w-[120rem] min-h-0 md:min-h-[31.25rem] h-auto md:h-[calc(100svh-10rem)] xl:h-[calc(100svh-12.5rem)]">
 
@@ -442,7 +429,7 @@ export default function ViralitySection({ globeContainerRef }) {
                   Creative can be developed and tested systematically.
                 </p>
               </div>
-              <GlowH className="absolute -top-3 left-28 max-sm:left-auto max-sm:right-0 md:left-auto md:right-0 w-20 h-6" />
+              <GlowH className="absolute -top-3 left-28 max-sm:left-auto max-sm:right-0 sm:left-auto sm:right-0 md:left-auto md:right-0 w-20 h-6" />
               <GlowV className="absolute -top-0 -left-4 w-7 h-[calc(100%+0px)]" />
               <GlowCubes className="absolute -top-3 -right-7 w-7 h-10 hidden md:block" />
             </div>
@@ -463,7 +450,7 @@ export default function ViralitySection({ globeContainerRef }) {
                   Growth becomes more predictable when distribution is managed as a system.
                 </p>
               </div>
-              <GlowH className="absolute -top-3 left-28 max-sm:left-auto max-sm:right-0 md:left-auto md:right-0 w-20 h-6" />
+              <GlowH className="absolute -top-3 left-28 max-sm:left-auto max-sm:right-0 sm:left-auto sm:right-0 md:left-auto md:right-0 w-20 h-6" />
               <GlowV className="absolute -top-0 -left-4 w-7 h-[calc(100%+0px)]" />
               <GlowCubes className="absolute -top-3 -left-7 w-7 h-10 hidden md:block" />
             </div>

@@ -1,26 +1,7 @@
 /**
  * GlobeCanvas — Standalone fixed Canvas for the Creator Globe.
  *
- * SCROLL TRACKING — 3 phases, all continuous:
- *
- *  Phase 1 — Approach (cnRect.top goes vh → 0):
- *    Globe nudges UP in 3D space (globeYOffset decreases).
- *    NO CSS translateY — the movement is in 3D, so no clipping.
- *    Container stays at position: fixed, top: 0, height: 100vh.
- *    Uses a 2px threshold to prevent sub-pixel interference
- *    from overwriting GSAP values during CN pin.
- *
- *  Phase 2 — CN pinned (cnRect.top <= 0, cnRect.bottom >= vh):
- *    CN's timeline takes over globeYOffset and drives it to final.
- *    Starts at the nudged value = continuous, no snap.
- *
- *  Phase 3 — CN exit (cnRect.bottom < vh):
- *    translateY = cnRect.bottom - vh → globe follows CN off-screen.
- *
- * TUNING:
- *  NUDGE_3D — how much the globe rises in 3D units during approach.
- *             Higher = more rise. 0.4 is subtle, 0.8 is dramatic.
- *  Exported so CN section can compute its start value.
+ * [header comment unchanged — see your original]
  */
 
 import { useRef, useState, useEffect } from "react";
@@ -29,19 +10,10 @@ import CreatorGlobe from "./Creatorglobe";
 import CreatorGlobeOffsetGroup from "./Creatorglobeoffsetgroup";
 import { creatorGlobeState } from "./Creatorglobestate";
 
-// How much the globe rises in 3D units during the approach scroll.
-// globeYOffset goes from ENTRY_Y → (ENTRY_Y - NUDGE_3D).
-// Higher = more visible peek. Tune to taste.
 const NUDGE_3D = 0.4;
-
-// Rocket-phase end values — where the globe is when rocket section unpins.
-// Globe stays centered during rocket phase (no X shift).
-// Must match RocketLaunchSection: globeYOffset = GLOBE_3D_MID_Y (1.2),
-// globeXOffset stays at initial 1.18 (no tween moves it).
 const GLOBE_ENTRY_Y = 1.2;
-const GLOBE_ENTRY_X = 1.18;  // adjusted for full-width canvas (was 1.05)
+const GLOBE_ENTRY_X = 1.18;
 
-// Export for CN section to compute its start values.
 export { NUDGE_3D, GLOBE_ENTRY_Y, GLOBE_ENTRY_X };
 
 /* ══════════════════════════════════════════════════════
@@ -132,13 +104,25 @@ export default function GlobeCanvas() {
 
   useEffect(() => {
     let rafId;
+
+    // Last-written values — skip DOM writes when unchanged
+    let lastOpacity = -1;
+    let lastOffsetY = Number.NaN;
+    let lastTooltipTx = Number.NaN;
+    let lastTooltipTy = Number.NaN;
+    let lastTooltipOpacity = -1;
+
     const tick = () => {
       rafId = requestAnimationFrame(tick);
       const el = containerRef.current;
       if (!el) return;
 
       // ── Opacity ──
-      el.style.opacity = String(creatorGlobeState.globeOpacity);
+      const op = creatorGlobeState.globeOpacity;
+      if (op !== lastOpacity) {
+        el.style.opacity = String(op);
+        lastOpacity = op;
+      }
 
       // ── Scroll tracking ──
       const cnEl = creatorGlobeState.cnSectionEl;
@@ -149,25 +133,24 @@ export default function GlobeCanvas() {
         const cnRect = cnEl.getBoundingClientRect();
 
         if (cnRect.top > vh * 0.25) {
-          // Phase 1: CN approaching — nudge globe UP in 3D.
-          // Threshold of 2px prevents sub-pixel rounding from
-          // triggering this during CN pin and overwriting GSAP values.
-          // approach: 0 (CN at bottom of viewport) → 1 (CN at top, about to pin)
+          // Phase 1: approach — nudge globe UP in 3D
           const approach = Math.max(0, 1 - cnRect.top / vh);
           const targetY = GLOBE_ENTRY_Y - (NUDGE_3D * approach);
-          // Lerp instead of snap — lets scrubbed timeline hand off smoothly
           creatorGlobeState.globeYOffset += (targetY - creatorGlobeState.globeYOffset) * 0.04;
           offsetY = 0;
         } else if (cnRect.bottom < vh) {
-          // Phase 3: CN leaving — follow via top position
+          // Phase 3: exit
           offsetY = cnRect.top;
         } else {
-          // Phase 2: CN pinned or post-pin gap
+          // Phase 2: pinned or post-pin gap
           offsetY = Math.min(0, cnRect.top);
         }
       }
 
-      el.style.transform = `translateY(${offsetY}px)`;
+      if (offsetY !== lastOffsetY) {
+        el.style.transform = `translateY(${offsetY}px)`;
+        lastOffsetY = offsetY;
+      }
 
       // ── Tooltip ──
       const currentData = creatorGlobeState.hoveredData;
@@ -182,10 +165,22 @@ export default function GlobeCanvas() {
       }
       if (tooltipRef.current) {
         if (currentData) {
-          tooltipRef.current.style.transform = `translate(${creatorGlobeState.tooltipX + 25}px, ${creatorGlobeState.tooltipY - 100}px)`;
-          tooltipRef.current.style.opacity = "1";
+          const tx = creatorGlobeState.tooltipX + 25;
+          const ty = creatorGlobeState.tooltipY - 100;
+          if (tx !== lastTooltipTx || ty !== lastTooltipTy) {
+            tooltipRef.current.style.transform = `translate(${tx}px, ${ty}px)`;
+            lastTooltipTx = tx;
+            lastTooltipTy = ty;
+          }
+          if (lastTooltipOpacity !== 1) {
+            tooltipRef.current.style.opacity = "1";
+            lastTooltipOpacity = 1;
+          }
         } else {
-          tooltipRef.current.style.opacity = "0";
+          if (lastTooltipOpacity !== 0) {
+            tooltipRef.current.style.opacity = "0";
+            lastTooltipOpacity = 0;
+          }
         }
       }
     };

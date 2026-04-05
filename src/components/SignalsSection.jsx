@@ -147,8 +147,8 @@ function SignalsCTA() {
                 }}
             />
 
-            <div className="relative px-4.5 py-3.5 5xl:px-7 5xl:py-5">
-                <span className="cta-scramble-text font-host font-thin text-xs md:text-sm 4xl:text-base 5xl:text-xl text-white uppercase tracking-tight">
+            <div className="relative max-mob:px-3.5 max-mob:py-2.5 mob:px-4 mob:py-3 sm:px-4.5 sm:py-3.5 md:px-4.5 md:py-3.5 xl:px-5 xl:py-4 2xl:px-6 2xl:py-4.5 3xl:px-7 3xl:py-5 4xl:px-8 4xl:py-6 5xl:px-10 5xl:py-7">
+                <span className="cta-scramble-text font-host font-thin max-mob:text-[0.65rem] mob:text-xs sm:text-xs md:text-sm lg:text-xs xl:text-sm 2xl:text-base 3xl:text-lg 4xl:text-xl 5xl:text-2xl text-white uppercase tracking-tight">
                     ASK ABOUT THE SYSTEM …
                 </span>
             </div>
@@ -314,12 +314,12 @@ export default function SignalsSection() {
                 {/* Center heading group */}
                 <div
                     ref={headingGroupRef}
-                    className="relative md:absolute md:top-[36%] md:left-[48%] md:-translate-x-1/2 md:-translate-y-1/2 flex flex-col items-center max-mob:items-start max-mob:pl-[12%] pt-[20vh] max-mob:pt-[30vh] md:pt-0 px-6 max-mob:px-4 md:px-0"
+                    className="relative max-mob:absolute mob:absolute max-mob:top-[36%] mob:top-[35%] sm:top-[35%] md:top-[36%] lg:top-[35%] md:left-[48%] md:-translate-x-1/2 md:-translate-y-1/2 max-mob:right-0 mob:right-0 sm:right-20 md:right-auto lg:left-[50%] lg:items-start flex flex-col items-start max-mob:pl-[12%] mob:pl-[10%] sm:pl-[8%] md:pl-0 pt-[20vh] max-mob:pt-0 mob:pt-0 sm:pt-0 md:pt-0 px-6 max-mob:px-4 mob:px-5 sm:px-6 md:px-0"
                 >
-                    <p className="font-host text-xs md:text-sm 4xl:text-base 5xl:text-2xl text-[#FF6F21] uppercase tracking-wide">
+                    <p className="font-host text-xs max-mob:text-sm mob:text-sm sm:text-sm md:text-sm lg:text-xs xl:text-sm 2xl:text-sm 3xl:text-base 4xl:text-lg 5xl:text-2xl text-[#FF6F21] uppercase tracking-tight">
                         STREAM OF DATA
                     </p>
-                    <h2 className="font-host text-center max-mob:text-left text-[clamp(1.75rem,6vw,3.375rem)] max-mob:text-[1.5rem] max-mob:leading-[0.9] max-mob:tracking-[-1.5px] md:text-[54px] 4xl:text-[4rem] 5xl:text-[6.5rem] tracking-[-2px] leading-tight md:leading-[64px] 5xl:leading-[1.05] text-white">
+                    <h2 className="font-host text-left max-lg:text-right max-mob:text-[2rem] mob:text-[2.25rem] sm:text-[2.75rem] md:text-[3.375rem] lg:text-4xl xl:text-5xl 2xl:text-[3.5rem] 3xl:text-[4rem] 4xl:text-[5.25rem] 5xl:text-[6.5rem] max-mob:leading-[0.9] mob:leading-[0.95] sm:leading-none tracking-[-2px] max-mob:tracking-[-1px] mob:tracking-[-1.5px] leading-none text-white [&_*]:text-left!">
                         Signals drive<br />everything
                     </h2>
                 </div>
@@ -330,18 +330,18 @@ export default function SignalsSection() {
                 {/* Bottom-right content — pointer-events-auto so CTA is interactive */}
                 <div
                     ref={bottomGroupRef}
-                    className="relative md:absolute md:bottom-[22%] md:right-[8%] flex flex-col items-center max-mob:items-start max-mob:pl-[12%] md:items-end gap-4 max-mob:gap-3 5xl:gap-8 pointer-events-auto px-6 max-mob:px-4 md:px-0 pb-16 max-mob:pb-10 md:pb-0 5xl:scale-150 5xl:origin-bottom-right"
+                    className="relative mob:absolute max-mob:bottom-[10%] mob:bottom-[12%] sm:bottom-[15%] md:bottom-[22%] max-mob:right-0 mob:right-0 sm:right-0 md:right-[8%] flex flex-col max-mob:items-end mob:items-end sm:items-end md:items-end max-mob:pl-[12%] mob:pl-[10%] sm:pl-[8%] md:pl-0 gap-4 max-mob:gap-3 mob:gap-3.5 sm:gap-4 xl:gap-5 3xl:gap-6 4xl:gap-7 5xl:gap-8 pointer-events-auto max-mob:px-4 mob:px-5 sm:px-6 md:px-0 max-mob:pb-10 mob:pb-12 sm:pb-14 md:pb-0"
                 >
 
                     {/* Results label */}
-                    <div className="flex flex-col items-center max-mob:items-start md:items-end gap-1 mb-6 max-mob:mb-4 pointer-events-none">
-                        <span className="font-host text-sm 4xl:text-base 5xl:text-2xl font-thin text-white/50 uppercase tracking-tight">
+                    <div className="flex flex-col max-mob:items-end mob:items-end sm:items-end md:items-end gap-1 max-mob:mb-4 mob:mb-5 sm:mb-5 md:mb-6 xl:mb-7 3xl:mb-8 4xl:mb-10 5xl:mb-12 pointer-events-none">
+                        <span className="font-host max-mob:text-[0.75rem] mob:text-xs sm:text-sm md:text-sm lg:text-xs xl:text-sm 2xl:text-base 3xl:text-lg 4xl:text-xl 5xl:text-3xl font-thin text-white/50 uppercase tracking-tight">
                             WHAT RESULTS CAN I EXPECT?
                         </span>
-                        <div className="flex gap-1 5xl:gap-2">
-                            <span className="w-2 h-3 5xl:w-3 5xl:h-5 bg-[#FF6F21]" />
-                            <span className="w-2 h-3 5xl:w-3 5xl:h-5 bg-[#FF6F21]/70" />
-                            <span className="w-2 h-3 5xl:w-3 5xl:h-5 bg-[#FF6F21]/45" />
+                        <div className="flex gap-1 xl:gap-1.5 3xl:gap-2 5xl:gap-3">
+                            <span className="w-2 h-3 lg:w-1.8 lg:h-3 xl:w-2.5 xl:h-3.5 2xl:w-3 2xl:h-4 3xl:w-3.5 3xl:h-5 4xl:w-4 4xl:h-6 5xl:w-5 5xl:h-7 bg-[#FF6F21]" />
+                            <span className="w-2 h-3 lg:w-1.8 lg:h-3 xl:w-2.5 xl:h-3.5 2xl:w-3 2xl:h-4 3xl:w-3.5 3xl:h-5 4xl:w-4 4xl:h-6 5xl:w-5 5xl:h-7 bg-[#FF6F21]/70" />
+                            <span className="w-2 h-3 lg:w-1.8 lg:h-3 xl:w-2.5 xl:h-3.5 2xl:w-3 2xl:h-4 3xl:w-3.5 3xl:h-5 4xl:w-4 4xl:h-6 5xl:w-5 5xl:h-7 bg-[#FF6F21]/45" />
                         </div>
                     </div>
 
@@ -351,7 +351,7 @@ export default function SignalsSection() {
                     </div>
 
                     {/* Disclaimer */}
-                    <p className="font-host font-thin text-[11px] md:text-[12px] 5xl:text-base text-white/50 uppercase tracking-tight max-w-[260px] md:max-w-[300px] 4xl:max-w-[380px] 5xl:max-w-[550px] leading-tight pointer-events-none text-center max-mob:text-left md:text-right">
+                    <p className="font-host font-thin max-mob:text-[0.6rem] mob:text-[0.65rem] sm:text-[11px] md:text-[12px] lg:text-[0.65rem] xl:text-[0.7rem] 2xl:text-xs 3xl:text-xs 4xl:text-sm 5xl:text-base text-white/50 uppercase tracking-tight max-mob:max-w-[350px] mob:max-w-[220px] sm:max-w-[260px] md:max-w-[300px] xl:max-w-[300px] 2xl:max-w-[320px] 3xl:max-w-[340px] 4xl:max-w-[380px] 5xl:max-w-[550px] leading-tight pointer-events-none max-mob:text-right mob:text-right sm:text-right md:text-right">
                         SESSIONS MAY BE RECORDED. BY USING CHAT,<br />
                         YOU ACKNOWLEDGE OUR <span className="underline">PRIVACY POLICY</span>.
                     </p>

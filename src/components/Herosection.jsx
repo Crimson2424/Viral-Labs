@@ -540,6 +540,24 @@ export default function HeroSection() {
         .mission-text {
           max-width: 75% !important;
         }
+        .hero-heading {
+          font-size: clamp(4rem, 5.5vw, 5.5rem) !important;
+        }
+        .hero-subheading {
+          font-size: 0.875rem !important;
+          max-width: 420px !important;
+          margin-bottom: 1rem !important;
+        }
+        .cta-inner a {
+          width: 8.5rem !important;
+          height: 2.25rem !important;
+        }
+        .cta-text {
+          font-size: 0.875rem !important;
+        }
+        .cta-sub span {
+          font-size: 0.625rem !important;
+        }
       }
 
       @media (min-width: 160rem) {
