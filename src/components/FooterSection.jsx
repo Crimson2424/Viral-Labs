@@ -27,7 +27,7 @@ const CORNER_HOVER = -12;
 
 /* ─── Arrow SVG component ─── */
 const ArrowIcon = () => (
-  <svg width="14" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg" className="inline-block ml-2">
+  <svg width="14" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg" className="inline-block ml-2 lg:w-3 lg:h-2 lg:ml-1">
     <path d="M7.92285 11.8463L6.65722 10.5554L10.3275 6.83441H0V5.0119H10.3275L6.65722 1.29094L7.92285 0L13.846 5.92315L7.92285 11.8463Z" fill="white" />
   </svg>
 );
@@ -220,13 +220,13 @@ const FooterSection = () => {
   );
 
   return (
-    <footer ref={sectionRef} className="footer-section relative w-full overflow-hidden" style={{ minHeight: "calc(100vw * 1484 / 1440)" }}>
-      <style>{`@media(max-width:639px){.footer-section{min-height:100vh!important}}`}</style>
+    <footer ref={sectionRef} className="footer-section relative w-full overflow-hidden lg:-mt-[20rem]" style={{ aspectRatio: "1440 / 1484" }}>
+      <style>{`@media(max-width:639px){.footer-section{aspect-ratio:unset!important;min-height:100vh}}@media(min-width:1024px) and (max-width:1279px){.clock-face-lg{width:4.5rem!important;height:4.5rem!important}}`}</style>
       <GlobalTexture />
 
       {/* ─── Background image ─── */}
       <div className="absolute inset-0">
-        {/* Mobile BG — right-aligned, ~55% width so left side stays dark */}
+        {/* Mobile BG */}
         <img
           src="/images/footer-mobile.png"
           alt=""
@@ -238,22 +238,21 @@ const FooterSection = () => {
         <img
           src={FooterBG}
           alt=""
-          className="h-full w-full object-cover hidden md:block"
+          className="w-full h-full object-cover hidden md:block"
           style={{ mixBlendMode: "lighten" }}
           draggable={false}
         />
-        <div className="absolute inset-0" />
       </div>
 
       {/* ─── Content ─── */}
-      <div className="relative z-10 mx-auto flex h-full min-h-[inherit] flex-col w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem]">
+      <div className="relative z-10 mx-auto flex h-full flex-col w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem]">
 
         {/* ═══ CTA AREA ═══ */}
-        <div className="flex flex-1 flex-col items-start sm:items-center pt-40 max-mob:pt-28 pb-12 max-mob:pb-8 text-left sm:text-center px-6 max-mob:px-4 sm:px-0 sm:pt-36 sm:pb-12 md:pt-48 md:pb-12 lg:pt-104 lg:pb-40 xl:pt-112 xl:pb-44 2xl:pt-120 2xl:pb-48 3xl:pt-128 3xl:pb-52 4xl:pt-172 4xl:pb-64 5xl:pt-220 5xl:pb-80">
+        <div className="flex flex-1 flex-col items-start sm:items-center pt-40 max-mob:pt-28 pb-12 max-mob:pb-8 text-left sm:text-center px-6 max-mob:px-4 sm:px-0 sm:pt-36 sm:pb-12 md:pt-48 md:pb-12 lg:pt-85 lg:pb-6 xl:pt-60 xl:pb-20 2xl:pt-72 2xl:pb-24 3xl:pt-80 3xl:pb-28 4xl:pt-120 4xl:pb-44 5xl:pt-160 5xl:pb-60">
           {/* Heading */}
           <h2
             ref={headingRef}
-            className="font-bricolage text-left sm:text-center text-3xl max-mob:text-2xl max-mob:leading-[1.08] max-mob:max-w-44 font-normal leading-[1.05] tracking-tight text-white max-w-[14rem] sm:max-w-none sm:text-4xl md:text-5xl lg:text-6xl xl:text-[4.25rem] 2xl:text-[4.5rem] 3xl:text-[4.75rem] 4xl:text-[6.5rem] 5xl:text-[8.5rem]"
+            className="font-bricolage text-left sm:text-center text-3xl max-mob:text-2xl max-mob:leading-[1.08] max-mob:max-w-44 font-normal leading-[1.05] tracking-tight text-white max-w-[14rem] sm:max-w-none sm:text-4xl md:text-5xl lg:text-5xl xl:text-[4.25rem] 2xl:text-[4.5rem] 3xl:text-[4.75rem] 4xl:text-[6.5rem] 5xl:text-[8.5rem]"
           >
             Engineering<br />predictable growth<br />starts here
           </h2>
@@ -261,7 +260,7 @@ const FooterSection = () => {
           {/* Subtext */}
           <p
             ref={subtextRef}
-            className="mt-2 max-w-[14rem] max-mob:text-xs max-mob:max-w-48 sm:max-w-[34rem] lg:max-w-[36rem] 2xl:max-w-[38rem] 3xl:max-w-[40rem] 4xl:max-w-[52rem] 5xl:max-w-[64rem] font-host text-sm font-thin leading-tight text-white/70 text-left sm:text-center sm:text-base lg:text-lg 3xl:text-xl 4xl:text-2xl 5xl:text-3xl sm:mt-2 4xl:mt-4 5xl:mt-6"
+            className="mt-2 max-w-[14rem] max-mob:text-xs max-mob:max-w-48 sm:max-w-[34rem] lg:max-w-[27rem] 2xl:max-w-[38rem] 3xl:max-w-[40rem] 4xl:max-w-[52rem] 5xl:max-w-[64rem] font-host text-sm font-thin leading-tight text-white/70 text-left sm:text-center sm:text-base lg:text-sm 3xl:text-xl 4xl:text-2xl 5xl:text-3xl sm:mt-2 4xl:mt-4 5xl:mt-6"
             style={{ opacity: 0 }}
           >
             If you're ready to move beyond guesswork and scale through structured
@@ -277,16 +276,16 @@ const FooterSection = () => {
             style={{ opacity: 0 }}
           >
             {/* Corner brackets — positioned via top/left/right/bottom, animated via transform only */}
-            <span ref={tlRef} className="pointer-events-none absolute" style={{ top: CORNER_DEFAULT, left: CORNER_DEFAULT, width: 8, height: 8, borderTop: "1.7px solid #FF6F21", borderLeft: "1.7px solid #FF6F21" }} />
-            <span ref={trRef} className="pointer-events-none absolute" style={{ top: CORNER_DEFAULT, right: CORNER_DEFAULT, width: 8, height: 8, borderTop: "1.7px solid #FF6F21", borderRight: "1.7px solid #FF6F21" }} />
-            <span ref={blRef} className="pointer-events-none absolute" style={{ bottom: CORNER_DEFAULT, left: CORNER_DEFAULT, width: 8, height: 8, borderBottom: "1.7px solid #FF6F21", borderLeft: "1.7px solid #FF6F21" }} />
-            <span ref={brRef} className="pointer-events-none absolute" style={{ bottom: CORNER_DEFAULT, right: CORNER_DEFAULT, width: 8, height: 8, borderBottom: "1.7px solid #FF6F21", borderRight: "1.7px solid #FF6F21" }} />
+            <span ref={tlRef} className="pointer-events-none absolute lg:w-[0.4rem] lg:h-[0.4rem]" style={{ top: CORNER_DEFAULT, left: CORNER_DEFAULT, borderTop: "1.7px solid #FF6F21", borderLeft: "1.7px solid #FF6F21" }} />
+            <span ref={trRef} className="pointer-events-none absolute lg:w-[0.4rem] lg:h-[0.4rem]" style={{ top: CORNER_DEFAULT, right: CORNER_DEFAULT, borderTop: "1.7px solid #FF6F21", borderRight: "1.7px solid #FF6F21" }} />
+            <span ref={blRef} className="pointer-events-none absolute lg:w-[0.4rem] lg:h-[0.4rem]" style={{ bottom: CORNER_DEFAULT, left: CORNER_DEFAULT, borderBottom: "1.7px solid #FF6F21", borderLeft: "1.7px solid #FF6F21" }} />
+            <span ref={brRef} className="pointer-events-none absolute lg:w-[0.4rem] lg:h-[0.4rem]" style={{ bottom: CORNER_DEFAULT, right: CORNER_DEFAULT, borderBottom: "1.7px solid #FF6F21", borderRight: "1.7px solid #FF6F21" }} />
 
             {/* Thin white border box */}
-            <div className="flex items-center border border-white/30 px-8 max-mob:px-6 py-2 max-mob:py-3 lg:px-10 lg:py-2.5 4xl:px-16 4xl:py-4 5xl:px-20 5xl:py-5">
+            <div className="flex items-center border border-white/30 px-8 max-mob:px-6 py-2 max-mob:py-3 lg:px-3 lg:py-2 4xl:px-16 4xl:py-4 5xl:px-20 5xl:py-5">
               <span
                 ref={btnTextRef}
-                className="font-host text-sm sm:text-md lg:text-base 3xl:text-lg 4xl:text-xl 5xl:text-2xl font-thin tracking-wider text-white"
+                className="font-host text-sm sm:text-md lg:text-xs 3xl:text-lg 4xl:text-xl 5xl:text-2xl font-thin tracking-wider text-white"
               >
                 {originalText}
               </span>
@@ -300,28 +299,30 @@ const FooterSection = () => {
 
           {/* Right column on mobile: clocks stacked vertically */}
           <div
-            ref={clocksRowRef}
-            className="order-2 max-sm:order-2 sm:order-none flex flex-col items-center gap-6 max-mob:gap-4 py-4 max-mob:pt-8 max-mob:scale-90 max-mob:origin-top sm:grid sm:grid-cols-2 sm:justify-items-center sm:gap-6 sm:pb-10 md:pb-40 lg:flex lg:flex-row lg:flex-wrap lg:justify-center lg:gap-10 xl:gap-12 2xl:gap-14 3xl:gap-16 4xl:gap-28 5xl:gap-36 lg:pb-60 xl:pb-68 2xl:pb-72 3xl:pb-80 4xl:pb-104 5xl:pb-128"
-            style={{ opacity: 0 }}
+            className="relative max-lg:order-2 max-mob:absolute lg:absolute w-full flex lg:justify-center lg:bottom-50"
           >
+            <div ref={clocksRowRef}
+            className="order-2 max-sm:order-2 sm:order-none flex flex-col items-center gap-6 max-mob:gap-4 py-4 max-mob:pt-8 max-mob:scale-90 max-mob:origin-top sm:grid sm:grid-cols-2 sm:justify-items-center sm:gap-6 sm:pb-10 md:pb-20 lg:left- lg:w-max lg:flex lg:flex-row lg:justify-center lg:gap-6 xl:static xl:translate-x-0 xl:w-auto xl:gap-12 xl:pb-28 2xl:gap-14 2xl:pb-32 3xl:gap-16 3xl:pb-40 4xl:gap-28 4xl:pb-64 5xl:gap-36 5xl:pb-80"
+            style={{ opacity: 0 }} >
             {CLOCKS.map((clock) => (
               <AnalogClock key={clock.tz} {...clock} />
             ))}
+            </div>
           </div>
 
           {/* Left column on mobile: logo + nav */}
           <div className="order-1 max-sm:order-1 sm:order-none">
-            <div ref={footerBarRef} className="py-8 max-mob:pt-10 max-mob:pb-5 sm:py-8 md:py-12 lg:py-22 xl:py-24 2xl:py-26 3xl:py-28 4xl:py-40 5xl:py-52">
-              <div className="flex flex-col items-start sm:flex-row sm:items-start sm:justify-center gap-8 max-mob:gap-5 sm:gap-12 md:gap-16 lg:gap-38 xl:gap-40 2xl:gap-42 3xl:gap-44 4xl:gap-64 5xl:gap-80">
+            <div ref={footerBarRef} className="py-8 max-mob:pt-10 max-mob:pb-5 sm:py-8 md:py-8 lg:py-4 xl:py-12 2xl:py-14 3xl:py-16 4xl:py-24 5xl:py-36">
+              <div className="flex flex-col items-start sm:flex-row sm:items-start sm:justify-center gap-8 max-mob:gap-5 sm:gap-12 md:gap-16 lg:gap-10 lg:mx-auto lg:max-w-xl xl:max-w-none xl:gap-40 2xl:gap-42 3xl:gap-44 4xl:gap-64 5xl:gap-80">
                 {/* Logo + tagline */}
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center gap-0.5">
                     <img src="/svgs/Viral-Labs-logo.svg" alt="Viral Labs" className="h-5 w-5 2xl:h-6 2xl:w-6 4xl:h-9 4xl:w-9 5xl:h-12 5xl:w-12" draggable={false} />
-                    <span ref={logoNameRef} className="font-bricolage text-3xl max-mob:text-2xl 2xl:text-4xl 3xl:text-4xl 4xl:text-6xl 5xl:text-7xl font-semibold tracking-tight text-white">
+                    <span ref={logoNameRef} className="font-bricolage text-3xl max-mob:text-2xl lg:text-2xl xl:text-3xl 2xl:text-4xl 3xl:text-4xl 4xl:text-6xl 5xl:text-7xl font-semibold tracking-tight text-white">
                       Viral Labs
                     </span>
                   </div>
-                  <span ref={taglineRef} className="font-host text-xs xl:text-sm 3xl:text-sm 4xl:text-lg 5xl:text-xl font-thin text-white/50">
+                  <span ref={taglineRef} className="font-host text-xs lg:text-[0.65rem] xl:text-sm 3xl:text-sm 4xl:text-lg 5xl:text-xl font-thin text-white/50 lg:text-center">
                     Engineering Distribution
                   </span>
                 </div>
@@ -402,7 +403,7 @@ const FooterSection = () => {
           </div>
 
           {/* ═══ COPYRIGHT ═══ */}
-          <div className="order-4 sm:order-none col-span-2 sm:col-span-1 mx-auto flex flex-col sm:flex-row w-full max-w-4xl 2xl:max-w-5xl 3xl:max-w-5xl 4xl:max-w-7xl 5xl:max-w-[96rem] items-start sm:items-center sm:justify-between gap-1 sm:gap-0 py-6 max-mob:py-4 4xl:py-10 5xl:py-14">
+          <div className="order-4 sm:order-none col-span-2 sm:col-span-1 mx-auto flex flex-col sm:flex-row w-full max-w-4xl lg:max-w-2xl 2xl:max-w-5xl 3xl:max-w-5xl 4xl:max-w-7xl 5xl:max-w-[96rem] items-start sm:items-center sm:justify-between gap-1 sm:gap-0 py-6 max-mob:py-4 lg:py-3 xl:py-6 4xl:py-10 5xl:py-14">
             <span ref={copyLeftRef} className="font-host text-xs 2xl:text-sm 3xl:text-sm 4xl:text-lg 5xl:text-xl font-thin text-white/40">
               © Copyright 2026 Viral Labs
             </span>
@@ -471,12 +472,12 @@ const AnalogClock = ({ city, tz, label }) => {
   }, [tz, label]);
 
   const clockSize = 'clamp(6.25rem, 3.75rem + 5.2vw, 16.25rem)';
-
+// clamp(6.25rem, 2.75rem + 5.2vw, 16.25rem)
   return (
-    <div className="flex flex-col items-center gap-4 4xl:gap-6 5xl:gap-8">
+    <div className="flex flex-col items-center gap-4 lg:gap-1 xl:gap-4 4xl:gap-6 5xl:gap-8">
       {/* Clock face — fluid size via clamp (100px → 260px) */}
       <div
-        className="relative flex items-center justify-center rounded-full border border-white/15"
+        className="clock-face-lg relative flex items-center justify-center rounded-full border border-white/15"
         style={{ width: clockSize, height: clockSize }}
       >
         {/* Minimal tick marks — only 12, 3, 6, 9 */}
@@ -532,12 +533,12 @@ const AnalogClock = ({ city, tz, label }) => {
       </div>
 
       {/* Digital time */}
-      <span ref={digitalRef} className="font-host text-xs 3xl:text-sm 4xl:text-base 5xl:text-lg font-thin uppercase tracking-widest text-white/50">
+      <span ref={digitalRef} className="font-host text-xs lg:text-[0.6rem] xl:text-xs 3xl:text-sm 4xl:text-base 5xl:text-lg font-thin uppercase tracking-widest text-white/50">
         --:-- --
       </span>
 
       {/* City name */}
-      <span className="-mt-4 font-host text-xs 3xl:text-sm 4xl:text-base 5xl:text-lg font-thin text-white/35">
+      <span className="-mt-4 lg:-mt-0.5 xl:-mt-4 font-host text-xs lg:text-[0.6rem] xl:text-xs 3xl:text-sm 4xl:text-base 5xl:text-lg font-thin text-white/35">
         {city}
       </span>
     </div>

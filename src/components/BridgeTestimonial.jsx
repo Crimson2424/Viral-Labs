@@ -263,7 +263,7 @@ const BridgeTestimonial = () => {
       {/* ── centred wrapper ── */}
       <div className="relative z-10 mx-auto w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem]">
         {/* ── testimonial card ── */}
-        <div className="relative mx-auto max-w-[52rem] 4xl:max-w-[72rem] 5xl:max-w-[96rem] px-8 pt-14 pb-10 sm:px-10 sm:pt-10 sm:pb-10 md:px-14 md:py-14 lg:px-16 lg:py-16 4xl:px-24 4xl:py-20 5xl:px-32 5xl:py-24">
+        <div className="relative mx-auto max-w-[52rem] lg:max-w-[40rem] 4xl:max-w-[72rem] 5xl:max-w-[96rem] px-8 pt-14 pb-10 sm:px-10 sm:pt-10 sm:pb-10 md:px-14 md:py-14 lg:px-12 lg:py-12 4xl:px-24 4xl:py-20 5xl:px-32 5xl:py-24">
           {/* ─── Four orange corner brackets ─── */}
           <CornerBrackets />
 
