@@ -270,7 +270,7 @@ const BridgeTestimonial = () => {
           {/* ─── Glowing vertical line – left side ─── */}
           <span
             ref={glowLineRef}
-            className="pointer-events-none absolute left-8 top-1/2 hidden h-[52%] w-[2px] -translate-y-1/2 sm:block"
+            className="pointer-events-none absolute left-3 top-1/2 h-[52%] w-[2px] -translate-y-1/2 sm:left-5 md:left-8"
             style={{
               background: "#F05A1F",
               boxShadow: "0 0 3px #F05A1F, 0 0 8px #F05A1Fcc, 0 0 18px #F05A1F99",
@@ -283,7 +283,7 @@ const BridgeTestimonial = () => {
           <img
             src={QuoteIcon}
             alt="quote"
-            className="mb-5 h-7 w-8 select-none opacity-80 sm:mb-6 sm:h-8 sm:w-10 md:h-9 md:w-11 4xl:h-12 4xl:w-14 5xl:h-14 5xl:w-16"
+            className="mb-5 h-9 w-10 select-none opacity-80 sm:mb-6 sm:h-8 sm:w-10 md:h-9 md:w-11 4xl:h-12 4xl:w-14 5xl:h-14 5xl:w-16"
             draggable={false}
           />
 
@@ -291,7 +291,7 @@ const BridgeTestimonial = () => {
           <div ref={quoteWrapperRef} className="relative">
             <p
               ref={quoteRef}
-              className="font-bricolage text-base font-thin leading-[1.75] tracking-wide text-white sm:text-lg md:text-2xl md:leading-tight 4xl:text-4xl 4xl:leading-snug 5xl:text-5xl 5xl:leading-snug"
+              className="font-bricolage text-base font-thin leading-snug tracking-wide text-white sm:text-lg sm:leading-[1.75] md:text-2xl md:leading-tight 4xl:text-4xl 4xl:leading-snug 5xl:text-5xl 5xl:leading-snug"
             >
               {testimonials[0].quote}
             </p>
@@ -310,7 +310,7 @@ const BridgeTestimonial = () => {
           />
 
           {/* ─── Bottom row: founder info + company ─── */}
-          <div className="mt-8 flex items-center justify-between sm:mt-10 4xl:mt-14 5xl:mt-16">
+          <div className="mt-5 flex items-center justify-between sm:mt-10 4xl:mt-14 5xl:mt-16">
             {/* founder */}
             <div className="flex items-center gap-3">
               <div className="h-9 w-9 shrink-0 rounded-full bg-[#2a2a2a] sm:h-10 sm:w-10 4xl:h-12 4xl:w-12 5xl:h-14 5xl:w-14" />
@@ -350,7 +350,7 @@ const BridgeTestimonial = () => {
               >
                 <span
                   ref={(el) => (cubeRefs.current[i] = el)}
-                  className="block h-[12px] w-[12px]"
+                  className="block h-2 w-2 sm:h-3 sm:w-3"
                   style={{
                     backgroundColor: i === 0 ? "#FF6F21" : "rgba(255,255,255,0.3)",
                     boxShadow: i === 0 ? "0 0 6px #FF6F21, 0 0 14px rgba(255,111,33,0.5)" : "none",
@@ -374,7 +374,7 @@ export default BridgeTestimonial;
 const CORNER_THICKNESS = "2px";
 const CORNER_COLOR = "#FF6F21";
 
-const cornerBase = "pointer-events-none absolute h-[28px] w-[28px]";
+const cornerBase = "pointer-events-none absolute h-5 w-5 md:h-[28px] md:w-[28px]";
 
 const CornerBrackets = () => (
   <>
@@ -410,17 +410,10 @@ const CornerBrackets = () => (
 );
 
 const GlowCubes = () => {
-  const cubeStyle = {
-    width: "10px",
-    height: "10px",
-    backgroundColor: "#FF6F21",
-    boxShadow: "0 0 10px #FF6F21, 0 0 20px #FF6F21aa",
-  };
-
   return (
-    <div className="absolute -right-3 top-0 hidden flex-col gap-[8px] sm:flex md:-right-3">
-      <span style={cubeStyle} />
-      <span style={cubeStyle} />
+    <div className="absolute -right-1 top-1/3 flex flex-col gap-1.5 max-md:top-1 sm:-right-5 sm:top-0 sm:gap-2 md:-right-3">
+      <span className="h-2 w-2 sm:h-2.5 sm:w-2.5 bg-[#FF6F21]" style={{ boxShadow: "0 0 10px #FF6F21, 0 0 20px #FF6F21aa" }} />
+      <span className="h-2 w-2 sm:h-2.5 sm:w-2.5 bg-[#FF6F21]" style={{ boxShadow: "0 0 10px #FF6F21, 0 0 20px #FF6F21aa" }} />
     </div>
   );
 };
