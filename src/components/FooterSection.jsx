@@ -181,7 +181,7 @@ const FooterSection = () => {
 
   return (
     <footer ref={sectionRef} className="footer-section relative w-full overflow-hidden md:-mt-[12rem] lg:-mt-[20rem] xl:-mt-[25rem] 2xl:-mt-[30rem] 3xl:-mt-[37.5rem] 4xl:-mt-[50rem] 5xl:-mt-[75rem]" style={{ aspectRatio: "1440 / 1484" }}>
-      <style>{`@media(max-width:639px){.footer-section{aspect-ratio:unset!important;min-height:100vh}}@media(min-width:768px) and (max-width:1023px){.clock-face-lg{width:3.5rem!important;height:3.5rem!important}}@media(min-width:1024px){.clock-face-lg{width:clamp(4.5rem,2.5rem+3.9vw,16rem)!important;height:clamp(4.5rem,2.5rem+3.9vw,16rem)!important}}`}</style>
+      <style>{`@media(max-width:767px){.footer-section{aspect-ratio:unset!important;min-height:100vh}}@media(max-width:25rem){.clock-face-lg{width:4.5rem!important;height:4.5rem!important}}@media(min-width:25rem) and (max-width:639px){.clock-face-lg{width:5rem!important;height:5rem!important}}@media(min-width:768px) and (max-width:1023px){.clock-face-lg{width:3.5rem!important;height:3.5rem!important}}@media(min-width:1024px){.clock-face-lg{width:clamp(4.5rem,2.5rem+3.9vw,16rem)!important;height:clamp(4.5rem,2.5rem+3.9vw,16rem)!important}}`}</style>
       <GlobalTexture />
 
       {/* ─── Background image ─── */}
@@ -208,11 +208,11 @@ const FooterSection = () => {
       <div className="relative z-10 mx-auto flex h-full flex-col w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem]">
 
         {/* ═══ CTA AREA ═══ */}
-        <div className="flex flex-1 flex-col items-start sm:items-center pt-40 max-mob:pt-28 pb-12 max-mob:pb-8 text-left sm:text-center px-6 max-mob:px-4 sm:px-0 sm:pt-36 sm:pb-12 md:pt-56 md:pb-4 lg:pt-85 lg:pb-6 xl:pt-106 xl:pb-8 2xl:pt-128 2xl:pb-10 3xl:pt-160 3xl:pb-12 4xl:pt-212 4xl:pb-16 5xl:pt-320 5xl:pb-24">
+        <div className="flex flex-1 flex-col items-start md:items-center pt-40 max-mob:pt-28 pb-12 max-mob:pb-8 text-left md:text-center px-6 max-mob:px-4 sm:pt-36 sm:pb-12 md:px-0 md:pt-56 md:pb-4 lg:pt-85 lg:pb-6 xl:pt-106 xl:pb-8 2xl:pt-128 2xl:pb-10 3xl:pt-160 3xl:pb-12 4xl:pt-212 4xl:pb-16 5xl:pt-320 5xl:pb-24">
           {/* Heading */}
           <h2
             ref={headingRef}
-            className="font-bricolage text-left sm:text-center text-3xl max-mob:text-2xl max-mob:leading-[1.08] max-mob:max-w-44 font-normal leading-[1.05] tracking-tight text-white max-w-[14rem] sm:max-w-none sm:text-4xl md:text-3xl lg:text-5xl xl:text-6xl 2xl:text-7xl 3xl:text-8xl 4xl:text-[7rem] 5xl:text-[10.5rem]"
+            className="font-bricolage text-left md:text-center text-3xl max-mob:text-2xl max-mob:leading-[1.08] max-mob:max-w-44 font-normal leading-[1.05] tracking-tight text-white max-w-[14rem] sm:text-4xl sm:max-w-[18rem] md:max-w-none md:text-3xl lg:text-5xl xl:text-6xl 2xl:text-7xl 3xl:text-8xl 4xl:text-[7rem] 5xl:text-[10.5rem]"
           >
             Engineering<br />predictable growth<br />starts here
           </h2>
@@ -220,7 +220,7 @@ const FooterSection = () => {
           {/* Subtext */}
           <p
             ref={subtextRef}
-            className="mt-2 max-w-[14rem] max-mob:text-xs max-mob:max-w-48 sm:max-w-[34rem] md:max-w-[22rem] lg:max-w-[27rem] xl:max-w-[34rem] 2xl:max-w-[40rem] 3xl:max-w-[50rem] 4xl:max-w-[66rem] 5xl:max-w-[100rem] font-host text-sm font-thin leading-tight text-white/70 text-left sm:text-center sm:text-base md:text-sm lg:text-sm xl:text-base 2xl:text-lg 3xl:text-xl 4xl:text-2xl 5xl:text-3xl sm:mt-2 4xl:mt-4 5xl:mt-6"
+            className="mt-2 max-w-[14rem] max-mob:text-xs max-mob:max-w-48 sm:max-w-[18rem] md:max-w-[22rem] lg:max-w-[27rem] xl:max-w-[34rem] 2xl:max-w-[40rem] 3xl:max-w-[50rem] 4xl:max-w-[66rem] 5xl:max-w-[100rem] font-host text-sm font-thin leading-tight text-white/70 text-left md:text-center sm:text-base md:text-sm lg:text-sm xl:text-base 2xl:text-lg 3xl:text-xl 4xl:text-2xl 5xl:text-3xl sm:mt-2 4xl:mt-4 5xl:mt-6"
             style={{ opacity: 0 }}
           >
             If you're ready to move beyond guesswork and scale through structured
@@ -236,10 +236,10 @@ const FooterSection = () => {
             style={{ opacity: 0 }}
           >
             {/* Corner brackets — positioned via top/left/right/bottom, animated via transform only */}
-            <span ref={tlRef} className="pointer-events-none absolute md:w-1.5 md:h-1.5 lg:w-[0.4rem] lg:h-[0.4rem] xl:w-[0.45rem] xl:h-[0.45rem] 2xl:w-2 2xl:h-2 4xl:w-2.5 4xl:h-2.5 5xl:w-3 5xl:h-3" style={{ top: CORNER_DEFAULT, left: CORNER_DEFAULT, borderTop: "1.7px solid #FF6F21", borderLeft: "1.7px solid #FF6F21" }} />
-            <span ref={trRef} className="pointer-events-none absolute md:w-1.5 md:h-1.5 lg:w-[0.4rem] lg:h-[0.4rem] xl:w-[0.45rem] xl:h-[0.45rem] 2xl:w-2 2xl:h-2 4xl:w-2.5 4xl:h-2.5 5xl:w-3 5xl:h-3" style={{ top: CORNER_DEFAULT, right: CORNER_DEFAULT, borderTop: "1.7px solid #FF6F21", borderRight: "1.7px solid #FF6F21" }} />
-            <span ref={blRef} className="pointer-events-none absolute md:w-1.5 md:h-1.5 lg:w-[0.4rem] lg:h-[0.4rem] xl:w-[0.45rem] xl:h-[0.45rem] 2xl:w-2 2xl:h-2 4xl:w-2.5 4xl:h-2.5 5xl:w-3 5xl:h-3" style={{ bottom: CORNER_DEFAULT, left: CORNER_DEFAULT, borderBottom: "1.7px solid #FF6F21", borderLeft: "1.7px solid #FF6F21" }} />
-            <span ref={brRef} className="pointer-events-none absolute md:w-1.5 md:h-1.5 lg:w-[0.4rem] lg:h-[0.4rem] xl:w-[0.45rem] xl:h-[0.45rem] 2xl:w-2 2xl:h-2 4xl:w-2.5 4xl:h-2.5 5xl:w-3 5xl:h-3" style={{ bottom: CORNER_DEFAULT, right: CORNER_DEFAULT, borderBottom: "1.7px solid #FF6F21", borderRight: "1.7px solid #FF6F21" }} />
+            <span ref={tlRef} className="pointer-events-none absolute w-2 h-2 mob:w-2.5 mob:h-2.5 md:w-1.5 md:h-1.5 lg:w-[0.4rem] lg:h-[0.4rem] xl:w-[0.45rem] xl:h-[0.45rem] 2xl:w-2 2xl:h-2 4xl:w-2.5 4xl:h-2.5 5xl:w-3 5xl:h-3" style={{ top: CORNER_DEFAULT, left: CORNER_DEFAULT, borderTop: "1.7px solid #FF6F21", borderLeft: "1.7px solid #FF6F21" }} />
+            <span ref={trRef} className="pointer-events-none absolute w-2 h-2 mob:w-2.5 mob:h-2.5 md:w-1.5 md:h-1.5 lg:w-[0.4rem] lg:h-[0.4rem] xl:w-[0.45rem] xl:h-[0.45rem] 2xl:w-2 2xl:h-2 4xl:w-2.5 4xl:h-2.5 5xl:w-3 5xl:h-3" style={{ top: CORNER_DEFAULT, right: CORNER_DEFAULT, borderTop: "1.7px solid #FF6F21", borderRight: "1.7px solid #FF6F21" }} />
+            <span ref={blRef} className="pointer-events-none absolute w-2 h-2 mob:w-2.5 mob:h-2.5 md:w-1.5 md:h-1.5 lg:w-[0.4rem] lg:h-[0.4rem] xl:w-[0.45rem] xl:h-[0.45rem] 2xl:w-2 2xl:h-2 4xl:w-2.5 4xl:h-2.5 5xl:w-3 5xl:h-3" style={{ bottom: CORNER_DEFAULT, left: CORNER_DEFAULT, borderBottom: "1.7px solid #FF6F21", borderLeft: "1.7px solid #FF6F21" }} />
+            <span ref={brRef} className="pointer-events-none absolute w-2 h-2 mob:w-2.5 mob:h-2.5 md:w-1.5 md:h-1.5 lg:w-[0.4rem] lg:h-[0.4rem] xl:w-[0.45rem] xl:h-[0.45rem] 2xl:w-2 2xl:h-2 4xl:w-2.5 4xl:h-2.5 5xl:w-3 5xl:h-3" style={{ bottom: CORNER_DEFAULT, right: CORNER_DEFAULT, borderBottom: "1.7px solid #FF6F21", borderRight: "1.7px solid #FF6F21" }} />
 
             {/* Thin white border box */}
             <div className="flex items-center border border-white/30 px-8 max-mob:px-6 py-2 max-mob:py-3 md:px-3 md:py-1.5 lg:px-3 lg:py-2 xl:px-5 xl:py-2 2xl:px-6 2xl:py-2.5 3xl:px-8 3xl:py-3 4xl:px-12 4xl:py-4 5xl:px-16 5xl:py-5">
@@ -255,14 +255,14 @@ const FooterSection = () => {
         </div>
 
         {/* ═══ BOTTOM SECTION — 2-col grid on mobile, normal flow on sm+ ═══ */}
-        <div className="mt-auto grid grid-cols-[1fr_auto] sm:block items-start gap-x-6 max-mob:gap-x-4 px-4 max-mob:px-3 sm:px-0">
+        <div className="mt-auto grid grid-cols-[1fr_auto] sm:grid-cols-[auto_1fr] md:block items-start gap-x-6 max-mob:gap-x-4 px-4 max-mob:px-3 md:px-0">
 
           {/* Right column on mobile: clocks stacked vertically */}
           <div
-            className="relative max-md:order-2 md:absolute w-full flex md:justify-center md:bottom-44 lg:bottom-50 xl:bottom-56 2xl:bottom-64 3xl:bottom-80 4xl:bottom-112 5xl:bottom-160"
+            className="relative order-2 mr-[2rem] mob:mr-[2rem] sm:mr-0 md:order-none md:absolute md:w-full flex md:justify-center md:bottom-44 lg:bottom-50 xl:bottom-56 2xl:bottom-64 3xl:bottom-80 4xl:bottom-112 5xl:bottom-160"
           >
             <div ref={clocksRowRef}
-            className="order-2 max-sm:order-2 sm:order-none flex flex-col items-center gap-6 max-mob:gap-4 py-4 max-mob:pt-8 max-mob:scale-90 max-mob:origin-top sm:grid sm:grid-cols-2 sm:justify-items-center sm:gap-6 sm:pb-10 md:w-max md:flex md:flex-row md:justify-center md:gap-4 md:pb-0 lg:gap-6 xl:gap-8 2xl:gap-10 3xl:gap-14 4xl:gap-20 5xl:gap-28"
+            className="order-2 flex flex-col items-center gap-6 max-mob:gap-4 py-4 max-mob:pt-8 max-mob:scale-90 max-mob:origin-top sm:grid sm:grid-cols-2 sm:gap-3 sm:py-6 sm:justify-items-center md:flex md:items-center md:w-max md:flex-row md:justify-center md:gap-4 md:pb-0 lg:gap-6 xl:gap-8 2xl:gap-10 3xl:gap-14 4xl:gap-20 5xl:gap-28"
             style={{ opacity: 0 }} >
             {CLOCKS.map((clock) => (
               <AnalogClock key={clock.tz} {...clock} />
@@ -271,14 +271,14 @@ const FooterSection = () => {
           </div>
 
           {/* Left column on mobile: logo + nav */}
-          <div className="order-1 max-sm:order-1 sm:order-none">
+          <div className="order-1 md:order-none">
             <div ref={footerBarRef} className="py-8 max-mob:pt-10 max-mob:pb-5 sm:py-8 md:py-3 lg:py-4 xl:py-5 2xl:py-6 3xl:py-8 4xl:py-12 5xl:py-16">
-              <div className="flex flex-col items-start sm:flex-row sm:items-start sm:justify-center gap-8 max-mob:gap-5 sm:gap-12 md:gap-8 md:mx-auto md:max-w-md lg:gap-10 lg:max-w-xl xl:max-w-2xl xl:gap-14 2xl:max-w-3xl 2xl:gap-18 3xl:max-w-4xl 3xl:gap-24 4xl:max-w-6xl 4xl:gap-36 5xl:max-w-[80rem] 5xl:gap-52">
+              <div className="flex flex-col items-start md:flex-row md:items-start md:justify-center gap-8 max-mob:gap-5 md:gap-8 md:mx-auto md:max-w-md lg:gap-10 lg:max-w-xl xl:max-w-2xl xl:gap-14 2xl:max-w-3xl 2xl:gap-18 3xl:max-w-4xl 3xl:gap-24 4xl:max-w-6xl 4xl:gap-36 5xl:max-w-[80rem] 5xl:gap-52">
                 {/* Logo + tagline */}
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center gap-0.5">
                     <img src="/svgs/Viral-Labs-logo.svg" alt="Viral Labs" className="h-5 w-5 2xl:h-6 2xl:w-6 4xl:h-9 4xl:w-9 5xl:h-12 5xl:w-12" draggable={false} />
-                    <span ref={logoNameRef} className="font-bricolage text-3xl max-mob:text-2xl md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl 3xl:text-4xl 4xl:text-6xl 5xl:text-7xl font-semibold tracking-tight text-white">
+                    <span ref={logoNameRef} className="font-bricolage text-3xl max-mob:text-2xl md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl 3xl:text-4xl 4xl:text-6xl 5xl:text-7xl font-semibold tracking-tight text-white whitespace-nowrap">
                       Viral Labs
                     </span>
                   </div>
@@ -288,14 +288,14 @@ const FooterSection = () => {
                 </div>
 
                 {/* Nav links + Social icons grouped closer */}
-                <div className="flex flex-col sm:flex-row items-start gap-1 sm:gap-16 md:gap-6 lg:gap-8 xl:gap-12 2xl:gap-16 3xl:gap-20 4xl:gap-28 5xl:gap-36">
+                <div className="flex flex-col md:flex-row items-start gap-1 md:gap-6 lg:gap-8 xl:gap-12 2xl:gap-16 3xl:gap-20 4xl:gap-28 5xl:gap-36">
                   {/* Nav columns */}
                   <div ref={navCol1Ref} className="flex flex-col gap-1">
                     {NAV_COL_1.map((link) => (
                       <a
                         key={link}
                         href="#"
-                        className={`font-host text-xl max-mob:text-base sm:text-sm md:text-xs xl:text-sm 2xl:text-base 3xl:text-base 4xl:text-xl 5xl:text-2xl font-thin transition-colors duration-200 hover:text-[#FF6F21] ${link === "Home" ? "text-[#FF6F21]" : "text-white"}`}
+                        className={`font-host text-xl max-mob:text-base md:text-xs xl:text-sm 2xl:text-base 3xl:text-base 4xl:text-xl 5xl:text-2xl font-thin transition-colors duration-200 hover:text-[#FF6F21] ${link === "Home" ? "text-[#FF6F21]" : "text-white"}`}
                       >
                         {link}
                       </a>
@@ -306,7 +306,7 @@ const FooterSection = () => {
                       <a
                         key={link}
                         href="#"
-                        className="font-host text-xl max-mob:text-base sm:text-sm md:text-xs xl:text-sm 2xl:text-base 3xl:text-base 4xl:text-xl 5xl:text-2xl font-thin text-white transition-colors duration-200 hover:text-[#FF6F21]"
+                        className="font-host text-xl max-mob:text-base md:text-xs xl:text-sm 2xl:text-base 3xl:text-base 4xl:text-xl 5xl:text-2xl font-thin text-white transition-colors duration-200 hover:text-[#FF6F21]"
                       >
                         {link}
                       </a>
@@ -314,7 +314,7 @@ const FooterSection = () => {
                   </div>
 
                   {/* Social icons — hidden on mobile */}
-                  <div ref={socialsRef} className="hidden sm:flex items-center gap-8 4xl:gap-14 5xl:gap-18" style={{ opacity: 0 }}>
+                  <div ref={socialsRef} className="hidden md:flex items-center gap-8 4xl:gap-14 5xl:gap-18" style={{ opacity: 0 }}>
                     {[
                       { key: "x", href: "https://x.com/EashanShetty", content: <span className="font-host text-xs 4xl:text-base 5xl:text-lg font-thin text-white transition-colors duration-200">X</span> },
                       { key: "in", href: "https://www.linkedin.com/company/virallabs/", content: <span className="font-host text-xs 4xl:text-base 5xl:text-lg font-thin text-white transition-colors duration-200">In</span> },
@@ -341,7 +341,7 @@ const FooterSection = () => {
           </div>
 
           {/* ═══ MOBILE SOCIALS — visible only below sm ═══ */}
-          <div className="order-3 sm:hidden col-span-2 flex items-center gap-8 max-mob:gap-6 pt-4 max-mob:pt-3">
+          <div className="order-3 md:hidden col-span-2 flex items-center gap-8 max-mob:gap-6 pt-4 max-mob:pt-3">
             {[
               { key: "x", href: "https://x.com/EashanShetty", content: <span className="font-host text-xs font-thin text-white">X</span> },
               { key: "in", href: "https://www.linkedin.com/company/virallabs/", content: <span className="font-host text-xs font-thin text-white">In</span> },
@@ -363,7 +363,7 @@ const FooterSection = () => {
           </div>
 
           {/* ═══ COPYRIGHT ═══ */}
-          <div className="order-4 sm:order-none col-span-2 sm:col-span-1 mx-auto flex flex-col sm:flex-row w-full max-w-4xl md:max-w-md lg:max-w-2xl xl:max-w-2xl 2xl:max-w-3xl 3xl:max-w-[80rem] 4xl:max-w-[100rem] 5xl:max-w-[120rem] items-start sm:items-center sm:justify-between gap-1 sm:gap-0 py-6 max-mob:py-4 md:py-2 lg:py-3 xl:py-4 2xl:py-5 3xl:py-6 4xl:py-8 5xl:py-12">
+          <div className="order-4 md:order-none col-span-2 md:col-span-1 mx-auto flex flex-col md:flex-row w-full max-w-4xl md:max-w-md lg:max-w-2xl xl:max-w-2xl 2xl:max-w-3xl 3xl:max-w-[80rem] 4xl:max-w-[100rem] 5xl:max-w-[120rem] items-start md:items-center md:justify-between gap-1 md:gap-0 py-6 max-mob:py-4 md:py-2 lg:py-3 xl:py-4 2xl:py-5 3xl:py-6 4xl:py-8 5xl:py-12">
             <span ref={copyLeftRef} className="font-host text-xs 2xl:text-sm 3xl:text-sm 4xl:text-lg 5xl:text-xl font-thin text-white/40">
               © Copyright 2026 Viral Labs
             </span>

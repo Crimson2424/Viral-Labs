@@ -39,7 +39,7 @@ export default function GlobeCanvasMobile() {
   return (
     <div
       ref={containerRef}
-      className="relative w-full aspect-square max-w-[320px] sm:max-w-[380px] md:max-w-[440px] mx-auto"
+      className="relative w-full aspect-square max-w-[85vw] mob:max-w-[80vw] sm:max-w-[380px] md:max-w-[440px] mx-auto"
       style={{ pointerEvents: "none" }}
     >
       <Canvas

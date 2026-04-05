@@ -248,11 +248,11 @@ function MobileLayout() {
   return (
     <section
       ref={sectionRef}
-      className="creator-network-section relative z-25 w-full max-lg:pt-[max(35svh,300px)] py-16 sm:py-20 md:py-24 px-4 sm:px-6 md:px-8"
+      className="creator-network-section relative z-25 w-full max-lg:pt-[max(32svh,280px)] mob:max-lg:pt-[max(28svh,250px)] sm:max-lg:pt-[max(35svh,300px)] md:max-lg:pt-[max(45svh,400px)] py-16 pb-8 mob:pb-16 sm:py-20 md:py-24 md:pb-2 px-4 sm:px-6 md:px-8"
     >
       <GlobalTexture />
 
-      <div className="relative z-40 flex flex-col items-center gap-6 sm:gap-8 md:gap-10 max-w-[640px] mx-auto">
+      <div className="relative z-40 flex flex-col items-center gap-4 mob:gap-6 sm:gap-8 md:gap-10 max-w-[640px] mx-auto">
         {/* Heading block — centered */}
         <div className="flex flex-col items-center gap-1">
           <p ref={cnLabelRef} className="font-host font-thin text-xs sm:text-sm md:text-base text-[#FF6F21] text-center uppercase tracking-normal">
@@ -267,7 +267,7 @@ function MobileLayout() {
         <GlobeCanvasMobile />
 
         {/* Glow line */}
-        <GlowLine svgRef={cnGlowRef} className="w-32 sm:w-40 md:w-48 h-auto" />
+        <GlowLine svgRef={cnGlowRef} className="w-32 sm:w-40 md:w-48 h-auto mt-1 mob:mt-6 sm:mt-0" />
 
         {/* Description */}
         <p ref={cnDescRef} className="font-host font-thin text-sm sm:text-base md:text-lg text-center leading-tight max-w-[520px]">

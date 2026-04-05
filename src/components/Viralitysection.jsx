@@ -379,7 +379,7 @@ export default function ViralitySection({ globeContainerRef }) {
         {/* Spacer — pushes cards below globe on mobile */}
         <div className="h-[55vh] sm:h-[50vh] max-mob:h-[50vh] md:hidden" aria-hidden="true" />
 
-        <div className="relative md:hidden w-full h-16 -mt-16 z-20 pointer-events-none" style={{ background: "linear-gradient(to bottom, transparent 0%, #121212 100%)" }} />
+        <div className="relative md:hidden w-full h-16 -mt-16 z-20 pointer-events-none" />
 
         <div className="relative mx-auto max-w-6xl 3xl:max-w-7xl 4xl:max-w-[90rem] 5xl:max-w-[120rem] min-h-0 md:min-h-[31.25rem] h-auto md:h-[calc(100svh-10rem)] xl:h-[calc(100svh-12.5rem)]">
 
