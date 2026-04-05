@@ -11,12 +11,22 @@
  *  creatorGlobeState.constellationOpacity (0→1) is driven by
  *  CreatorNetworkSection during the CN settle phase.
  *  useFrame reads it every frame and applies to materials.
+ *
+ * PERF:
+ *  Rings (60) and hub dots (20) are rendered via InstancedMesh
+ *  to collapse 80 draw calls to 2. Rings use a custom shader
+ *  with a per-instance opacity attribute. Hub dots share a
+ *  single material since they all use the same cAlpha.
  */
 
 import { useRef, useMemo, useEffect, useCallback } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { creatorGlobeState } from "./Creatorglobestate";
+
+// Module-level scratch — avoids per-frame allocation
+const _UNIT_SCALE = new THREE.Vector3(1, 1, 1);
+const _Z_AXIS = new THREE.Vector3(0, 0, 1);
 
 // ============================================================================
 // SHADER SOURCES
@@ -58,6 +68,24 @@ const constellationFragmentShader = `
   varying float vOpacity;
   void main() {
     gl_FragColor = vec4(1.0, 1.0, 1.0, vOpacity * uFade);
+  }
+`;
+
+// Ring instance shader — per-instance opacity via aOpacity
+const ringInstanceVertexShader = `
+  attribute float aOpacity;
+  varying float vOpacity;
+  void main() {
+    vOpacity = aOpacity;
+    gl_Position = projectionMatrix * modelViewMatrix * instanceMatrix * vec4(position, 1.0);
+  }
+`;
+
+const ringInstanceFragmentShader = `
+  uniform vec3 uColor;
+  varying float vOpacity;
+  void main() {
+    gl_FragColor = vec4(uColor, vOpacity);
   }
 `;
 
@@ -184,6 +212,14 @@ function generateHubData() {
 }
 
 // ============================================================================
+// INSTANCE COUNTS
+// ============================================================================
+
+const NUM_HUBS = 20;
+const RINGS_PER_HUB = 3;
+const NUM_RINGS = NUM_HUBS * RINGS_PER_HUB;
+
+// ============================================================================
 // MAIN COMPONENT
 // ============================================================================
 
@@ -203,14 +239,15 @@ export default function CreatorGlobe({ containerRef }) {
     autoTrajectoryProgress: 0,
     autoPauseTimer: 0,
     networkHubs: [],
-    networkRings: [],
     networkHitboxes: [],
-    networkDots: [],
+    ringBaseMatrices: [],
+    ringDelays: [],
   });
 
   const pointer = useMemo(() => new THREE.Vector2(-9999, -9999), []);
   const raycaster = useMemo(() => new THREE.Raycaster(), []);
 
+  // Reusable scratch objects
   const _parentInvQuat = useMemo(() => new THREE.Quaternion(), []);
   const _camRight = useMemo(() => new THREE.Vector3(), []);
   const _camUp = useMemo(() => new THREE.Vector3(), []);
@@ -219,6 +256,9 @@ export default function CreatorGlobe({ containerRef }) {
     () => new THREE.Quaternion().setFromEuler(new THREE.Euler(-0.45, 0, 0)),
     []
   );
+  const _tooltipVec = useMemo(() => new THREE.Vector3(), []);
+  const _tmpMat = useMemo(() => new THREE.Matrix4(), []);
+  const _scaleVec = useMemo(() => new THREE.Vector3(), []);
 
   const pointsMeshRef = useRef();
   const webMeshRef = useRef();
@@ -226,6 +266,9 @@ export default function CreatorGlobe({ containerRef }) {
   const webDotMatRef = useRef();
   const shimmerDotMatRef = useRef();
   const innerSphereRef = useRef();
+
+  const ringInstanceRef = useRef();
+  const dotInstanceRef = useRef();
 
   const trajectoryGroupRef = useRef();
   const lineGeoRef = useRef();
@@ -280,6 +323,55 @@ export default function CreatorGlobe({ containerRef }) {
     color: 0xf1f1f1, transparent: true, opacity: 0.9, side: THREE.DoubleSide, blending: THREE.AdditiveBlending,
   }), []);
 
+  // Trajectory clones — memoized so we don't re-clone every render
+  const autoLineMat = useMemo(() => lineMat.clone(), [lineMat]);
+  const autoRingMat = useMemo(() => ringMat.clone(), [ringMat]);
+
+  // ── Shared geometries + materials for instanced rings & dots ──
+  const ringGeo = useMemo(() => {
+    const g = new THREE.RingGeometry(0.015, 0.02, 32);
+    // per-instance opacity buffer
+    const opacityArr = new Float32Array(NUM_RINGS);
+    g.setAttribute("aOpacity", new THREE.InstancedBufferAttribute(opacityArr, 1));
+    return g;
+  }, []);
+
+  const ringInstanceMat = useMemo(() => new THREE.ShaderMaterial({
+    uniforms: { uColor: { value: new THREE.Color(0xFF6F21) } },
+    vertexShader: ringInstanceVertexShader,
+    fragmentShader: ringInstanceFragmentShader,
+    transparent: true,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+  }), []);
+
+  const hubDotGeo = useMemo(() => new THREE.CircleGeometry(0.01, 16), []);
+  const hubDotMat = useMemo(() => new THREE.MeshBasicMaterial({
+    color: 0xFF6F21,
+    transparent: true,
+    opacity: 0,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+  }), []);
+
+  // Hitbox shared resources
+  const hitboxGeo = useMemo(() => new THREE.SphereGeometry(0.035, 16, 16), []);
+  const hitboxMat = useMemo(() => new THREE.MeshBasicMaterial({ visible: false }), []);
+
+  // Dispose owned resources on unmount
+  useEffect(() => {
+    return () => {
+      ringGeo.dispose();
+      ringInstanceMat.dispose();
+      hubDotGeo.dispose();
+      hubDotMat.dispose();
+      hitboxGeo.dispose();
+      hitboxMat.dispose();
+      autoLineMat.dispose();
+      autoRingMat.dispose();
+    };
+  }, [ringGeo, ringInstanceMat, hubDotGeo, hubDotMat, hitboxGeo, hitboxMat, autoLineMat, autoRingMat]);
+
   // ════════════════════════════════════════════════
   // LOAD EARTH IMAGE + SPAWN PARTICLES & HUBS
   // ════════════════════════════════════════════════
@@ -333,63 +425,56 @@ export default function CreatorGlobe({ containerRef }) {
       }
 
       const s = state.current;
-      const numHubs = 20;
 
-      for (let i = 0; i < numHubs; i++) {
+      for (let i = 0; i < NUM_HUBS; i++) {
         const randIndex = Math.floor(Math.random() * pts.length);
         const hubPos = pts[randIndex].clone().normalize();
         s.networkHubs.push(hubPos);
 
-        const hubGroup = new THREE.Group();
-        hubGroup.position.copy(hubPos).multiplyScalar(1.003);
-        hubGroup.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), hubPos);
-        globe.add(hubGroup);
+        // Compose base matrix at hubPos * 1.003, oriented so local Z → hubPos
+        const pos = hubPos.clone().multiplyScalar(1.003);
+        const quat = new THREE.Quaternion().setFromUnitVectors(_Z_AXIS, hubPos);
+        const baseMat = new THREE.Matrix4().compose(pos, quat, _UNIT_SCALE);
 
-        for (let j = 0; j < 3; j++) {
-          const ring = new THREE.Mesh(
-            new THREE.RingGeometry(0.015, 0.02, 32),
-            new THREE.MeshBasicMaterial({
-              color: 0xFF6F21,
-              transparent: true,
-              depthWrite: false,
-              side: THREE.DoubleSide,
-            })
-          );
-          ring.renderOrder = 11;
-          ring.userData = { delay: j + Math.random() * 0.5 };
-          hubGroup.add(ring);
-          s.networkRings.push(ring);
+        // Hub dot instance — static matrix
+        if (dotInstanceRef.current) {
+          dotInstanceRef.current.setMatrixAt(i, baseMat);
         }
 
-        const dot = new THREE.Mesh(
-          new THREE.CircleGeometry(0.01, 16),
-          new THREE.MeshBasicMaterial({
-            color: 0xFF6F21,
-            transparent: true,
-            opacity: 0,
-            depthWrite: false,
-            side: THREE.DoubleSide,
-          })
-        );
-        dot.renderOrder = 12;
-        hubGroup.add(dot);
-        s.networkDots.push(dot);
+        // 3 ring instances per hub, each with its own delay
+        for (let j = 0; j < RINGS_PER_HUB; j++) {
+          const ringIdx = i * RINGS_PER_HUB + j;
+          s.ringBaseMatrices[ringIdx] = baseMat.clone();
+          s.ringDelays[ringIdx] = j + Math.random() * 0.5;
+          // Initial matrix — scale 0 (hidden until first frame update)
+          _scaleVec.set(0, 0, 0);
+          _tmpMat.copy(baseMat).scale(_scaleVec);
+          if (ringInstanceRef.current) {
+            ringInstanceRef.current.setMatrixAt(ringIdx, _tmpMat);
+          }
+        }
 
-        const hitbox = new THREE.Mesh(
-          new THREE.SphereGeometry(0.035, 16, 16),
-          new THREE.MeshBasicMaterial({ visible: false })
-        );
+        // Hitbox — child of globe, shared geo + mat
+        const hitbox = new THREE.Mesh(hitboxGeo, hitboxMat);
+        hitbox.position.copy(pos);
         hitbox.userData = {
           position: hubPos,
           ...generateHubData(),
         };
-        hubGroup.add(hitbox);
+        globe.add(hitbox);
         s.networkHitboxes.push(hitbox);
+      }
+
+      if (dotInstanceRef.current) {
+        dotInstanceRef.current.instanceMatrix.needsUpdate = true;
+      }
+      if (ringInstanceRef.current) {
+        ringInstanceRef.current.instanceMatrix.needsUpdate = true;
       }
 
       s.initialized = true;
     };
-  }, []);
+  }, [hitboxGeo, hitboxMat, _scaleVec, _tmpMat]);
 
   // ════════════════════════════════════════════════
   // POINTER EVENTS — gated by creatorGlobeState.interactive
@@ -459,7 +544,7 @@ export default function CreatorGlobe({ containerRef }) {
       window.removeEventListener("pointerdown", onDown);
       window.removeEventListener("pointerup", onUp);
     };
-  }, [containerRef, pointer, camera, raycaster]);
+  }, [containerRef, pointer, camera, raycaster, _parentInvQuat, _camRight, _camUp, _qDelta]);
 
   const updateTrajectoryTarget = useCallback((vStart, vEnd) => {
     const midPoint = vStart.clone().add(vEnd).multiplyScalar(0.5);
@@ -474,7 +559,7 @@ export default function CreatorGlobe({ containerRef }) {
     }
     if (targetRingRef.current) {
       targetRingRef.current.position.copy(vEnd).multiplyScalar(1.01);
-      targetRingRef.current.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), vEnd);
+      targetRingRef.current.quaternion.setFromUnitVectors(_Z_AXIS, vEnd);
     }
   }, []);
 
@@ -489,7 +574,7 @@ export default function CreatorGlobe({ containerRef }) {
     const s = state.current;
     const time = clock.getElapsedTime();
 
-    globe.scale.lerp(new THREE.Vector3(1, 1, 1), 0.03);
+    globe.scale.lerp(_UNIT_SCALE, 0.03);
 
     // ── Constellation fade ──
     const cAlpha = creatorGlobeState.constellationOpacity;
@@ -533,32 +618,45 @@ export default function CreatorGlobe({ containerRef }) {
     }
 
     if (s.activeHoverHub && containerRef?.current) {
-      const vector = s.activeHoverHub.userData.position.clone();
-      vector.applyMatrix4(globe.matrixWorld);
-      vector.project(camera);
+      _tooltipVec.copy(s.activeHoverHub.userData.position);
+      _tooltipVec.applyMatrix4(globe.matrixWorld);
+      _tooltipVec.project(camera);
 
       const rect = containerRef.current.getBoundingClientRect();
-      creatorGlobeState.tooltipX = (vector.x * 0.5 + 0.5) * rect.width;
-      creatorGlobeState.tooltipY = (vector.y * -0.5 + 0.5) * rect.height;
+      creatorGlobeState.tooltipX = (_tooltipVec.x * 0.5 + 0.5) * rect.width;
+      creatorGlobeState.tooltipY = (_tooltipVec.y * -0.5 + 0.5) * rect.height;
     }
 
-    s.networkRings.forEach((ring) => {
-      if (cAlpha <= 0) { ring.visible = false; return; }
-      const t = (time - ring.userData.delay) % 3;
-      if (t < 0) {
-        ring.visible = false;
-      } else {
-        ring.visible = true;
-        const scale = 1 + t * 3;
-        ring.scale.set(scale, scale, scale);
-        ring.material.opacity = Math.max(0, 0.6 - t / 2) * cAlpha;
-      }
-    });
+    // ── Ring instance updates ──
+    if (s.initialized && ringInstanceRef.current) {
+      if (cAlpha > 0) {
+        ringInstanceRef.current.visible = true;
+        const opacityAttr = ringGeo.attributes.aOpacity;
+        const opacityArr = opacityAttr.array;
 
-    // Hub center dots
-    s.networkDots.forEach((dot) => {
-      dot.material.opacity = cAlpha;
-    });
+        for (let i = 0; i < NUM_RINGS; i++) {
+          const delay = s.ringDelays[i];
+          const t = (time - delay) % 3;
+          if (t < 0) {
+            _scaleVec.set(0, 0, 0);
+            opacityArr[i] = 0;
+          } else {
+            const scale = 1 + t * 3;
+            _scaleVec.set(scale, scale, scale);
+            opacityArr[i] = Math.max(0, 0.6 - t / 2) * cAlpha;
+          }
+          _tmpMat.copy(s.ringBaseMatrices[i]).scale(_scaleVec);
+          ringInstanceRef.current.setMatrixAt(i, _tmpMat);
+        }
+        ringInstanceRef.current.instanceMatrix.needsUpdate = true;
+        opacityAttr.needsUpdate = true;
+      } else {
+        ringInstanceRef.current.visible = false;
+      }
+    }
+
+    // Hub center dots — shared opacity
+    hubDotMat.opacity = cAlpha;
 
     if (s.activeHoverHub) {
       s.trajectoryProgress = Math.min(1.0, s.trajectoryProgress + 0.025);
@@ -605,7 +703,7 @@ export default function CreatorGlobe({ containerRef }) {
           if (autoLineGeoRef.current) autoLineGeoRef.current.setFromPoints(autoCurve.getPoints(50));
           if (autoTargetRingRef.current) {
             autoTargetRingRef.current.position.copy(endPos).multiplyScalar(1.01);
-            autoTargetRingRef.current.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), endPos);
+            autoTargetRingRef.current.quaternion.setFromUnitVectors(_Z_AXIS, endPos);
           }
         }
       } else if (s.autoTrajectoryState === "animating") {
@@ -704,6 +802,22 @@ export default function CreatorGlobe({ containerRef }) {
         />
       </points>
 
+      {/* Instanced rings — 60 → 1 draw call */}
+      <instancedMesh
+        ref={ringInstanceRef}
+        args={[ringGeo, ringInstanceMat, NUM_RINGS]}
+        renderOrder={11}
+        frustumCulled={false}
+      />
+
+      {/* Instanced hub dots — 20 → 1 draw call */}
+      <instancedMesh
+        ref={dotInstanceRef}
+        args={[hubDotGeo, hubDotMat, NUM_HUBS]}
+        renderOrder={12}
+        frustumCulled={false}
+      />
+
       <group ref={trajectoryGroupRef} visible={false}>
         <line>
           <bufferGeometry ref={lineGeoRef} />
@@ -718,11 +832,11 @@ export default function CreatorGlobe({ containerRef }) {
       <group ref={autoTrajectoryGroupRef} visible={false}>
         <line>
           <bufferGeometry ref={autoLineGeoRef} />
-          <primitive object={lineMat.clone()} attach="material" />
+          <primitive object={autoLineMat} attach="material" />
         </line>
         <mesh ref={autoTargetRingRef}>
           <ringGeometry args={[0.05, 0.055, 32]} />
-          <primitive object={ringMat.clone()} attach="material" />
+          <primitive object={autoRingMat} attach="material" />
         </mesh>
       </group>
     </group>
