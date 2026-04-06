@@ -449,7 +449,7 @@ function createBakeResources() {
 // SCENE
 // ============================================
 
-const IS_MOBILE = typeof window !== 'undefined' && window.innerWidth < 768;
+const IS_MOBILE = typeof window !== 'undefined' && window.innerWidth < 1024;
 
 function Scene() {
   const { camera, gl, size, viewport } = useThree();
@@ -696,7 +696,7 @@ export default function GlobalCanvas() {
           powerPreference: "high-performance",
         }}
         camera={{ position: [0, 0, 5], fov: 45 }}
-        dpr={[1, 2]}
+        dpr={IS_MOBILE ? 1 : [1, 2]}
       >
         <Suspense fallback={null}>
           <Scene />

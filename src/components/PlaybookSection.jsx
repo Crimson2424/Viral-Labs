@@ -262,7 +262,7 @@ export default function PlaybookSection() {
       ];
 
       const fired = new Set();
-      const DURATION = 4;
+      const DURATION = window.innerWidth < 1024 ? 6 : 4;
 
       const sweepTween = gsap.to(sweepGroup, {
         rotation: "+=360",

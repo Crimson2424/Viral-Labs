@@ -28,10 +28,11 @@ import { viralityState } from "./Viralitystate";
 // CONFIGURATION
 // ============================================================================
 
-const TEXTURE_SIZE = 512;
+const IS_MOBILE_GL = typeof window !== "undefined" && window.innerWidth < 1024;
+const TEXTURE_SIZE = IS_MOBILE_GL ? 256 : 512;
 
 const CONFIG = {
-  particleCount: 262144,
+  particleCount: IS_MOBILE_GL ? 65536 : 262144,
   pointSize: 0.08,
   sphereRadius: 0.45,
   coreDensity: 1.0,

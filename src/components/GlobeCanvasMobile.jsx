@@ -19,21 +19,18 @@ export default function GlobeCanvasMobile() {
   const containerRef = useRef(null);
 
   useEffect(() => {
-    const apply = () => {
+    creatorGlobeState.constellationOpacity = 1;
+    creatorGlobeState.interactive = false;
+    creatorGlobeState.globeOpacity = 1;
+
+    // Re-apply periodically instead of every frame (60fps → ~4fps check)
+    const intervalId = setInterval(() => {
       creatorGlobeState.constellationOpacity = 1;
-      creatorGlobeState.interactive = false; // no drag/hover on mobile — scroll wins
+      creatorGlobeState.interactive = false;
       creatorGlobeState.globeOpacity = 1;
-    };
-    apply();
+    }, 250);
 
-    let rafId;
-    const tick = () => {
-      apply();
-      rafId = requestAnimationFrame(tick);
-    };
-    rafId = requestAnimationFrame(tick);
-
-    return () => cancelAnimationFrame(rafId);
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
@@ -45,7 +42,7 @@ export default function GlobeCanvasMobile() {
       <Canvas
         camera={{ position: [0, 0, 3.5], fov: 45 }}
         gl={{ antialias: false, alpha: true, powerPreference: "high-performance" }}
-        dpr={[1, 2]}
+        dpr={1}
         style={{ width: "100%", height: "100%", pointerEvents: "none" }}
       >
         <group rotation={[-0.2, 0.64, 1.23]}>

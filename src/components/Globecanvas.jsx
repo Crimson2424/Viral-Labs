@@ -133,23 +133,22 @@ export default function GlobeCanvas() {
         const cnRect = cnEl.getBoundingClientRect();
 
         if (cnRect.top > vh * 0.25) {
-          // Phase 1: approach — nudge globe UP in 3D
           const approach = Math.max(0, 1 - cnRect.top / vh);
           const targetY = GLOBE_ENTRY_Y - (NUDGE_3D * approach);
           creatorGlobeState.globeYOffset += (targetY - creatorGlobeState.globeYOffset) * 0.04;
           offsetY = 0;
         } else if (cnRect.bottom < vh) {
-          // Phase 3: exit
           offsetY = cnRect.top;
         } else {
-          // Phase 2: pinned or post-pin gap
           offsetY = Math.min(0, cnRect.top);
         }
       }
 
-      if (offsetY !== lastOffsetY) {
-        el.style.transform = `translateY(${offsetY}px)`;
-        lastOffsetY = offsetY;
+      // Round to avoid sub-pixel layout thrashing
+      const roundedY = Math.round(offsetY);
+      if (roundedY !== lastOffsetY) {
+        el.style.transform = `translateY(${roundedY}px)`;
+        lastOffsetY = roundedY;
       }
 
       // ── Tooltip ──

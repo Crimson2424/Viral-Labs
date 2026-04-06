@@ -117,10 +117,11 @@ export default forwardRef(function MissionStats(props, ref) {
 
     gsap.set(track, { x: 0 });
 
+    const marqueeDuration = window.innerWidth < 1024 ? 30 : 20;
     function createMarquee(startX) {
       return gsap.fromTo(track,
         { x: startX },
-        { x: startX - setWidth, duration: 20, ease: "none", repeat: -1 }
+        { x: startX - setWidth, duration: marqueeDuration, ease: "none", repeat: -1 }
       );
     }
 
@@ -151,7 +152,9 @@ export default forwardRef(function MissionStats(props, ref) {
     const circumference = 2 * Math.PI * 532;
 
     gsap.set(dashes, { strokeDashoffset: 0 });
-    gsap.to(dashes, { strokeDashoffset: circumference, duration: 60, ease: "none", repeat: -1 });
+    // Slower on mobile to reduce GPU repainting of large SVG strokes
+    const arcDuration = window.innerWidth < 1024 ? 120 : 60;
+    gsap.to(dashes, { strokeDashoffset: circumference, duration: arcDuration, ease: "none", repeat: -1 });
   }, { scope: arcRef });
 
   // ── Stat cycling: odometer initial state ──
