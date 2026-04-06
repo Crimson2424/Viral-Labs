@@ -368,12 +368,12 @@ export default function RocketLaunchSection() {
               transform: "translate(-50%, -50%)",
             }}
           >
-            <img ref={f2Ref} src="/images/rocket/rocket-frame-2.png" alt="" className="w-full h-auto block" draggable={false} />
-            <img ref={f3Ref} src="/images/rocket/rocket-frame-3.png" alt="" className="w-full h-auto block" style={{ marginTop: "-4px" }} draggable={false} />
-            <img ref={f4Ref} src="/images/rocket/rocket-frame-4.png" alt="" className="w-full h-auto block" style={{ marginTop: "-4px" }} draggable={false} />
-            <img ref={f5Ref} src="/images/rocket/rocket-frame-5.png" alt="" className="w-full h-auto block" style={{ marginTop: "-4px" }} draggable={false} />
-            <img ref={f6Ref} src="/images/rocket/rocket-frame-6.png" alt="" className="w-full h-auto block" style={{ marginTop: "-4px" }} draggable={false} />
-            <img ref={f7Ref} src="/images/rocket/rocket-frame-7.png" alt="" className="w-full h-auto block" style={{ marginTop: "-4px" }} draggable={false} />
+            <img ref={f2Ref} src="/images/rocket/rocket-frame-2.webp" alt="" className="w-full h-auto block" width={1604} height={525} draggable={false} />
+            <img ref={f3Ref} src="/images/rocket/rocket-frame-3.webp" alt="" className="w-full h-auto block" width={1604} height={511} style={{ marginTop: "-4px" }} draggable={false} />
+            <img ref={f4Ref} src="/images/rocket/rocket-frame-4.webp" alt="" className="w-full h-auto block" width={1604} height={590} style={{ marginTop: "-4px" }} draggable={false} />
+            <img ref={f5Ref} src="/images/rocket/rocket-frame-5.webp" alt="" className="w-full h-auto block" width={1604} height={221} style={{ marginTop: "-4px" }} draggable={false} />
+            <img ref={f6Ref} src="/images/rocket/rocket-frame-6.webp" alt="" className="w-full h-auto block" width={1604} height={835} style={{ marginTop: "-4px" }} draggable={false} />
+            <img ref={f7Ref} src="/images/rocket/rocket-frame-7.webp" alt="" className="w-full h-auto block" width={1604} height={1085} style={{ marginTop: "-4px" }} draggable={false} />
             <RocketThrustersSvg
               ref={thrusterRef}
               className="block h-auto pointer-events-none w-[36%] -mt-2.5 relative z-[1]"

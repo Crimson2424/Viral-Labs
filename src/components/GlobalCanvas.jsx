@@ -455,7 +455,7 @@ function Scene() {
   const { camera, gl, size, viewport } = useThree();
   const materialRef = useRef();
   const meshRef = useRef();
-  const rawTexture = useLoader(THREE.TextureLoader, IS_MOBILE ? "/images/hero-bg-sm.png" : "/images/bg-image.png");
+  const rawTexture = useLoader(THREE.TextureLoader, IS_MOBILE ? "/images/hero-bg-sm.webp" : "/images/bg-image.webp");
   const texture = useMemo(() => {
     const t = rawTexture.clone();
     t.colorSpace = THREE.SRGBColorSpace;

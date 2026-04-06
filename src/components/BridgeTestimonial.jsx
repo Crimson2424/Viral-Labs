@@ -304,6 +304,8 @@ const BridgeTestimonial = () => {
             ref={shiftLineRef}
             src={ShiftLine}
             alt=""
+            width={763}
+            height={31}
             className="mt-0 h-auto w-full max-w-[48rem] 4xl:max-w-[66rem] 5xl:max-w-[90rem] select-none"
             style={{ opacity: 0 }}
             draggable={false}

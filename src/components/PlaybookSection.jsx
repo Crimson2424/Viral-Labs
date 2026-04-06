@@ -475,7 +475,7 @@ export default function PlaybookSection() {
         {/* ━━━ RECON CARD ━━━ */}
         <div className="pb-card col-span-7 relative isolate h-96 rounded overflow-hidden border border-solid border-[#383838] shadow-lg shadow-black/30 bg-[#171717] ">
           <img src="/images/light ray 1 recon.webp" alt="" className="absolute top-0 left-0 h-full w-auto object-contain pointer-events-none" />
-          <img src="/images/light ray 2 recon.png" alt="" className="absolute top-0 right-0 h-3/5 w-auto object-contain pointer-events-none" />
+          <img src="/images/light ray 2 recon.webp" alt="" className="absolute top-0 right-0 h-3/5 w-auto object-contain pointer-events-none" />
           <GridLinesReconSvg className="absolute top-0 right-0 h-full w-auto opacity-70 pointer-events-none" />
 
           <ReconRadarInlineSvg
@@ -606,7 +606,7 @@ export default function PlaybookSection() {
         {/* ━━━ DEPLOY CARD ━━━ */}
         <div className="pb-card col-span-5 relative isolate h-96 rounded overflow-hidden border border-solid border-[#383838] bg-[#171717] ">
           <img
-            src="/images/lines.png"
+            src="/images/lines.webp"
             alt=""
             className="absolute inset-x-0 bottom-15 w-full h-auto object-contain pointer-events-none mix-blend-plus-lighter"
           />
@@ -656,7 +656,7 @@ export default function PlaybookSection() {
           <img src="/images/light ray 1 optimize.webp" alt="" className="absolute top-0 left-0 h-full w-auto object-contain pointer-events-none" />
           <GridLinesOptimizeSvg className="absolute top-0 left-1/3 h-full w-auto opacity-70 pointer-events-none" />
           <img
-            src="/images/Globe and mobile.png"
+            src="/images/Globe and mobile.webp"
             alt=""
             className="absolute top-5 left-1/4 w-3/4 h-9/10 pointer-events-none object-contain"
           />

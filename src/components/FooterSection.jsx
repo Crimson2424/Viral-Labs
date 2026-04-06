@@ -3,8 +3,8 @@ import { gsap, SplitText, useGSAP } from "./Gsapconfig";
 import GlobalTexture from "./Globaltexture";
 import fontReady from "./fontReady";
 
-/* ─── BG image (drop Footer_BG.png into public/images/) ─── */
-const FooterBG = "/images/Footer_BG.png";
+/* ─── BG image ─── */
+const FooterBG = "/images/Footer_BG.webp";
 
 /* ─── Clock config ─── */
 const CLOCKS = [
@@ -188,7 +188,7 @@ const FooterSection = () => {
       <div className="absolute inset-0">
         {/* Mobile BG */}
         <img
-          src="/images/footer-mobile.png"
+          src="/images/footer-mobile.webp"
           alt=""
           className="absolute -right-[18%] top-0 h-auto w-[55%] object-contain object-top-right md:hidden"
           style={{ mixBlendMode: "lighten" }}

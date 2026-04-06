@@ -300,7 +300,7 @@ export default function SignalsSection() {
 
             {/* Mobile fallback background */}
             <img
-              src="/images/signal-mobile.png"
+              src="/images/signal-mobile.webp"
               alt=""
               className="absolute inset-0 z-1 h-full w-full object-cover mix-blend-lighten lg:hidden object-[25%] md:object-[30%]"
               draggable={false}

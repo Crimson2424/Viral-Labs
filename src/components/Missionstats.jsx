@@ -75,11 +75,11 @@ const DashedArc = forwardRef(({ className = "" }, ref) => (
 ));
 
 const LOGOS = [
-  { src: "/images/Logo 1.png", alt: "Logo" },
-  { src: "/images/idag8zcHyV_1773986487960 1.png", alt: "Deel" },
-  { src: "/images/Dr._Martens_Logo 1.png", alt: "Dr. Martens" },
-  { src: "/images/flo-svg 1.png", alt: "Flo" },
-  { src: "/images/Vector.png", alt: "The North Face" },
+  { src: "/images/Logo 1.png", alt: "Logo", width: 168, height: 58 },
+  { src: "/images/idag8zcHyV_1773986487960 1.png", alt: "Deel", width: 156, height: 73 },
+  { src: "/images/Dr._Martens_Logo 1.png", alt: "Dr. Martens", width: 162, height: 92 },
+  { src: "/images/flo-svg 1.png", alt: "Flo", width: 163, height: 75 },
+  { src: "/images/Vector.png", alt: "The North Face", width: 60, height: 73 },
 ];
 
 // ════════════════════════════════════════════════
@@ -412,6 +412,8 @@ export default forwardRef(function MissionStats(props, ref) {
                     key={`${setKey}-${i}`}
                     src={logo.src}
                     alt={logo.alt}
+                    width={logo.width}
+                    height={logo.height}
                     className="screen-card h-15 max-mob:h-10 4xl:h-20 5xl:h-24 w-auto object-contain opacity-0 grayscale brightness-75 transition-all duration-300 ease-out hover:brightness-150 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]"
                   />
                 ))}
