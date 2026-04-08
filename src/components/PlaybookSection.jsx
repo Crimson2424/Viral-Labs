@@ -474,8 +474,8 @@ export default function PlaybookSection() {
 
         {/* ━━━ RECON CARD ━━━ */}
         <div className="pb-card col-span-7 relative isolate h-96 rounded overflow-hidden border border-solid border-[#383838] shadow-lg shadow-black/30 bg-[#171717] ">
-          <img src="/images/light ray 1 recon.webp" alt="" className="absolute top-0 left-0 h-full w-auto object-contain pointer-events-none" />
-          <img src="/images/light ray 2 recon.webp" alt="" className="absolute top-0 right-0 h-3/5 w-auto object-contain pointer-events-none" />
+          <img src="/images/light ray 1 recon.webp" alt="" className="absolute top-0 left-0 h-full w-auto object-contain pointer-events-none" loading="lazy" />
+          <img src="/images/light ray 2 recon.webp" alt="" className="absolute top-0 right-0 h-3/5 w-auto object-contain pointer-events-none" loading="lazy" />
           <GridLinesReconSvg className="absolute top-0 right-0 h-full w-auto opacity-70 pointer-events-none" />
 
           <ReconRadarInlineSvg
@@ -483,7 +483,7 @@ export default function PlaybookSection() {
             className="absolute top-0 right-0 h-full w-auto pointer-events-none"
           />
 
-          <img src="/images/cubes.png" alt="" className="absolute bottom-2 right-2 w-4 sm:w-5 md:w-6 object-contain pointer-events-none" />
+          <img src="/images/cubes.png" alt="" className="absolute bottom-2 right-2 w-4 sm:w-5 md:w-6 object-contain pointer-events-none" loading="lazy" />
 
           <div className="absolute z-10 top-6 left-5 sm:top-8 sm:left-6 lg:top-10 lg:left-7">
             <h3 className="font-bricolage font-medium text-4xl text-[#dddddd] tracking-tighter">
@@ -609,6 +609,7 @@ export default function PlaybookSection() {
             src="/images/lines.webp"
             alt=""
             className="absolute inset-x-0 bottom-15 w-full h-auto object-contain pointer-events-none mix-blend-plus-lighter"
+            loading="lazy"
           />
 
           {/* Mobile screens — two-column scrolling marquee */}
@@ -622,6 +623,7 @@ export default function PlaybookSection() {
                     src="/images/mobile.png"
                     alt=""
                     className="w-full h-auto object-contain"
+                    loading="lazy"
                   />
                 ))}
               </div>
@@ -633,6 +635,7 @@ export default function PlaybookSection() {
                     src="/images/mobile.png"
                     alt=""
                     className="w-full h-auto object-contain"
+                    loading="lazy"
                   />
                 ))}
               </div>
@@ -653,15 +656,15 @@ export default function PlaybookSection() {
 
         {/* ━━━ OPTIMIZE CARD ━━━ */}
         <div className="pb-card col-span-7 relative isolate h-96 rounded overflow-hidden border border-solid border-[#383838] bg-[#171717] ">
-          <img src="/images/light ray 1 optimize.webp" alt="" className="absolute top-0 left-0 h-full w-auto object-contain pointer-events-none" />
+          <img src="/images/light ray 1 optimize.webp" alt="" className="absolute top-0 left-0 h-full w-auto object-contain pointer-events-none" loading="lazy" />
           <GridLinesOptimizeSvg className="absolute top-0 left-1/3 h-full w-auto opacity-70 pointer-events-none" />
           <img
             src="/images/Globe and mobile.webp"
             alt=""
             className="absolute top-5 left-1/4 w-3/4 h-9/10 pointer-events-none object-contain"
           />
-          <img src="/images/light ray 2 optimize.webp" alt="" className="absolute bottom-0 right-0 h-28 w-auto object-contain pointer-events-none" />
-          <img src="/images/cubes.png" alt="" className="absolute bottom-2 right-2 w-4 sm:w-5 md:w-6 object-contain pointer-events-none" />
+          <img src="/images/light ray 2 optimize.webp" alt="" className="absolute bottom-0 right-0 h-28 w-auto object-contain pointer-events-none" loading="lazy" />
+          <img src="/images/cubes.png" alt="" className="absolute bottom-2 right-2 w-4 sm:w-5 md:w-6 object-contain pointer-events-none" loading="lazy" />
 
           <div className="absolute z-10 top-6 left-5 sm:top-8 sm:left-6 lg:top-10 lg:left-7">
             <h3 className="font-bricolage font-medium text-4xl text-[#dddddd] tracking-tighter">

@@ -630,7 +630,7 @@ export default function HeroSection() {
       {/* ═══ Hero Content ═══ */}
       <div
         ref={heroContentRef}
-        className="absolute inset-x-0 top-0 z-[10] min-h-svh overflow-hidden"
+        className="absolute inset-x-0 top-0 z-[10] min-h-screen overflow-hidden"
       >
         <GridOverlay ref={gridOverlayRef} showTexture={true}>
           <Navbar entranceDelay={6.2} />

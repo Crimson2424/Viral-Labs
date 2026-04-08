@@ -131,6 +131,14 @@ function AccordionItem({
   // Store resolved elements + split instances so the close handler can access them.
   const closeTargetsRef = useRef(null);
 
+  // Cursor-follow "Click me" label
+  const cursorLabelRef = useRef(null);
+  const cursorCornersRef = useRef(null);
+  const isHoveringRef = useRef(false);
+  const isActiveRef = useRef(isActive);
+  const showCursorLabelRef = useRef(null);
+  const hideCursorLabelRef = useRef(null);
+
   // Play forward for open, run custom synchronized close for close.
   useEffect(() => {
     if (!tlRef.current || !closeTargetsRef.current) return;
@@ -168,6 +176,16 @@ function AccordionItem({
       closeTl.to(t.statItems, { opacity: 0, y: 20, duration: D * 0.4, stagger: 0.03, ease: "power2.in" }, 0);
 
       closeTlRef.current = closeTl;
+    }
+  }, [isActive]);
+
+  // Mirror isActive into a ref so hover handlers see the latest value
+  // without re-binding listeners. If the user opens the accordion while
+  // hovering, force the label to hide.
+  useEffect(() => {
+    isActiveRef.current = isActive;
+    if (isActive && isHoveringRef.current && hideCursorLabelRef.current) {
+      hideCursorLabelRef.current();
     }
   }, [isActive]);
 
@@ -245,6 +263,109 @@ function AccordionItem({
     { scope: containerRef, dependencies: [expandedHeight] }
   );
 
+  // ── Cursor-follow "Click me" label (desktop only) ──
+  useGSAP(
+    () => {
+      if (typeof window === "undefined") return;
+      const mql = window.matchMedia("(hover: hover) and (pointer: fine)");
+      if (!mql.matches) return;
+
+      const header = headerRef.current;
+      const label = cursorLabelRef.current;
+      const cornersWrap = cursorCornersRef.current;
+      if (!header || !label || !cornersWrap) return;
+
+      const corners = cornersWrap.querySelectorAll("path");
+
+      // Initial state: hidden, centered on cursor via xPercent/yPercent
+      gsap.set(label, { opacity: 0, scale: 0.85, xPercent: -50, yPercent: -50, x: 0, y: 0 });
+      gsap.set(corners, { drawSVG: "50% 50%" });
+
+      let xTo = gsap.quickTo(label, "x", { duration: 0.4, ease: "power3.out" });
+      let yTo = gsap.quickTo(label, "y", { duration: 0.4, ease: "power3.out" });
+      let rotateTo = gsap.quickTo(label, "rotation", { duration: 0.6, ease: "power3.out" });
+      let lastX = 0;
+      let lastT = 0;
+
+      let activeTl = null;
+
+      const show = () => {
+        activeTl?.kill();
+        activeTl = gsap.timeline()
+          .to(label, { opacity: 1, scale: 1, duration: 0.4, ease: "power3.out" }, 0)
+          .to(corners, { drawSVG: "0% 100%", duration: 0.55, ease: "power3.out" }, 0);
+      };
+
+      const hide = () => {
+        activeTl?.kill();
+        activeTl = gsap.timeline()
+          .to(label, { opacity: 0, scale: 0.85, duration: 0.3, ease: "power3.in" }, 0)
+          .to(corners, { drawSVG: "50% 50%", duration: 0.3, ease: "power3.in" }, 0);
+      };
+
+      showCursorLabelRef.current = show;
+      hideCursorLabelRef.current = hide;
+
+      const onEnter = (e) => {
+        if (isActiveRef.current) return;
+        isHoveringRef.current = true;
+        const rect = header.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        // Kill stale tweens from previous hover cycle
+        gsap.killTweensOf(label, "x,y,rotation");
+        // Snap to cursor
+        gsap.set(label, { x, y, rotation: 0 });
+        // Recreate quickTo functions so they start fresh from current position
+        xTo = gsap.quickTo(label, "x", { duration: 0.4, ease: "power3.out" });
+        yTo = gsap.quickTo(label, "y", { duration: 0.4, ease: "power3.out" });
+        rotateTo = gsap.quickTo(label, "rotation", { duration: 0.6, ease: "power3.out" });
+        lastX = x;
+        lastT = 0;
+        show();
+      };
+
+      const onMove = (e) => {
+        if (!isHoveringRef.current || isActiveRef.current) return;
+        const rect = header.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        xTo(x);
+        yTo(y);
+
+        // Velocity-based tilt: clamp to ±15deg
+        const now = performance.now();
+        const dt = now - lastT;
+        if (dt > 0 && lastT !== 0) {
+          const vx = (x - lastX) / dt; // px per ms
+          const tilt = gsap.utils.clamp(-15, 15, vx * 8);
+          rotateTo(tilt);
+        }
+        lastX = x;
+        lastT = now;
+      };
+
+      const onLeave = () => {
+        if (!isHoveringRef.current) return;
+        isHoveringRef.current = false;
+        lastT = 0;
+        rotateTo(0);
+        hide();
+      };
+
+      header.addEventListener("mouseenter", onEnter);
+      header.addEventListener("mousemove", onMove);
+      header.addEventListener("mouseleave", onLeave);
+
+      return () => {
+        header.removeEventListener("mouseenter", onEnter);
+        header.removeEventListener("mousemove", onMove);
+        header.removeEventListener("mouseleave", onLeave);
+      };
+    },
+    { scope: containerRef }
+  );
+
   const itemStyle = absolutePos
     ? { position: "absolute", top: absolutePos.top, left: 0, right: 0 }
     : undefined;
@@ -264,6 +385,31 @@ function AccordionItem({
 
       <div ref={headerRef} className="relative z-10">
         <HeaderRowContent data={data} bgClass="border-t border-[#FF6F21]/70" textClass="text-white" />
+
+        {/* Cursor-follow "Click me" label — desktop only via JS gating */}
+        <div
+          ref={cursorLabelRef}
+          className="pointer-events-none absolute top-0 left-0 z-30 will-change-transform hidden lg:block"
+          aria-hidden="true"
+        >
+          <div ref={cursorCornersRef} className="relative px-7 py-4">
+            <svg className="absolute top-0 left-0 overflow-visible" width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M13 1 L1 1 L1 13" stroke="#FF6F21" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <svg className="absolute top-0 right-0 overflow-visible" width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M1 1 L13 1 L13 13" stroke="#FF6F21" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <svg className="absolute bottom-0 left-0 overflow-visible" width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M1 1 L1 13 L13 13" stroke="#FF6F21" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <svg className="absolute bottom-0 right-0 overflow-visible" width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M13 1 L13 13 L1 13" stroke="#FF6F21" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <span className="block font-bricolage text-[#FF6F21] text-xl leading-none whitespace-nowrap tracking-tight">
+              Click me
+            </span>
+          </div>
+        </div>
       </div>
 
       <div ref={contentWrapRef} className="relative z-10 -mt-px">

@@ -351,7 +351,7 @@ export default forwardRef(function MissionStats(props, ref) {
 
   return (
     <div ref={wrapperRef} className="relative w-full min-h-screen overflow-visible">
-     <div className="relative mx-auto w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem] min-h-svh flex flex-col">
+     <div className="relative mx-auto w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem] min-h-screen flex flex-col">
 
       {/* Grid lines */}
       <div className="pointer-events-none absolute inset-y-0 left-0 w-px bg-white/20 z-50" aria-hidden="true" />
@@ -417,6 +417,7 @@ export default forwardRef(function MissionStats(props, ref) {
                     alt={logo.alt}
                     width={logo.width}
                     height={logo.height}
+                    loading="lazy"
                     className="screen-card h-15 max-mob:h-10 4xl:h-20 5xl:h-24 w-auto object-contain opacity-0 grayscale brightness-75 transition-all duration-300 ease-out hover:brightness-150 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]"
                   />
                 ))}

@@ -285,6 +285,7 @@ const BridgeTestimonial = () => {
             alt="quote"
             className="mb-5 h-9 w-10 select-none opacity-80 sm:mb-6 sm:h-8 sm:w-10 md:mb-4 md:h-7 md:w-8 4xl:h-12 4xl:w-14 5xl:h-14 5xl:w-16"
             draggable={false}
+            loading="lazy"
           />
 
           {/* ─── Quote text + decorative cubes ─── */}

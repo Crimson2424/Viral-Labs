@@ -108,8 +108,29 @@ export default function ViralitySection({ globeContainerRef }) {
       // Globe glow — hidden
       gsap.set(glowRef.current, { opacity: 0, scale: 0.6 });
 
-      // Mobile globe video — hidden
-      gsap.set(mobileGlobeRef.current, { opacity: 0, scale: 0.85, filter: "blur(10px)" });
+      // Mobile globe video — hidden; load video source when section is near
+      if (mobileGlobeRef.current) {
+        gsap.set(mobileGlobeRef.current, { opacity: 0, scale: 0.85, filter: "blur(10px)" });
+        const vid = mobileGlobeRef.current;
+
+        // Check if browser supports HEVC with alpha (Safari on iOS/macOS only)
+        const probe = document.createElement("video");
+        const supportsHEVCAlpha = probe.canPlayType('video/mp4; codecs="hvc1"') === "probably";
+
+        const io = new IntersectionObserver(([e]) => {
+          if (e.isIntersecting) {
+            if (supportsHEVCAlpha) {
+              vid.src = "/videos/Globe ProRes 44 HEVC-hevc-safari.mp4";
+            } else {
+              vid.src = "/videos/globevideo.webm";
+              vid.style.mixBlendMode = "lighten";
+            }
+            vid.play().catch(() => {});
+            io.disconnect();
+          }
+        }, { rootMargin: "200px" });
+        io.observe(sectionRef.current);
+      }
 
       // Cards — hidden, offset from their final positions
       gsap.set(".v-card-tl", {
@@ -259,10 +280,12 @@ export default function ViralitySection({ globeContainerRef }) {
       }, 22);
 
       // ── Mobile globe + glow-globe fade-in (small screens only) ──
-      tl.to(mobileGlobeRef.current, {
-        opacity: 1, scale: 1, filter: "blur(0px)",
-        duration: 20, ease: "power3.out",
-      }, 22);
+      if (mobileGlobeRef.current) {
+        tl.to(mobileGlobeRef.current, {
+          opacity: 1, scale: 1, filter: "blur(0px)",
+          duration: 20, ease: "power3.out",
+        }, 22);
+      }
 
       // ── PHASE B — GLOBE GLOW ──
       tl.to(glowRef.current, {
@@ -326,18 +349,16 @@ export default function ViralitySection({ globeContainerRef }) {
         {isDesktop && <div ref={globeContainerRef} className="absolute -top-40 bottom-0 w-full -translate-y-12" />}
       </div>
 
-      {/* Globe video for small screens */}
-      <video
+      {/* Globe video for small screens — only rendered on mobile, deferred load */}
+      {!isDesktop && <video
         ref={mobileGlobeRef}
-        src="/videos/globevideo.webm"
-        autoPlay
+        preload="none"
         loop
         muted
         playsInline
         aria-hidden="true"
-        className="absolute left-1/2 -translate-x-1/2 top-[18.5%] max-sm:top-[14%] max-mob:top-[10%] mob:top-[9%] md:top-[15%] w-[90vw] max-mob:w-[200vw] mob:w-[205vw] sm:w-[140vw] md:w-[160vw] max-mob:max-w-none mob:max-w-none sm:max-w-none md:max-w-none object-contain lg:hidden pointer-events-none z-10"
-        style={{ mixBlendMode: "lighten" }}
-      />
+        className="absolute left-1/2 -translate-x-1/2 top-[18.5%] max-sm:top-[14%] max-mob:top-[10%] mob:top-[9%] md:top-[15%] w-[90vw] max-mob:w-[200vw] mob:w-[205vw] sm:w-[140vw] md:w-[160vw] max-mob:max-w-none mob:max-w-none sm:max-w-none md:max-w-none object-contain pointer-events-none z-10"
+      />}
 
       <GlobalGrid />
       <GlobalTexture />
@@ -350,7 +371,7 @@ export default function ViralitySection({ globeContainerRef }) {
       
 
       {/* ═══ Main viewport content — heading + cards fit within 100vh ═══ */}
-      <div className="relative z-40 px-[clamp(0.75rem,3vw,3rem)] max-sm:px-2 max-mob:px-3 pt-8 pointer-events-none h-auto min-h-svh md:h-svh md:pb-20">
+      <div className="relative z-40 px-[clamp(0.75rem,3vw,3rem)] max-sm:px-2 max-mob:px-3 pt-8 pointer-events-none h-auto min-h-screen md:h-screen md:pb-20">
 
         <div ref={headerRef} className="flex flex-col items-center gap-1 mb-4 md:mb-6 xl:mb-12" style={{ perspective: "600px" }}>
           <p className="v-label virality-label font-host text-xs md:text-base lg:text-xs xl:text-xs 4xl:text-lg 5xl:text-xl text-[#ff6f21] text-center leading-none">
@@ -368,7 +389,7 @@ export default function ViralitySection({ globeContainerRef }) {
 
         <div className="relative md:hidden w-full h-16 -mt-16 z-20 pointer-events-none" />
 
-        <div className="relative mx-auto max-w-6xl 3xl:max-w-7xl 4xl:max-w-[90rem] 5xl:max-w-[120rem] min-h-0 md:min-h-[31.25rem] h-auto md:h-[calc(100svh-10rem)] xl:h-[calc(100svh-12.5rem)]">
+        <div className="relative mx-auto max-w-6xl 3xl:max-w-7xl 4xl:max-w-[90rem] 5xl:max-w-[120rem] min-h-0 md:min-h-[31.25rem] h-auto md:h-[calc(100vh-10rem)] xl:h-[calc(100vh-12.5rem)]">
 
           <div className="grid grid-cols-1 gap-8 md:gap-0 px-2 md:px-0 md:contents md:bg-transparent p-2 md:p-0 rounded-lg md:rounded-none overflow-visible">
 

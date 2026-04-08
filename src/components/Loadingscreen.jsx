@@ -37,6 +37,8 @@ const WhiteLine = () => (
   </svg>
 );
 
+const IS_MOBILE_LOADER = typeof window !== "undefined" && window.innerWidth < 1024;
+
 const OrangeLine = () => (
   <svg
     className="w-full h-full"
@@ -49,14 +51,17 @@ const OrangeLine = () => (
     <g filter="url(#glow-ambient)">
       <line x1="0" y1="10" x2="107" y2="10" stroke="#FF3D00" strokeWidth="1" />
     </g>
-    {/* Mid glow */}
-    <g filter="url(#glow-mid)">
-      <line x1="0" y1="10" x2="107" y2="10" stroke="#FF5522" strokeWidth="2" />
-    </g>
-    {/* Inner glow */}
-    <g filter="url(#glow-inner)">
-      <line x1="0" y1="10" x2="107" y2="10" stroke="#FF6B35" strokeWidth="1.5" />
-    </g>
+    {/* Mid + inner glow — skip on mobile */}
+    {!IS_MOBILE_LOADER && (
+      <>
+        <g filter="url(#glow-mid)">
+          <line x1="0" y1="10" x2="107" y2="10" stroke="#FF5522" strokeWidth="2" />
+        </g>
+        <g filter="url(#glow-inner)">
+          <line x1="0" y1="10" x2="107" y2="10" stroke="#FF6B35" strokeWidth="1.5" />
+        </g>
+      </>
+    )}
     {/* Core line — bright orange */}
     <line x1="0" y1="10" x2="107" y2="10" stroke="#FF6A2A" strokeWidth="1" />
     {/* Hot white center */}
@@ -69,16 +74,20 @@ const OrangeLine = () => (
         <feBlend mode="normal" in="SourceGraphic" in2="bg" result="shape" />
         <feGaussianBlur stdDeviation="4" result="blur" />
       </filter>
-      <filter id="glow-mid" x="-5" y="2" width="117" height="16" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood floodOpacity="0" result="bg" />
-        <feBlend mode="normal" in="SourceGraphic" in2="bg" result="shape" />
-        <feGaussianBlur stdDeviation="2.5" result="blur" />
-      </filter>
-      <filter id="glow-inner" x="-3" y="4" width="113" height="12" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood floodOpacity="0" result="bg" />
-        <feBlend mode="normal" in="SourceGraphic" in2="bg" result="shape" />
-        <feGaussianBlur stdDeviation="1.2" result="blur" />
-      </filter>
+      {!IS_MOBILE_LOADER && (
+        <>
+          <filter id="glow-mid" x="-5" y="2" width="117" height="16" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+            <feFlood floodOpacity="0" result="bg" />
+            <feBlend mode="normal" in="SourceGraphic" in2="bg" result="shape" />
+            <feGaussianBlur stdDeviation="2.5" result="blur" />
+          </filter>
+          <filter id="glow-inner" x="-3" y="4" width="113" height="12" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+            <feFlood floodOpacity="0" result="bg" />
+            <feBlend mode="normal" in="SourceGraphic" in2="bg" result="shape" />
+            <feGaussianBlur stdDeviation="1.2" result="blur" />
+          </filter>
+        </>
+      )}
       <filter id="glow-core" x="-2" y="5" width="111" height="10" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
         <feFlood floodOpacity="0" result="bg" />
         <feBlend mode="normal" in="SourceGraphic" in2="bg" result="shape" />

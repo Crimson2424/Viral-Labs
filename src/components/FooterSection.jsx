@@ -193,6 +193,7 @@ const FooterSection = () => {
           className="absolute -right-[18%] top-0 h-auto w-[55%] object-contain object-top-right md:hidden"
           style={{ mixBlendMode: "lighten" }}
           draggable={false}
+          loading="lazy"
         />
         {/* Desktop BG */}
         <img
@@ -201,6 +202,7 @@ const FooterSection = () => {
           className="w-full h-full object-cover hidden md:block"
           style={{ mixBlendMode: "lighten" }}
           draggable={false}
+          loading="lazy"
         />
       </div>
 
@@ -208,7 +210,7 @@ const FooterSection = () => {
       <div className="relative z-10 mx-auto flex h-full flex-col w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem]">
 
         {/* ═══ CTA AREA ═══ */}
-        <div className="flex flex-1 flex-col items-start md:items-center pt-40 max-mob:pt-28 pb-12 max-mob:pb-8 text-left md:text-center px-6 max-mob:px-4 sm:pt-36 sm:pb-12 md:px-0 md:pt-56 md:pb-4 lg:pt-85 lg:pb-6 xl:pt-106 xl:pb-8 2xl:pt-128 2xl:pb-10 3xl:pt-160 3xl:pb-12 4xl:pt-212 4xl:pb-16 5xl:pt-320 5xl:pb-24">
+        <div className="flex flex-1 flex-col items-start md:items-center pt-40 max-mob:pt-28 pb-12 max-mob:pb-8 text-left md:text-center px-6 max-mob:px-4 sm:pt-36 sm:pb-12 md:px-0 md:pt-56 md:pb-4 lg:pt-85 lg:pb-6 xl:pt-106 xl:pb-8 2xl:pt-128 2xl:pb-10 3xl:pt-160 3xl:pb-12 4xl:pt-256 4xl:pb-16 5xl:pt-384 5xl:pb-24">
           {/* Heading */}
           <h2
             ref={headingRef}
