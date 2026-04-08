@@ -696,14 +696,12 @@ function BloomController({ bloomRef }) {
 
 export default function GlobalCanvas() {
   const bloomRef = useRef();
-  // Lock height on mount so mobile browser chrome show/hide doesn't resize canvas
-  const lockedHeight = useRef(window.innerHeight);
 
   return (
     <div
       id="global-canvas"
-      className="fixed top-0 left-0 w-full z-[5]"
-      style={{ pointerEvents: "none", height: lockedHeight.current }}
+      className="fixed top-0 left-0 w-full h-screen z-[5]"
+      style={{ pointerEvents: "none" }}
     >
       <Canvas
         gl={{
