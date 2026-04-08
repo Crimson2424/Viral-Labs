@@ -509,17 +509,31 @@ function Scene() {
   useEffect(() => {
     bakeNoise(size.width, size.height);
 
-    const handleResize = () => {
-      clearTimeout(debounceRef.current);
-      debounceRef.current = setTimeout(() => {
-        bakeNoise(
-          gl.domElement.clientWidth,
-          gl.domElement.clientHeight
-        );
-      }, 200);
-    };
+    // On mobile, only rebake on orientation change (not browser chrome show/hide)
+    const handleResize = IS_MOBILE
+      ? null
+      : () => {
+          clearTimeout(debounceRef.current);
+          debounceRef.current = setTimeout(() => {
+            bakeNoise(
+              gl.domElement.clientWidth,
+              gl.domElement.clientHeight
+            );
+          }, 200);
+        };
 
-    window.addEventListener("resize", handleResize);
+    if (handleResize) window.addEventListener("resize", handleResize);
+
+    if (IS_MOBILE) {
+      const onOrient = () => setTimeout(() => bakeNoise(gl.domElement.clientWidth, gl.domElement.clientHeight), 200);
+      window.addEventListener("orientationchange", onOrient);
+      return () => {
+        window.removeEventListener("orientationchange", onOrient);
+        clearTimeout(debounceRef.current);
+        if (rtRef.current) rtRef.current.dispose();
+        if (bakeRef.current) { bakeRef.current.geometry.dispose(); bakeRef.current.material.dispose(); }
+      };
+    }
 
     return () => {
       window.removeEventListener("resize", handleResize);
@@ -682,12 +696,14 @@ function BloomController({ bloomRef }) {
 
 export default function GlobalCanvas() {
   const bloomRef = useRef();
+  // Lock height on mount so mobile browser chrome show/hide doesn't resize canvas
+  const lockedHeight = useRef(window.innerHeight);
 
   return (
     <div
       id="global-canvas"
-      className="fixed inset-0 z-[5]"
-      style={{ pointerEvents: "none" }}
+      className="fixed top-0 left-0 w-full z-[5]"
+      style={{ pointerEvents: "none", height: lockedHeight.current }}
     >
       <Canvas
         gl={{
@@ -697,6 +713,7 @@ export default function GlobalCanvas() {
         }}
         camera={{ position: [0, 0, 5], fov: 45 }}
         dpr={IS_MOBILE ? 1 : [1, 2]}
+        resize={{ scroll: false }}
       >
         <Suspense fallback={null}>
           <Scene />
