@@ -174,13 +174,7 @@ export default function Navbar({ entranceDelay = 0.3 }) {
       fontReady.then(() => {
         if (cancelled) return;
 
-      // ── Audio setup ──
-      if (!audioRef.current) {
-        const audio = new Audio("/audio/music.mp3.mpeg");
-        audio.loop = true;
-        audio.volume = 0.5;
-        audioRef.current = audio;
-      }
+      // ── Audio setup deferred to first user interaction (see handleSoundToggle) ──
 
       // ── Initial states ──
       gsap.set(navRef.current, { yPercent: -120 });
@@ -327,14 +321,17 @@ export default function Navbar({ entranceDelay = 0.3 }) {
     const next = !isSoundPlaying;
     setIsSoundPlaying(next);
 
-    // ── Audio control ──
-    const audio = audioRef.current;
-    if (audio) {
-      if (next) {
-        audio.play().catch(() => {});
-      } else {
-        audio.pause();
+    // ── Audio control — lazy-create on first play ──
+    if (next) {
+      if (!audioRef.current) {
+        const a = new Audio("/audio/music.mp3.mpeg");
+        a.loop = true;
+        a.volume = 0.5;
+        audioRef.current = a;
       }
+      audioRef.current.play().catch(() => {});
+    } else if (audioRef.current) {
+      audioRef.current.pause();
     }
 
     // ── Wave amplitude ──

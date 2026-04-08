@@ -162,34 +162,18 @@ export const NavGlowLine = forwardRef(({ className = "" }, ref) => (
     <g filter="url(#navGlow2)" style={{ mixBlendMode: "plus-lighter" }}>
       <line x1="11" y1="11.5" x2="77" y2="11.5" stroke="#FF6F21" />
     </g>
-    <g filter="url(#navGlow3)" style={{ mixBlendMode: "plus-lighter" }}>
-      <line x1="11" y1="11.5" x2="77" y2="11.5" stroke="#FF6F21" />
-    </g>
-    <g filter="url(#navGlow4)" style={{ mixBlendMode: "plus-lighter" }}>
-      <line x1="11" y1="11.5" x2="77" y2="11.5" stroke="#FF6F21" />
-    </g>
     <defs>
       <filter id="navGlow0" x="10" y="10" width="68" height="3" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
         <feFlood floodOpacity="0" result="BackgroundImageFix" />
         <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
         <feGaussianBlur stdDeviation="0.5" result="effect1" />
       </filter>
-      <filter id="navGlow1" x="10" y="10" width="68" height="3" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="0.5" result="effect1" />
-      </filter>
-      <filter id="navGlow2" x="5" y="5" width="78" height="13" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+      <filter id="navGlow1" x="5" y="5" width="78" height="13" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
         <feFlood floodOpacity="0" result="BackgroundImageFix" />
         <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
         <feGaussianBlur stdDeviation="3" result="effect1" />
       </filter>
-      <filter id="navGlow3" x="5" y="5" width="78" height="13" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="3" result="effect1" />
-      </filter>
-      <filter id="navGlow4" x="0" y="0" width="88" height="23" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+      <filter id="navGlow2" x="0" y="0" width="88" height="23" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
         <feFlood floodOpacity="0" result="BackgroundImageFix" />
         <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
         <feGaussianBlur stdDeviation="5.5" result="effect1" />
@@ -218,34 +202,18 @@ export const CtaGlowLine = forwardRef(({ className = "" }, ref) => (
     <g filter="url(#ctaGlow2)" style={{ mixBlendMode: "plus-lighter" }}>
       <line x1="11" y1="11.5" x2="171" y2="11.5" stroke="#FF6F21" />
     </g>
-    <g filter="url(#ctaGlow3)" style={{ mixBlendMode: "plus-lighter" }}>
-      <line x1="11" y1="11.5" x2="171" y2="11.5" stroke="#FF6F21" />
-    </g>
-    <g filter="url(#ctaGlow4)" style={{ mixBlendMode: "plus-lighter" }}>
-      <line x1="11" y1="11.5" x2="171" y2="11.5" stroke="#FF6F21" />
-    </g>
     <defs>
       <filter id="ctaGlow0" x="10" y="10" width="162" height="3" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
         <feFlood floodOpacity="0" result="BackgroundImageFix" />
         <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
         <feGaussianBlur stdDeviation="0.5" result="effect1" />
       </filter>
-      <filter id="ctaGlow1" x="10" y="10" width="162" height="3" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="0.5" result="effect1" />
-      </filter>
-      <filter id="ctaGlow2" x="5" y="5" width="172" height="13" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+      <filter id="ctaGlow1" x="5" y="5" width="172" height="13" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
         <feFlood floodOpacity="0" result="BackgroundImageFix" />
         <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
         <feGaussianBlur stdDeviation="3" result="effect1" />
       </filter>
-      <filter id="ctaGlow3" x="5" y="5" width="172" height="13" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="3" result="effect1" />
-      </filter>
-      <filter id="ctaGlow4" x="0" y="0" width="182" height="23" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+      <filter id="ctaGlow2" x="0" y="0" width="182" height="23" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
         <feFlood floodOpacity="0" result="BackgroundImageFix" />
         <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
         <feGaussianBlur stdDeviation="5.5" result="effect1" />
@@ -273,34 +241,18 @@ export const CardGlowH = forwardRef(({ className = "" }, ref) => (
     <g filter="url(#cardGlowH2)" style={{ mixBlendMode: "plus-lighter" }}>
       <line x1="11" y1="11.5" x2="71" y2="11.5" stroke="#F05A1F" />
     </g>
-    <g filter="url(#cardGlowH3)" style={{ mixBlendMode: "plus-lighter" }}>
-      <line x1="11" y1="11.5" x2="71" y2="11.5" stroke="#F05A1F" />
-    </g>
-    <g filter="url(#cardGlowH4)" style={{ mixBlendMode: "plus-lighter" }}>
-      <line x1="11" y1="11.5" x2="71" y2="11.5" stroke="#F05A1F" />
-    </g>
     <defs>
       <filter id="cardGlowH0" x="10" y="10" width="62" height="3" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
         <feFlood floodOpacity="0" result="BackgroundImageFix" />
         <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
         <feGaussianBlur stdDeviation="0.5" result="effect1" />
       </filter>
-      <filter id="cardGlowH1" x="10" y="10" width="62" height="3" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="0.5" result="effect1" />
-      </filter>
-      <filter id="cardGlowH2" x="5" y="5" width="72" height="13" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+      <filter id="cardGlowH1" x="5" y="5" width="72" height="13" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
         <feFlood floodOpacity="0" result="BackgroundImageFix" />
         <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
         <feGaussianBlur stdDeviation="3" result="effect1" />
       </filter>
-      <filter id="cardGlowH3" x="5" y="5" width="72" height="13" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="3" result="effect1" />
-      </filter>
-      <filter id="cardGlowH4" x="0" y="0" width="82" height="23" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+      <filter id="cardGlowH2" x="0" y="0" width="82" height="23" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
         <feFlood floodOpacity="0" result="BackgroundImageFix" />
         <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
         <feGaussianBlur stdDeviation="5.5" result="effect1" />
@@ -329,34 +281,18 @@ export const CardGlowV = forwardRef(({ className = "" }, ref) => (
     <g filter="url(#cardGlowV2)" style={{ mixBlendMode: "plus-lighter" }}>
       <line x1="11.5" y1="111" x2="11.5" y2="11" stroke="#F05A1F" />
     </g>
-    <g filter="url(#cardGlowV3)" style={{ mixBlendMode: "plus-lighter" }}>
-      <line x1="11.5" y1="111" x2="11.5" y2="11" stroke="#F05A1F" />
-    </g>
-    <g filter="url(#cardGlowV4)" style={{ mixBlendMode: "plus-lighter" }}>
-      <line x1="11.5" y1="111" x2="11.5" y2="11" stroke="#F05A1F" />
-    </g>
     <defs>
       <filter id="cardGlowV0" x="10" y="10" width="3" height="102" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
         <feFlood floodOpacity="0" result="BackgroundImageFix" />
         <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
         <feGaussianBlur stdDeviation="0.5" result="effect1" />
       </filter>
-      <filter id="cardGlowV1" x="10" y="10" width="3" height="102" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="0.5" result="effect1" />
-      </filter>
-      <filter id="cardGlowV2" x="5" y="5" width="13" height="112" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+      <filter id="cardGlowV1" x="5" y="5" width="13" height="112" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
         <feFlood floodOpacity="0" result="BackgroundImageFix" />
         <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
         <feGaussianBlur stdDeviation="3" result="effect1" />
       </filter>
-      <filter id="cardGlowV3" x="5" y="5" width="13" height="112" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="3" result="effect1" />
-      </filter>
-      <filter id="cardGlowV4" x="0" y="0" width="23" height="122" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+      <filter id="cardGlowV2" x="0" y="0" width="23" height="122" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
         <feFlood floodOpacity="0" result="BackgroundImageFix" />
         <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
         <feGaussianBlur stdDeviation="5.5" result="effect1" />
@@ -405,269 +341,6 @@ export const CardCubes = forwardRef(({ className = "" }, ref) => (
 // Playbook Section SVGs
 // ══════════════════════════════════════════════════
 
-// ── Light Ray 1 Recon (154×300) — vertical orange glow, left edge ──
-export const LightRay1ReconSvg = forwardRef(({ className = "" }, ref) => (
-  <svg ref={ref} className={className} width="154" height="300" viewBox="0 0 154 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g filter="url(#filter0_f_1_548)" style={{ mixBlendMode: "plus-lighter" }}>
-      <path d="M-42.3183 227.854L-31.6004 252.158L-20.8826 276.462L47.8703 200.3L-3.41347 33.5914L-42.3183 227.854Z" fill="url(#paint0_linear_1_548)" />
-    </g>
-    <g filter="url(#filter1_f_1_548)" style={{ mixBlendMode: "plus-lighter" }}>
-      <path d="M-42.3168 227.859L-31.599 252.163L-20.8812 276.467L103.956 185.409L26.9499 -60.0015L-42.3168 227.859Z" fill="url(#paint1_linear_1_548)" />
-    </g>
-    <g opacity="0.3" filter="url(#filter2_f_1_548)" style={{ mixBlendMode: "plus-lighter" }}>
-      <path d="M-42.3177 227.857L-31.5999 252.161L-20.8821 276.465L109.26 199.369L13.9267 -27.4233L-42.3177 227.857Z" fill="url(#paint2_linear_1_548)" />
-    </g>
-    <defs>
-      <filter id="filter0_f_1_548" x="-76.3184" y="-0.408691" width="158.189" height="310.871" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="17" result="effect1_foregroundBlur_1_548" />
-      </filter>
-      <filter id="filter1_f_1_548" x="-86.3169" y="-104.001" width="234.272" height="424.469" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="22" result="effect1_foregroundBlur_1_548" />
-      </filter>
-      <filter id="filter2_f_1_548" x="-86.3176" y="-71.4233" width="239.577" height="391.888" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="22" result="effect1_foregroundBlur_1_548" />
-      </filter>
-      <linearGradient id="paint0_linear_1_548" x1="-38.8043" y1="253.949" x2="34.4351" y2="233.166" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#FFF9F5" />
-        <stop offset="1" stopOpacity="0" />
-      </linearGradient>
-      <linearGradient id="paint1_linear_1_548" x1="-6.81907" y1="212.529" x2="100.378" y2="174.631" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#FF5100" />
-        <stop offset="1" stopOpacity="0" />
-      </linearGradient>
-      <linearGradient id="paint2_linear_1_548" x1="-6.81993" y1="212.525" x2="81.4442" y2="192.774" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#CD4800" />
-        <stop offset="1" stopOpacity="0" />
-      </linearGradient>
-    </defs>
-  </svg>
-));
-
-// ── Light Ray 2 Recon (423×182) — angled orange glow, top-right ──
-export const LightRay2ReconSvg = forwardRef(({ className = "" }, ref) => (
-  <svg ref={ref} className={className} width="423" height="182" viewBox="0 0 423 182" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g filter="url(#filter0_f_1_426)" style={{ mixBlendMode: "plus-lighter" }}>
-      <path d="M515.429 -36.834L482.095 -8.11397L448.761 20.6061L234.929 -69.3946L394.43 -266.395L515.429 -36.834Z" fill="url(#paint0_linear_1_426)" />
-    </g>
-    <g filter="url(#filter1_f_1_426)" style={{ mixBlendMode: "plus-lighter" }}>
-      <path d="M515.429 -36.834L482.095 -8.11402L448.761 20.606L60.5 -86.9982L299.999 -377L515.429 -36.834Z" fill="url(#paint1_linear_1_426)" />
-    </g>
-    <g opacity="0.3" filter="url(#filter2_f_1_426)" style={{ mixBlendMode: "plus-lighter" }}>
-      <path d="M515.429 -36.8325L482.095 -8.11245L448.761 20.6076L44 -70.4965L340.501 -338.497L515.429 -36.8325Z" fill="url(#paint2_linear_1_426)" />
-    </g>
-    <defs>
-      <filter id="filter0_f_1_426" x="200.929" y="-300.395" width="348.5" height="355.001" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="17" result="effect1_foregroundBlur_1_426" />
-      </filter>
-      <filter id="filter1_f_1_426" x="16.5" y="-421" width="542.929" height="485.606" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="22" result="effect1_foregroundBlur_1_426" />
-      </filter>
-      <filter id="filter2_f_1_426" x="0" y="-382.498" width="559.429" height="447.105" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="22" result="effect1_foregroundBlur_1_426" />
-      </filter>
-      <linearGradient id="paint0_linear_1_426" x1="504.5" y1="-5.99805" x2="346.5" y2="-123.998" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#FFF9F5" />
-        <stop offset="1" stopOpacity="0" />
-      </linearGradient>
-      <linearGradient id="paint1_linear_1_426" x1="405.026" y1="-54.95" x2="204" y2="-241.998" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#FF5100" />
-        <stop offset="1" stopOpacity="0" />
-      </linearGradient>
-      <linearGradient id="paint2_linear_1_426" x1="405.026" y1="-54.9499" x2="191" y2="-180.998" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#FF5100" />
-        <stop offset="1" stopOpacity="0" />
-      </linearGradient>
-    </defs>
-  </svg>
-));
-
-// ── Light Ray 1 Blueprint (341×54) — bottom-left orange glow ──
-export const LightRay1BlueprintSvg = forwardRef(({ className = "" }, ref) => (
-  <svg ref={ref} className={className} width="341" height="54" viewBox="0 0 341 54" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g filter="url(#filter0_f_1_614)" style={{ mixBlendMode: "plus-lighter" }}>
-      <path d="M8.27161 43.9996L-16.0323 54.7174L-40.3363 65.4353L35.8255 134.188L202.535 82.9044L8.27161 43.9996Z" fill="url(#paint0_linear_1_614)" />
-    </g>
-    <g filter="url(#filter1_f_1_614)" style={{ mixBlendMode: "plus-lighter" }}>
-      <path d="M8.26658 44.001L-16.0373 54.7189L-40.3413 65.4367L50.7174 190.273L296.127 113.268L8.26658 44.001Z" fill="url(#paint1_linear_1_614)" />
-    </g>
-    <g opacity="0.3" filter="url(#filter2_f_1_614)" style={{ mixBlendMode: "plus-lighter" }}>
-      <path d="M8.26917 44.0001L-16.0348 54.718L-40.3387 65.4358L36.7569 195.578L263.549 100.245L8.26917 44.0001Z" fill="url(#paint2_linear_1_614)" />
-    </g>
-    <defs>
-      <filter id="filter0_f_1_614" x="-74.3364" y="9.99951" width="310.871" height="158.188" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="17" result="effect1_foregroundBlur_1_614" />
-      </filter>
-      <filter id="filter1_f_1_614" x="-84.3413" y="0.000976562" width="424.469" height="234.272" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="22" result="effect1_foregroundBlur_1_614" />
-      </filter>
-      <filter id="filter2_f_1_614" x="-84.3389" y="0" width="391.888" height="239.578" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="22" result="effect1_foregroundBlur_1_614" />
-      </filter>
-      <linearGradient id="paint0_linear_1_614" x1="-17.8229" y1="47.5136" x2="2.9595" y2="120.753" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#FFF9F5" />
-        <stop offset="1" stopOpacity="0" />
-      </linearGradient>
-      <linearGradient id="paint1_linear_1_614" x1="23.597" y1="79.4988" x2="61.4945" y2="186.696" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#FF5100" />
-        <stop offset="1" stopOpacity="0" />
-      </linearGradient>
-      <linearGradient id="paint2_linear_1_614" x1="23.6008" y1="79.4979" x2="43.3515" y2="167.762" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#FF5100" />
-        <stop offset="1" stopOpacity="0" />
-      </linearGradient>
-    </defs>
-  </svg>
-));
-
-// ── Light Ray 2 Blueprint (290×300) — right-side angled glow ──
-export const LightRay2BlueprintSvg = forwardRef(({ className = "" }, ref) => (
-  <svg ref={ref} className={className} width="290" height="300" viewBox="0 0 290 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g filter="url(#filter0_f_1_607)" style={{ mixBlendMode: "plus-lighter" }}>
-      <path d="M515.429 -42.2187L482.095 -70.9388L448.761 -99.6588L234.929 -9.65818L394.429 187.342L515.429 -42.2187Z" fill="url(#paint0_linear_1_607)" />
-    </g>
-    <g filter="url(#filter1_f_1_607)" style={{ mixBlendMode: "plus-lighter" }}>
-      <path d="M515.429 -42.2187L482.095 -70.9387L448.761 -99.6587L60.4998 7.94543L299.999 297.947L515.429 -42.2187Z" fill="url(#paint1_linear_1_607)" />
-    </g>
-    <g opacity="0.3" filter="url(#filter2_f_1_607)" style={{ mixBlendMode: "plus-lighter" }}>
-      <path d="M515.429 -42.2202L482.095 -70.9403L448.761 -99.6603L43.9998 -8.55624L340.5 259.445L515.429 -42.2202Z" fill="url(#paint2_linear_1_607)" />
-    </g>
-    <defs>
-      <filter id="filter0_f_1_607" x="200.929" y="-133.659" width="348.5" height="355.001" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="17" result="effect1_foregroundBlur_1_607" />
-      </filter>
-      <filter id="filter1_f_1_607" x="16.5" y="-143.659" width="542.929" height="485.606" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="22" result="effect1_foregroundBlur_1_607" />
-      </filter>
-      <filter id="filter2_f_1_607" x="0" y="-143.66" width="559.429" height="447.105" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="22" result="effect1_foregroundBlur_1_607" />
-      </filter>
-      <linearGradient id="paint0_linear_1_607" x1="504.5" y1="-73.0547" x2="346.5" y2="44.9453" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#FFF9F5" />
-        <stop offset="1" stopOpacity="0" />
-      </linearGradient>
-      <linearGradient id="paint1_linear_1_607" x1="405.025" y1="-24.1028" x2="204" y2="162.945" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#FF5100" />
-        <stop offset="1" stopOpacity="0" />
-      </linearGradient>
-      <linearGradient id="paint2_linear_1_607" x1="405.025" y1="-24.1028" x2="191" y2="101.945" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#FF5100" />
-        <stop offset="1" stopOpacity="0" />
-      </linearGradient>
-    </defs>
-  </svg>
-));
-
-// ── Light Ray 1 Optimize (62×300) — vertical orange glow, left edge ──
-export const LightRay1OptimizeSvg = forwardRef(({ className = "" }, ref) => (
-  <svg ref={ref} className={className} width="62" height="300" viewBox="0 0 62 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g filter="url(#filter0_f_1_1018)" style={{ mixBlendMode: "plus-lighter" }}>
-      <path d="M17.5741 21.2701L6.85629 -3.03381L-3.86154 -27.3378L-72.6144 48.8241L-21.3307 215.533L17.5741 21.2701Z" fill="url(#paint0_linear_1_1018)" />
-    </g>
-    <g filter="url(#filter1_f_1_1018)" style={{ mixBlendMode: "plus-lighter" }}>
-      <path d="M17.5727 21.2651L6.85488 -3.03881L-3.86295 -27.3428L-128.7 63.7159L-51.694 309.126L17.5727 21.2651Z" fill="url(#paint1_linear_1_1018)" />
-    </g>
-    <g opacity="0.3" filter="url(#filter2_f_1_1018)" style={{ mixBlendMode: "plus-lighter" }}>
-      <path d="M17.5736 21.2677L6.85576 -3.03625L-3.86208 -27.3402L-134.004 49.7554L-38.6709 276.548L17.5736 21.2677Z" fill="url(#paint2_linear_1_1018)" />
-    </g>
-    <defs>
-      <filter id="filter0_f_1_1018" x="-106.615" y="-61.3379" width="158.189" height="310.871" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="17" result="effect1_foregroundBlur_1_1018" />
-      </filter>
-      <filter id="filter1_f_1_1018" x="-172.7" y="-71.3428" width="234.272" height="424.469" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="22" result="effect1_foregroundBlur_1_1018" />
-      </filter>
-      <filter id="filter2_f_1_1018" x="-178.004" y="-71.3403" width="239.578" height="391.888" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="22" result="effect1_foregroundBlur_1_1018" />
-      </filter>
-      <linearGradient id="paint0_linear_1_1018" x1="14.0601" y1="-4.82438" x2="-59.1792" y2="15.958" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#FFF9F5" />
-        <stop offset="1" stopOpacity="0" />
-      </linearGradient>
-      <linearGradient id="paint1_linear_1_1018" x1="-17.9251" y1="36.5955" x2="-125.122" y2="74.493" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#FF5100" />
-        <stop offset="1" stopOpacity="0" />
-      </linearGradient>
-      <linearGradient id="paint2_linear_1_1018" x1="-17.9242" y1="36.5994" x2="-106.188" y2="56.35" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#FF5100" />
-        <stop offset="1" stopOpacity="0" />
-      </linearGradient>
-    </defs>
-  </svg>
-));
-
-// ── Light Ray 2 Optimize (336×118) — bottom-right orange glow ──
-export const LightRay2OptimizeSvg = forwardRef(({ className = "" }, ref) => (
-  <svg ref={ref} className={className} width="336" height="118" viewBox="0 0 336 118" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g filter="url(#filter0_f_1_1004)" style={{ mixBlendMode: "plus-lighter" }}>
-      <path d="M331.856 195.578L356.16 184.86L380.464 174.142L304.302 105.389L137.593 156.673L331.856 195.578Z" fill="url(#paint0_linear_1_1004)" />
-    </g>
-    <g filter="url(#filter1_f_1_1004)" style={{ mixBlendMode: "plus-lighter" }}>
-      <path d="M331.861 195.577L356.165 184.859L380.469 174.141L289.41 49.3043L44 126.31L331.861 195.577Z" fill="url(#paint1_linear_1_1004)" />
-    </g>
-    <g opacity="0.3" filter="url(#filter2_f_1_1004)" style={{ mixBlendMode: "plus-lighter" }}>
-      <path d="M331.858 195.577L356.162 184.86L380.466 174.142L303.371 43.9999L76.5782 139.333L331.858 195.577Z" fill="url(#paint2_linear_1_1004)" />
-    </g>
-    <defs>
-      <filter id="filter0_f_1_1004" x="103.593" y="71.3896" width="310.871" height="158.188" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="17" result="effect1_foregroundBlur_1_1004" />
-      </filter>
-      <filter id="filter1_f_1_1004" x="0" y="5.3042" width="424.469" height="234.272" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="22" result="effect1_foregroundBlur_1_1004" />
-      </filter>
-      <filter id="filter2_f_1_1004" x="32.5781" y="0" width="391.888" height="239.578" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-        <feFlood floodOpacity="0" result="BackgroundImageFix" />
-        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feGaussianBlur stdDeviation="22" result="effect1_foregroundBlur_1_1004" />
-      </filter>
-      <linearGradient id="paint0_linear_1_1004" x1="357.95" y1="192.064" x2="337.168" y2="118.825" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#FFF9F5" />
-        <stop offset="1" stopOpacity="0" />
-      </linearGradient>
-      <linearGradient id="paint1_linear_1_1004" x1="316.53" y1="160.079" x2="278.633" y2="52.882" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#FF5100" />
-        <stop offset="1" stopOpacity="0" />
-      </linearGradient>
-      <linearGradient id="paint2_linear_1_1004" x1="316.527" y1="160.08" x2="296.776" y2="71.8156" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#FF5100" />
-        <stop offset="1" stopOpacity="0" />
-      </linearGradient>
-    </defs>
-  </svg>
-));
 
 // ── Grid Lines Optimize (415×300) — background grid mesh ──
 export const GridLinesOptimizeSvg = forwardRef(({ className = "" }, ref) => (
@@ -984,7 +657,7 @@ export const CubesSvg = forwardRef(({ className = "" }, ref) => (
 // ── IMG-based components (too large to inline) ──
 
 export const GlobeAndMobileSvg = forwardRef(({ className = "" }, ref) => (
-  <img ref={ref} src="/images/Globe_and_mobile.webp" alt="" className={className} />
+  <img ref={ref} src="/images/Globe_and_mobile.webp" alt="" className={className} loading="lazy" />
 ));
 
 export const LinesDeploySvg = forwardRef(({ className = "" }, ref) => (
@@ -1660,15 +1333,15 @@ export const ScreensDeploySvg = forwardRef(({ className = "" }, ref) => (
 ));
 
 export const BlueprintFlowchartSvg = forwardRef(({ className = "" }, ref) => (
-  <img ref={ref} src="/svgs/blueprint-flowchart.svg" alt="" className={className} />
+  <img ref={ref} src="/svgs/blueprint-flowchart.svg" alt="" className={className} loading="lazy" />
 ));
 
 export const LinesBlueprintSvg = forwardRef(({ className = "" }, ref) => (
-  <img ref={ref} src="/svgs/Lines blueprint.svg" alt="" className={className} />
+  <img ref={ref} src="/svgs/Lines blueprint.svg" alt="" className={className} loading="lazy" />
 ));
 
 export const ImageHiddenBlueprintSvg = forwardRef(({ className = "" }, ref) => (
-  <img ref={ref} src="/svgs/Image [hidden] blueprint.svg" alt="" className={className} />
+  <img ref={ref} src="/svgs/Image [hidden] blueprint.svg" alt="" className={className} loading="lazy" />
 ));
 
 export const EllipseBlueprintSvg = forwardRef(({ className = "" }, ref) => (
@@ -1707,52 +1380,52 @@ export const GridLinesReconSvg = forwardRef(({ className = "" }, ref) => (
 // ── Rocket Frame parts (img-based, too complex to inline) ──
 
 export const RocketFrame2Svg = forwardRef(({ className = "" }, ref) => (
-  <img ref={ref} src="/svgs/Rocket frame 2.svg" alt="" className={className} />
+  <img ref={ref} src="/svgs/Rocket frame 2.svg" alt="" className={className} loading="lazy" />
 ));
 
 export const RocketFrame3Svg = forwardRef(({ className = "" }, ref) => (
-  <img ref={ref} src="/svgs/Rocket frame 3.svg" alt="" className={className} />
+  <img ref={ref} src="/svgs/Rocket frame 3.svg" alt="" className={className} loading="lazy" />
 ));
 
 export const RocketFrame4Svg = forwardRef(({ className = "" }, ref) => (
-  <img ref={ref} src="/svgs/Rocket frame 4.svg" alt="" className={className} />
+  <img ref={ref} src="/svgs/Rocket frame 4.svg" alt="" className={className} loading="lazy" />
 ));
 
 export const RocketFrame5Svg = forwardRef(({ className = "" }, ref) => (
-  <img ref={ref} src="/svgs/Rocket Frame 5.svg" alt="" className={className} />
+  <img ref={ref} src="/svgs/Rocket Frame 5.svg" alt="" className={className} loading="lazy" />
 ));
 
 export const RocketFrame6Svg = forwardRef(({ className = "" }, ref) => (
-  <img ref={ref} src="/svgs/Rocket frame 6.svg" alt="" className={className} />
+  <img ref={ref} src="/svgs/Rocket frame 6.svg" alt="" className={className} loading="lazy" />
 ));
 
 export const RocketFrame7Svg = forwardRef(({ className = "" }, ref) => (
-  <img ref={ref} src="/svgs/Rocket Frame 7.svg" alt="" className={className} />
+  <img ref={ref} src="/svgs/Rocket Frame 7.svg" alt="" className={className} loading="lazy" />
 ));
 
 // ── Connector line (diagonal + horizontal, bridges rocket to labels) ──
 export const LinesVectorRocketSvg = forwardRef(({ className = "" }, ref) => (
-  <img ref={ref} src="/svgs/lines vector rocket.svg" alt="" className={className} />
+  <img ref={ref} src="/svgs/lines vector rocket.svg" alt="" className={className} loading="lazy" />
 ));
 
 // ── Glow Line (193×23) — orange glow scan line ──
 export const GlowLineSvg = forwardRef(({ className = "" }, ref) => (
-  <img ref={ref} src="/svgs/Glow-line.svg" alt="" className={className} />
+  <img ref={ref} src="/svgs/Glow-line.svg" alt="" className={className} loading="lazy" />
 ));
 
 // ── Line 744 (134×1) — gray stat divider line ──
 export const Line744Svg = forwardRef(({ className = "" }, ref) => (
-  <img ref={ref} src="/svgs/Line 744.svg" alt="" className={className} />
+  <img ref={ref} src="/svgs/Line 744.svg" alt="" className={className} loading="lazy" />
 ));
 
 // ── Shift Line (763×31) — curved orange gradient line for BridgeTestimonial ──
 export const ShiftLineSvg = forwardRef(({ className = "" }, ref) => (
-  <img ref={ref} src="/svgs/shift line.svg" alt="" className={className} />
+  <img ref={ref} src="/svgs/shift line.svg" alt="" className={className} loading="lazy" />
 ));
 
 // ── Corner bracket (10×10) — orange L-shaped corner marker ──
 export const CornerVectorRocketSvg = forwardRef(({ className = "", style = {} }, ref) => (
-  <img ref={ref} src="/svgs/corner Vector rocket.svg" alt="" className={className} style={style} />
+  <img ref={ref} src="/svgs/corner Vector rocket.svg" alt="" className={className} style={style} loading="lazy" />
 ));
 
 // ── Rocket Thrusters (182×42) — orange flame glow below rocket frame 7 ──

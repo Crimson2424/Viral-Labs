@@ -167,7 +167,7 @@ const SHADER_CONFIG = {
 function Scene() {
   const { camera, size, viewport } = useThree();
   const materialRef = useRef();
-  const rawTexture = useLoader(THREE.TextureLoader, "/images/bg-image.png");
+  const rawTexture = useLoader(THREE.TextureLoader, "/images/bg-image.webp");
   const texture = useMemo(() => rawTexture.clone(), [rawTexture]);
   const scale = useAspect(viewport.width, viewport.height, 1);
 

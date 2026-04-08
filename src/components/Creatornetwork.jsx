@@ -460,34 +460,18 @@ export default function CreatorNetwork({ viewRef }) {
                 <g filter="url(#cn-glow2)" style={{ mixBlendMode: "plus-lighter" }}>
                   <line x1="11" y1="11.5" x2="182" y2="11.5" stroke="#F05A1F" />
                 </g>
-                <g filter="url(#cn-glow3)" style={{ mixBlendMode: "plus-lighter" }}>
-                  <line x1="11" y1="11.5" x2="182" y2="11.5" stroke="#F05A1F" />
-                </g>
-                <g filter="url(#cn-glow4)" style={{ mixBlendMode: "plus-lighter" }}>
-                  <line x1="11" y1="11.5" x2="182" y2="11.5" stroke="#F05A1F" />
-                </g>
                 <defs>
                   <filter id="cn-glow0" x="10" y="10" width="173" height="3" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
                     <feFlood floodOpacity="0" result="BackgroundImageFix" />
                     <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
                     <feGaussianBlur stdDeviation="0.5" result="effect1" />
                   </filter>
-                  <filter id="cn-glow1" x="10" y="10" width="173" height="3" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-                    <feFlood floodOpacity="0" result="BackgroundImageFix" />
-                    <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-                    <feGaussianBlur stdDeviation="0.5" result="effect1" />
-                  </filter>
-                  <filter id="cn-glow2" x="5" y="5" width="183" height="13" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                  <filter id="cn-glow1" x="5" y="5" width="183" height="13" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
                     <feFlood floodOpacity="0" result="BackgroundImageFix" />
                     <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
                     <feGaussianBlur stdDeviation="3" result="effect1" />
                   </filter>
-                  <filter id="cn-glow3" x="5" y="5" width="183" height="13" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-                    <feFlood floodOpacity="0" result="BackgroundImageFix" />
-                    <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-                    <feGaussianBlur stdDeviation="3" result="effect1" />
-                  </filter>
-                  <filter id="cn-glow4" x="0" y="0" width="193" height="23" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
+                  <filter id="cn-glow2" x="0" y="0" width="193" height="23" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
                     <feFlood floodOpacity="0" result="BackgroundImageFix" />
                     <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
                     <feGaussianBlur stdDeviation="5.5" result="effect1" />

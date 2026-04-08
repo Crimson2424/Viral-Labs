@@ -160,7 +160,7 @@ function DesktopLayout() {
   return (
     <section
       ref={sectionRef}
-      className="creator-network-section relative z-25 w-full h-auto min-h-svh lg:h-[140vh]"
+      className="creator-network-section relative z-25 w-full h-auto min-h-screen lg:h-[140vh]"
     >
       <GlobalTexture />
 
@@ -248,7 +248,7 @@ function MobileLayout() {
   return (
     <section
       ref={sectionRef}
-      className="creator-network-section relative z-25 w-full max-lg:pt-[max(32svh,280px)] mob:max-lg:pt-[max(28svh,250px)] sm:max-lg:pt-[max(35svh,300px)] md:max-lg:pt-[max(45svh,400px)] py-16 pb-8 mob:pb-16 sm:py-20 md:py-24 md:pb-2 px-4 sm:px-6 md:px-8"
+      className="creator-network-section relative z-25 w-full max-lg:pt-[max(32vh,280px)] mob:max-lg:pt-[max(28vh,250px)] sm:max-lg:pt-[max(35vh,300px)] md:max-lg:pt-[max(45vh,400px)] py-16 pb-8 mob:pb-16 sm:py-20 md:py-24 md:pb-2 px-4 sm:px-6 md:px-8"
     >
       <GlobalTexture />
 

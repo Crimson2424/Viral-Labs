@@ -30,6 +30,9 @@ export default function SignalsCanvas() {
 
   useEffect(() => {
     let rafId;
+    let lastTransform = "";
+    let lastOpacity = "";
+
     const tick = () => {
       rafId = requestAnimationFrame(tick);
       const el = containerRef.current;
@@ -37,20 +40,20 @@ export default function SignalsCanvas() {
 
       const sectionEl = signalsCanvasState.sectionEl;
       if (!sectionEl || !sectionEl.offsetParent) {
-        el.style.opacity = "0";
+        if (lastOpacity !== "0") { el.style.opacity = "0"; lastOpacity = "0"; }
         return;
       }
 
       const rect = sectionEl.getBoundingClientRect();
       const vh = window.innerHeight;
 
-      // Only visible when section is in viewport
       if (rect.bottom < 0 || rect.top > vh) {
-        el.style.opacity = "0";
+        if (lastOpacity !== "0") { el.style.opacity = "0"; lastOpacity = "0"; }
       } else {
-        el.style.opacity = "1";
-        // Position canvas to align with section
-        el.style.transform = `translateY(${rect.top}px)`;
+        if (lastOpacity !== "1") { el.style.opacity = "1"; lastOpacity = "1"; }
+        // Round to nearest pixel to avoid sub-pixel layout work
+        const t = `translateY(${Math.round(rect.top)}px)`;
+        if (t !== lastTransform) { el.style.transform = t; lastTransform = t; }
       }
     };
 

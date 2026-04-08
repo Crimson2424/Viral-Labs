@@ -449,13 +449,13 @@ function createBakeResources() {
 // SCENE
 // ============================================
 
-const IS_MOBILE = typeof window !== 'undefined' && window.innerWidth < 768;
+const IS_MOBILE = typeof window !== 'undefined' && window.innerWidth < 1024;
 
 function Scene() {
   const { camera, gl, size, viewport } = useThree();
   const materialRef = useRef();
   const meshRef = useRef();
-  const rawTexture = useLoader(THREE.TextureLoader, IS_MOBILE ? "/images/hero-bg-sm.png" : "/images/bg-image.png");
+  const rawTexture = useLoader(THREE.TextureLoader, IS_MOBILE ? "/images/hero-bg-sm.webp" : "/images/bg-image.webp");
   const texture = useMemo(() => {
     const t = rawTexture.clone();
     t.colorSpace = THREE.SRGBColorSpace;
@@ -696,7 +696,7 @@ export default function GlobalCanvas() {
           powerPreference: "high-performance",
         }}
         camera={{ position: [0, 0, 5], fov: 45 }}
-        dpr={[1, 2]}
+        dpr={IS_MOBILE ? 1 : [1, 2]}
       >
         <Suspense fallback={null}>
           <Scene />

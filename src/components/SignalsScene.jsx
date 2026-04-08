@@ -1,8 +1,9 @@
 import { useRef, useEffect, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { signalsConfig } from "./SignalsConfig";
 
-const CONFIG = {
+ const CONFIG = {
   // Geometry
   lineCount: 80,
   segmentCount: 150,
@@ -11,7 +12,6 @@ const CONFIG = {
   spreadHeight: 38.07,
   spreadDepth: 0,
   curveLength: 60.58,
-  straightLength: 113.76,
   curvePower: 1.2382,
 
   // Line appearance
@@ -40,10 +40,12 @@ const CONFIG = {
 
 function getPathPoint(t, lineIndex, out, time) {
   const {
-    curveLength, straightLength, lineCount,
+    curveLength, lineCount,
     spreadHeight, spreadDepth, curvePower,
     waveSpeed, waveHeight,
   } = CONFIG;
+
+  const straightLength = signalsConfig.straightLength;
 
   const totalLen = curveLength + straightLength;
   const currentX = -curveLength + t * totalLen;

@@ -334,6 +334,7 @@ export default function CoreOperations() {
                   <img
                     src={card.img}
                     alt={card.title}
+                    loading="lazy"
                     className="co-card-img w-full h-full object-contain will-change-transform"
                   />
                   <div className="absolute bottom-0 left-0 z-10 overflow-hidden">

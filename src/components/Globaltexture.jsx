@@ -4,7 +4,7 @@ export default function GlobalTexture() {
     <div
       className="pointer-events-none absolute inset-0 mix-blend-lighten z-[20] opacity-30"
       style={{
-        backgroundImage: "url('/images/textures.png')",
+        backgroundImage: "url('/images/textures.webp')",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}

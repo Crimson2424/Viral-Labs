@@ -209,31 +209,55 @@ export default function HeroSection() {
       }, 3.0);
 
       // ── PHASE 3 — SUBHEADING SCRAMBLE (4.0 → ~4.6) ──
+      const isMobileEntrance = window.innerWidth < 1024;
+
       entrance.to(subheadingRef.current, {
         opacity: 1, duration: 0.3, ease: "power2.out",
       }, 4.0);
 
-      subChars.forEach((char, i) => {
-        const original = originalTexts[i];
-        if (original.trim() === "") return;
-
-        const delay = 4.0 + i * 0.025;
+      if (isMobileEntrance) {
+        // Mobile: single batch scramble instead of per-char onUpdate callbacks
         const proxy = { progress: 0 };
-
         entrance.to(proxy, {
           progress: 1,
-          duration: 0.4,
+          duration: 0.5,
           ease: "none",
           onUpdate: () => {
-            if (proxy.progress < 0.7) {
-              char.textContent =
-                asciiChars[Math.floor(Math.random() * asciiChars.length)];
+            if (proxy.progress < 0.6) {
+              for (let j = 0; j < subChars.length; j++) {
+                if (originalTexts[j].trim() === "") continue;
+                subChars[j].textContent = asciiChars[Math.floor(Math.random() * asciiChars.length)];
+              }
             } else {
-              char.textContent = original;
+              for (let j = 0; j < subChars.length; j++) {
+                subChars[j].textContent = originalTexts[j];
+              }
             }
           },
-        }, delay);
-      });
+        }, 4.0);
+      } else {
+        subChars.forEach((char, i) => {
+          const original = originalTexts[i];
+          if (original.trim() === "") return;
+
+          const delay = 4.0 + i * 0.025;
+          const proxy = { progress: 0 };
+
+          entrance.to(proxy, {
+            progress: 1,
+            duration: 0.4,
+            ease: "none",
+            onUpdate: () => {
+              if (proxy.progress < 0.7) {
+                char.textContent =
+                  asciiChars[Math.floor(Math.random() * asciiChars.length)];
+              } else {
+                char.textContent = original;
+              }
+            },
+          }, delay);
+        });
+      }
 
       // ── CTA REVEAL (4.5 → ~5.8) ──
       entrance.set(ctaRef.current, { opacity: 1 }, 4.5);
@@ -246,26 +270,49 @@ export default function HeroSection() {
       entrance.to(".cta-text", {
         opacity: 1, duration: 0.1, ease: "power1.out",
       }, 5.0);
-      ctaChars.forEach((char, i) => {
-        const original = ctaOriginals[i];
-        if (original.trim() === "") return;
 
-        const delay = 5.0 + i * 0.025;
-        const proxy = { progress: 0 };
-        entrance.to(proxy, {
+      if (isMobileEntrance) {
+        // Mobile: single batch scramble for CTA text
+        const ctaProxy = { progress: 0 };
+        entrance.to(ctaProxy, {
           progress: 1,
-          duration: 0.35,
+          duration: 0.4,
           ease: "none",
           onUpdate: () => {
-            if (proxy.progress < 0.65) {
-              char.textContent =
-                asciiChars[Math.floor(Math.random() * asciiChars.length)];
+            if (ctaProxy.progress < 0.55) {
+              for (let j = 0; j < ctaChars.length; j++) {
+                if (ctaOriginals[j].trim() === "") continue;
+                ctaChars[j].textContent = asciiChars[Math.floor(Math.random() * asciiChars.length)];
+              }
             } else {
-              char.textContent = original;
+              for (let j = 0; j < ctaChars.length; j++) {
+                ctaChars[j].textContent = ctaOriginals[j];
+              }
             }
           },
-        }, delay);
-      });
+        }, 5.0);
+      } else {
+        ctaChars.forEach((char, i) => {
+          const original = ctaOriginals[i];
+          if (original.trim() === "") return;
+
+          const delay = 5.0 + i * 0.025;
+          const proxy = { progress: 0 };
+          entrance.to(proxy, {
+            progress: 1,
+            duration: 0.35,
+            ease: "none",
+            onUpdate: () => {
+              if (proxy.progress < 0.65) {
+                char.textContent =
+                  asciiChars[Math.floor(Math.random() * asciiChars.length)];
+              } else {
+                char.textContent = original;
+              }
+            },
+          }, delay);
+        });
+      }
 
       entrance.set(".cta-arrow", { opacity: 1 }, 5.4);
       entrance.to(arrowPath, {
@@ -583,7 +630,7 @@ export default function HeroSection() {
       {/* ═══ Hero Content ═══ */}
       <div
         ref={heroContentRef}
-        className="absolute inset-x-0 top-0 z-[10] min-h-svh overflow-hidden"
+        className="absolute inset-x-0 top-0 z-[10] min-h-screen overflow-hidden"
       >
         <GridOverlay ref={gridOverlayRef} showTexture={true}>
           <Navbar entranceDelay={6.2} />

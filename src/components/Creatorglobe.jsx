@@ -382,9 +382,21 @@ export default function CreatorGlobe({ containerRef }) {
 
     globe.scale.set(0.01, 0.01, 0.01);
 
+    // Defer texture fetch until the globe's container is near the viewport
     const img = new Image();
     img.crossOrigin = "anonymous";
-    img.src = "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_specular_2048.jpg";
+    const containerEl = containerRef?.current;
+    if (containerEl) {
+      const io = new IntersectionObserver(([e]) => {
+        if (e.isIntersecting) {
+          img.src = "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_specular_2048.jpg";
+          io.disconnect();
+        }
+      }, { rootMargin: "400px" });
+      io.observe(containerEl);
+    } else {
+      img.src = "https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_specular_2048.jpg";
+    }
 
     img.onload = () => {
       const canvas = document.createElement("canvas");
@@ -474,7 +486,7 @@ export default function CreatorGlobe({ containerRef }) {
 
       s.initialized = true;
     };
-  }, [hitboxGeo, hitboxMat, _scaleVec, _tmpMat]);
+  }, [hitboxGeo, hitboxMat, _scaleVec, _tmpMat, containerRef]);
 
   // ════════════════════════════════════════════════
   // POINTER EVENTS — gated by creatorGlobeState.interactive

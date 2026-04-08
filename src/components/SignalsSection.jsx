@@ -19,6 +19,7 @@ import { useGSAP } from "@gsap/react";
 import { gsap, SplitText, ScrollTrigger } from "./Gsapconfig";
 import GlobalTexture from "./Globaltexture";
 import { signalsCanvasState } from "./SignalsCanvas";
+import { signalsConfig } from "./SignalsConfig";
 import fontReady from "./fontReady";
 
 /* ─── ASCII chars for scramble effect ─── */
@@ -181,6 +182,23 @@ export default function SignalsSection() {
         () => {
             if (!headingGroupRef.current || !bottomGroupRef.current) return;
 
+            /* ── Straight line grow animation (no font dependency) ── */
+            const targetStraight = 113.76;
+            signalsConfig.straightLength = 0;
+
+            gsap.to(signalsConfig, {
+                straightLength: 113.76,
+                duration: 2,
+                ease: "power3.out",
+                scrollTrigger: {
+                    trigger: sectionRef.current,
+                    start: "top 20%",
+                    once: true,
+                    refreshPriority: -1, // ← run refresh after higher-priority pinned ones
+                    // markers: true,
+                },
+            });
+
             let cancelled = false;
             const splitInstances = [];
             fontReady.then(() => {
@@ -300,7 +318,7 @@ export default function SignalsSection() {
 
             {/* Mobile fallback background */}
             <img
-              src="/images/signal-mobile.png"
+              src="/images/signal-mobile.webp"
               alt=""
               className="absolute inset-0 z-1 h-full w-full object-cover mix-blend-lighten lg:hidden object-[25%] md:object-[30%]"
               draggable={false}
