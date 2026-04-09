@@ -18,8 +18,8 @@ const CLOCKS = [
 const SCRAMBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&";
 
 /* ─── Nav links ─── */
-const NAV_COL_1 = ["Home", "About", "Contact"];
-const NAV_COL_2 = ["Services", "Case Studies"];
+const NAV_COL_1 = ["Home", "Service", "Viral Engine"];
+const NAV_COL_2 = ["Case Studies", "Contact"];
 const NAV_MOBILE = ["Home", "Services", "Viral Engine", "Case Studies", "Contact"];
 
 /* ─── Corner bracket default/hover offsets ─── */
@@ -211,11 +211,11 @@ const FooterSection = () => {
       <div className="relative z-10 mx-auto flex h-full flex-col w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem] 5xl:max-w-[250rem]">
 
         {/* ═══ CTA AREA ═══ */}
-        <div className="flex flex-1 flex-col items-start md:items-center pt-40 max-mob:pt-28 pb-12 max-mob:pb-8 text-left md:text-center px-6 max-mob:px-4 max-md:!-ml-[1.5vw] max-md:!pl-2 sm:pt-36 sm:pb-12 md:px-0 md:pt-56 md:pb-4 lg:pt-85 lg:pb-6 xl:pt-106 xl:pb-8 2xl:pt-128 2xl:pb-10 3xl:pt-160 3xl:pb-12 4xl:pt-206 4xl:pb-16 5xl:pt-324 5xl:pb-24">
+        <div className="flex flex-1 flex-col items-start md:items-center pt-40 max-mob:pt-28 pb-12 max-mob:pb-8 text-left md:text-center px-6 max-mob:px-4 max-md:!-ml-[1.5vw] max-md:!pl-2 sm:pt-36 sm:pb-12 md:px-0 md:pt-65 md:pb-4 lg:pt-85 lg:pb-6 xl:pt-106 xl:pb-8 2xl:pt-128 2xl:pb-10 3xl:pt-160 3xl:pb-12 4xl:pt-206 4xl:pb-16 5xl:pt-324 5xl:pb-24">
           {/* Heading */}
           <h2
             ref={headingRef}
-            className="font-bricolage text-left md:text-center text-3xl max-mob:text-2xl max-mob:leading-[1.08] max-mob:max-w-44 font-normal leading-[1.05] tracking-tight text-white max-w-[14rem] sm:text-4xl sm:max-w-[18rem] md:max-w-none md:text-3xl lg:text-5xl xl:text-6xl 2xl:text-7xl 3xl:text-8xl 4xl:text-[9rem] 5xl:text-[13rem]"
+            className="font-bricolage text-left md:text-center text-3xl max-mob:text-2xl max-mob:leading-[1.08] max-mob:max-w-44 font-normal leading-[1.05] tracking-tight text-white max-w-[14rem] sm:text-4xl sm:max-w-[18rem] md:max-w-none md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl 3xl:text-8xl 4xl:text-[9rem] 5xl:text-[13rem]"
           >
             Engineering<br />predictable growth<br />starts here
           </h2>
@@ -223,7 +223,7 @@ const FooterSection = () => {
           {/* Subtext */}
           <p
             ref={subtextRef}
-            className="mt-2 max-w-[14rem] max-mob:text-xs max-mob:max-w-48 sm:max-w-[18rem] md:max-w-[22rem] lg:max-w-[27rem] xl:max-w-[34rem] 2xl:max-w-[40rem] 3xl:max-w-[50rem] 4xl:max-w-[66rem] 5xl:max-w-[100rem] font-host text-sm font-thin leading-tight text-white/70 text-left md:text-center sm:text-base md:text-sm lg:text-sm xl:text-base 2xl:text-lg 3xl:text-xl 4xl:text-3xl 5xl:text-4xl sm:mt-2 4xl:mt-4 5xl:mt-6"
+            className="mt-2 max-w-[14rem] max-mob:text-xs max-mob:max-w-48 sm:max-w-[18rem] md:max-w-[18rem] lg:max-w-[27rem] xl:max-w-[34rem] 2xl:max-w-[40rem] 3xl:max-w-[50rem] 4xl:max-w-[66rem] 5xl:max-w-[100rem] font-host text-sm font-thin leading-tight text-white/70 text-left md:text-center sm:text-base md:text-[0.57rem] lg:text-sm xl:text-base 2xl:text-lg 3xl:text-xl 4xl:text-3xl 5xl:text-4xl sm:mt-2 4xl:mt-4 5xl:mt-6"
             style={{ opacity: 0 }}
           >
             If you're ready to move beyond guesswork and scale through structured
@@ -421,7 +421,7 @@ const FooterSection = () => {
           </div>
 
           {/* ═══ COPYRIGHT ═══ */}
-          <div className="order-4 md:order-none col-span-2 md:col-span-1 mx-auto flex flex-col md:flex-row w-full max-w-4xl md:max-w-md lg:max-w-2xl xl:max-w-2xl 2xl:max-w-3xl 3xl:max-w-[80rem] 4xl:max-w-[100rem] 5xl:max-w-[155rem] items-start md:items-center md:justify-between gap-1 md:gap-0 py-6 max-mob:py-4 md:py-2 lg:py-3 xl:py-4 2xl:py-5 3xl:py-6 4xl:py-8 5xl:py-12">
+          <div className="order-4 md:order-none col-span-2 md:col-span-1 mx-auto flex flex-col md:flex-row w-full max-w-4xl md:max-w-md lg:max-w-2xl xl:max-w-2xl 2xl:max-w-4xl 3xl:max-w-[80rem] 4xl:max-w-[100rem] 5xl:max-w-[155rem] items-start md:items-center md:justify-between gap-1 md:gap-0 py-6 max-mob:py-4 md:py-2 lg:py-3 xl:py-4 2xl:py-5 3xl:py-6 4xl:py-8 5xl:py-12">
             <span ref={copyLeftRef} className="font-host text-xs 2xl:text-sm 3xl:text-sm 4xl:text-lg 5xl:text-3xl font-thin text-white/40">
               © Copyright 2026 Viral Labs
             </span>

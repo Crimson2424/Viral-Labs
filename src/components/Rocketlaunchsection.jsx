@@ -427,7 +427,7 @@ export default function RocketLaunchSection() {
           </div>
 
           {/* LABEL 3 — Distribution Layer (RIGHT on all screens) */}
-          <div ref={label3Ref} className="absolute z-40 pointer-events-none right-0 max-mob:right-0 top-[55%] lg:top-[47%] w-40 max-mob:w-35 sm:right-[2%] sm:w-48 md:right-[4%] md:w-56 lg:right-[20%] lg:w-56 xl:right-[18%] xl:w-80 2xl:right-[20%] 2xl:w-82 3xl:right-[21%] 3xl:w-[26.25rem] 4xl:right-[13%] 4xl:w-[32rem] 5xl:right-0 5xl:w-[40rem]">
+          <div ref={label3Ref} className="absolute z-40 pointer-events-none right-0 max-mob:right-0 top-[54%]  w-40 max-mob:w-35 sm:right-[2%] sm:w-48 md:right-[4%] md:w-56 lg:top-[47%] lg:right-[20%] lg:w-56 xl:right-[18%] xl:w-80 2xl:right-[20%] 2xl:w-82 3xl:right-[21%] 3xl:w-[26.25rem] 4xl:right-[13%] 4xl:w-[32rem] 5xl:right-0 5xl:w-[40rem]">
             <ConnectorLine className="block w-full h-auto max-h-3 sm:max-h-4 lg:max-h-none -mb-2 lg:-mb-4 scale-x-[-1]" />
             <div className="flex items-start gap-1 lg:gap-1.5 w-fit ml-auto max-mob:mt-1.5 max-sm:mt-2 lg:mt-2">
               <CubesSvg className="w-3 sm:w-4 lg:w-4 xl:w-5 4xl:w-6 5xl:w-9 h-auto mt-0.5 shrink-0" />
@@ -454,7 +454,7 @@ export default function RocketLaunchSection() {
       </div>
       {/* VE BODY — mobile only (outside pinned section, normal flow) */}
       <div ref={mobileBodyRef} className="relative lg:hidden mx-auto w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem] py-12">
-        <GlowLineSvg ref={mobileGlowRef} className="w-20 sm:w-28 h-auto -ml-2.5" />
+        <GlowLineSvg ref={mobileGlowRef} className="w-20 sm:w-28 h-auto -ml-2.5 mob:max-sm:-ml-1.5" />
         <p ref={mobileBodyTextRef} className="font-host text-sm max-mob:text-xs sm:text-xs font-thin text-white tracking-tighter leading-snug mt-0.5 max-w-[65vw] max-mob:max-w-[58vw] sm:max-w-56 md:max-w-64">
           Behind every <span className="font-medium">Engagement</span> is a structured distribution system. It starts with <span className="font-medium">Audience</span> and <span className="font-medium">Market signals</span>, converts them into content and <span className="font-medium">Message systems</span>, and executes them through coordinated <span className="font-medium">Publishing</span> and <span className="font-medium">Amplification infrastructure</span>.
         </p>

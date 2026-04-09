@@ -685,7 +685,7 @@ export default function HeroSection() {
 
               <p
                 ref={subheadingRef}
-                className="hero-subheading font-host text-base max-mob:mb-4 4xl:text-lg 5xl:text-2xl text-[#a1a1aa] text-left md:text-center tracking-[-0.32px] leading-[1.15] max-w-[60%] max-mob:max-w-[60%] sm:max-w-[45%] md:max-w-[540px] 4xl:max-w-[700px] 5xl:max-w-[1000px] mb-5 5xl:mb-8"
+                className="hero-subheading font-host text-base max-mob:mb-4 md:text-xs lg:text-base 4xl:text-2xl 5xl:text-3xl text-[#a1a1aa] text-left md:text-center tracking-[-0.32px] leading-[1.15] max-w-[60%] max-mob:max-w-[60%] sm:max-w-[45%] md:max-w-[540px] 4xl:max-w-[700px] 5xl:max-w-[1000px] mb-5 5xl:mb-8"
               >
                 We build short-form content systems that turn attention into
                 installs consistently, at scale, without relying on luck.
