@@ -20,6 +20,7 @@ const SCRAMBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&";
 /* ─── Nav links ─── */
 const NAV_COL_1 = ["Home", "About", "Contact"];
 const NAV_COL_2 = ["Services", "Case Studies"];
+const NAV_MOBILE = ["Home", "Services", "Viral Engine", "Case Studies", "Contact"];
 
 /* ─── Corner bracket default/hover offsets ─── */
 const CORNER_DEFAULT = -8;
@@ -181,7 +182,7 @@ const FooterSection = () => {
 
   return (
     <footer ref={sectionRef} className="footer-section relative w-full overflow-hidden md:-mt-[12rem] lg:-mt-[20rem] xl:-mt-[25rem] 2xl:-mt-[30rem] 3xl:-mt-[37.5rem] 4xl:-mt-[50rem] 5xl:-mt-[75rem]" style={{ aspectRatio: "1440 / 1484" }}>
-      <style>{`@media(max-width:767px){.footer-section{aspect-ratio:unset!important;min-height:100vh}}@media(max-width:25rem){.clock-face-lg{width:4.5rem!important;height:4.5rem!important}}@media(min-width:25rem) and (max-width:639px){.clock-face-lg{width:5rem!important;height:5rem!important}}@media(min-width:768px) and (max-width:1023px){.clock-face-lg{width:3.5rem!important;height:3.5rem!important}}@media(min-width:1024px){.clock-face-lg{width:clamp(4.5rem,2.5rem+3.9vw,16rem)!important;height:clamp(4.5rem,2.5rem+3.9vw,16rem)!important}}`}</style>
+      <style>{`@media(max-width:767px){.footer-section{aspect-ratio:unset!important;min-height:100vh}}@media(max-width:25rem){.clock-face-lg{width:3.75rem!important;height:3.75rem!important}}@media(min-width:25rem) and (max-width:639px){.clock-face-lg{width:4.25rem!important;height:4.25rem!important}}@media(min-width:768px) and (max-width:1023px){.clock-face-lg{width:3.5rem!important;height:3.5rem!important}}@media(min-width:1024px){.clock-face-lg{width:clamp(4.5rem,2.5rem+3.9vw,16rem)!important;height:clamp(4.5rem,2.5rem+3.9vw,16rem)!important}}`}</style>
       <GlobalTexture />
 
       {/* ─── Background image ─── */}
@@ -210,7 +211,7 @@ const FooterSection = () => {
       <div className="relative z-10 mx-auto flex h-full flex-col w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem]">
 
         {/* ═══ CTA AREA ═══ */}
-        <div className="flex flex-1 flex-col items-start md:items-center pt-40 max-mob:pt-28 pb-12 max-mob:pb-8 text-left md:text-center px-6 max-mob:px-4 sm:pt-36 sm:pb-12 md:px-0 md:pt-56 md:pb-4 lg:pt-85 lg:pb-6 xl:pt-106 xl:pb-8 2xl:pt-128 2xl:pb-10 3xl:pt-160 3xl:pb-12 4xl:pt-256 4xl:pb-16 5xl:pt-384 5xl:pb-24">
+        <div className="flex flex-1 flex-col items-start md:items-center pt-40 max-mob:pt-28 pb-12 max-mob:pb-8 text-left md:text-center px-6 max-mob:px-4 max-md:!-ml-[1.5vw] max-md:!pl-2 sm:pt-36 sm:pb-12 md:px-0 md:pt-56 md:pb-4 lg:pt-85 lg:pb-6 xl:pt-106 xl:pb-8 2xl:pt-128 2xl:pb-10 3xl:pt-160 3xl:pb-12 4xl:pt-256 4xl:pb-16 5xl:pt-384 5xl:pb-24">
           {/* Heading */}
           <h2
             ref={headingRef}
@@ -256,8 +257,85 @@ const FooterSection = () => {
           </div>
         </div>
 
-        {/* ═══ BOTTOM SECTION — 2-col grid on mobile, normal flow on sm+ ═══ */}
-        <div className="mt-auto grid grid-cols-[1fr_auto] sm:grid-cols-[auto_1fr] md:block items-start gap-x-6 max-mob:gap-x-4 px-4 max-mob:px-3 md:px-0">
+        {/* ═══ MOBILE BOTTOM — visible only below md ═══ */}
+        <div className="md:hidden max-mob:mt-20 mob:mt-10 sm:mt-70 flex items-stretch justify-between gap-4 -mx-[1.5vw] pl-2 pr-2 pb-8 pt-6">
+          {/* Left column */}
+          <div className="flex flex-col justify-between flex-1 min-w-0">
+            {/* Top group: logo + nav */}
+            <div>
+              {/* Logo + tagline */}
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-1">
+                  <img src="/svgs/Viral-Labs-logo.svg" alt="Viral Labs" className="h-6 w-6" draggable={false} />
+                  <span className="font-bricolage text-2xl font-semibold tracking-tight text-white whitespace-nowrap">
+                    Viral Labs
+                  </span>
+                </div>
+                <span className="font-host text-xs font-thin text-white/50">
+                  Engineering Distribution
+                </span>
+              </div>
+
+              {/* Nav links */}
+              <nav className="flex flex-col gap-0 leading-tight mt-8">
+                {NAV_MOBILE.map((link) => (
+                  <a
+                    key={link}
+                    href="#"
+                    className={`font-host text-xl leading-[1.15] font-thin transition-colors duration-200 hover:text-[#FF6F21] ${link === "Home" ? "text-[#FF6F21]" : "text-white"}`}
+                  >
+                    {link}
+                  </a>
+                ))}
+              </nav>
+            </div>
+
+            {/* Bottom group: socials + copyright */}
+            <div>
+              {/* Socials */}
+              <div className="flex items-center gap-5">
+                {[
+                  { key: "x", href: "https://x.com/EashanShetty", label: "X" },
+                  { key: "in", href: "https://www.linkedin.com/company/virallabs/", label: "In" },
+                ].map(({ key, href, label }) => (
+                  <a
+                    key={key}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group relative flex h-4 w-7 items-center justify-center"
+                  >
+                    <span className="pointer-events-none absolute -left-1 -top-1 h-[6px] w-[6px] border-l border-t border-[#FF6F21]/60" />
+                    <span className="pointer-events-none absolute -right-1 -top-1 h-[6px] w-[6px] border-r border-t border-[#FF6F21]/60" />
+                    <span className="pointer-events-none absolute -bottom-1 -left-1 h-[6px] w-[6px] border-b border-l border-[#FF6F21]/60" />
+                    <span className="pointer-events-none absolute -bottom-1 -right-1 h-[6px] w-[6px] border-b border-r border-[#FF6F21]/60" />
+                    <span className="font-host text-[0.7rem] font-thin text-white">{label}</span>
+                  </a>
+                ))}
+              </div>
+
+              {/* Copyright */}
+              <div className="flex flex-col gap-1 mt-3">
+                <a href="#" className="font-host text-xs font-thin text-white/40 hover:text-white/70">
+                  Privacy Policy
+                </a>
+                <span className="font-host text-xs font-thin text-white/40">
+                  © Copyright 2026 Viral Labs
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right column — clocks stacked, span full height */}
+          <div className="flex flex-col items-center gap-2 shrink-0">
+            {CLOCKS.map((clock) => (
+              <AnalogClock key={`m-${clock.tz}`} {...clock} />
+            ))}
+          </div>
+        </div>
+
+        {/* ═══ BOTTOM SECTION — desktop/tablet only (md+) ═══ */}
+        <div className="hidden md:block mt-auto md:px-0">
 
           {/* Right column on mobile: clocks stacked vertically */}
           <div
@@ -340,28 +418,6 @@ const FooterSection = () => {
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* ═══ MOBILE SOCIALS — visible only below sm ═══ */}
-          <div className="order-3 md:hidden col-span-2 flex items-center gap-8 max-mob:gap-6 pt-4 max-mob:pt-3">
-            {[
-              { key: "x", href: "https://x.com/EashanShetty", content: <span className="font-host text-xs font-thin text-white">X</span> },
-              { key: "in", href: "https://www.linkedin.com/company/virallabs/", content: <span className="font-host text-xs font-thin text-white">In</span> },
-            ].map(({ key, href, content }) => (
-              <a
-                key={key}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative flex h-4 w-8 items-center justify-center"
-              >
-                <span className="pointer-events-none absolute -left-1.5 -top-1.5 h-[8px] w-[8px] border-l border-t border-[#FF6F21]/60" />
-                <span className="pointer-events-none absolute -right-1.5 -top-1.5 h-[8px] w-[8px] border-r border-t border-[#FF6F21]/60" />
-                <span className="pointer-events-none absolute -bottom-1.5 -left-1.5 h-[8px] w-[8px] border-b border-l border-[#FF6F21]/60" />
-                <span className="pointer-events-none absolute -bottom-1.5 -right-1.5 h-[8px] w-[8px] border-b border-r border-[#FF6F21]/60" />
-                {content}
-              </a>
-            ))}
           </div>
 
           {/* ═══ COPYRIGHT ═══ */}
@@ -495,12 +551,12 @@ const AnalogClock = ({ city, tz, label }) => {
       </div>
 
       {/* Digital time */}
-      <span ref={digitalRef} className="font-host text-xs md:text-[0.5rem] lg:text-[0.6rem] xl:text-[0.65rem] 2xl:text-xs 3xl:text-sm 4xl:text-base 5xl:text-lg font-thin uppercase tracking-widest text-white/50">
+      <span ref={digitalRef} className="font-host text-[0.55rem] md:text-[0.5rem] lg:text-[0.6rem] xl:text-[0.65rem] 2xl:text-xs 3xl:text-sm 4xl:text-base 5xl:text-lg font-thin uppercase tracking-widest text-white/50">
         --:-- --
       </span>
 
       {/* City name */}
-      <span className="-mt-4 md:-mt-0.5 lg:-mt-0.5 xl:-mt-1 2xl:-mt-1.5 3xl:-mt-2 4xl:-mt-3 5xl:-mt-4 font-host text-xs md:text-[0.5rem] lg:text-[0.6rem] xl:text-[0.65rem] 2xl:text-xs 3xl:text-sm 4xl:text-base 5xl:text-lg font-thin text-white/35">
+      <span className="-mt-3 md:-mt-0.5 lg:-mt-0.5 xl:-mt-1 2xl:-mt-1.5 3xl:-mt-2 4xl:-mt-3 5xl:-mt-4 font-host text-[0.5rem] md:text-[0.5rem] lg:text-[0.6rem] xl:text-[0.65rem] 2xl:text-xs 3xl:text-sm 4xl:text-base 5xl:text-lg font-thin text-white/35">
         {city}
       </span>
     </div>
