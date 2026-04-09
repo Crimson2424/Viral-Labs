@@ -482,8 +482,11 @@ export default function ViralitySection({ globeContainerRef }) {
         </div>
       </div>
 
+      {/* ══ Mobile bottom spacer — replaces hidden bottom text ══ */}
+      <div className="md:hidden h-16 sm:h-20" aria-hidden="true" />
+
       {/* ══ BOTTOM TEXT — lives outside the h-screen block, scrolled to after pin ══ */}
-      <div ref={bottomTextRef} className="relative z-40 px-[clamp(0.75rem,3vw,3rem)] max-sm:px-2 max-mob:px-3 pb-[clamp(2.5rem,5vh,10rem)] pointer-events-none">
+      <div ref={bottomTextRef} className="hidden md:block relative z-40 px-[clamp(0.75rem,3vw,3rem)] max-sm:px-2 max-mob:px-3 pb-[clamp(2.5rem,5vh,10rem)] pointer-events-none">
         <div className="flex flex-col md:flex-row items-start md:justify-around max-w-6xl 5xl:max-w-none mx-auto gap-6 md:gap-16 pt-10 md:pt-24">
 
           {/* Left column */}

@@ -449,7 +449,7 @@ function createBakeResources() {
 // SCENE
 // ============================================
 
-const IS_MOBILE = typeof window !== 'undefined' && window.innerWidth < 1024;
+const IS_MOBILE = typeof window !== 'undefined' && window.innerWidth < 768;
 
 function Scene() {
   const { camera, gl, size, viewport } = useThree();
