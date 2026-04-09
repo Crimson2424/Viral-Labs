@@ -487,11 +487,11 @@ export default function ViralitySection({ globeContainerRef }) {
 
       {/* ══ BOTTOM TEXT — lives outside the h-screen block, scrolled to after pin ══ */}
       <div ref={bottomTextRef} className="hidden md:block relative z-40 px-[clamp(0.75rem,3vw,3rem)] max-sm:px-2 max-mob:px-3 pb-[clamp(2.5rem,5vh,10rem)] pointer-events-none">
-        <div className="flex flex-col md:flex-row items-start md:justify-around max-w-6xl 5xl:max-w-none mx-auto gap-6 md:gap-16 pt-10 md:pt-24">
+        <div className="flex flex-col md:flex-row items-start md:justify-around max-w-6xl 5xl:max-w-none mx-auto gap-6 md:gap-[30%] lg:gap-16 pt-10 md:pt-24">
 
           {/* Left column */}
-          <div className="max-w-md 5xl:max-w-4xl">
-            <p className="v-bottom-left-text font-host font-thin text-sm max-mob:text-sm text-white leading-[1.2] tracking-tight 4xl:text-base 5xl:text-3xl">
+          <div className="md:max-w-[40%] lg:max-w-md 5xl:max-w-4xl">
+            <p className="v-bottom-left-text font-host font-thin text-sm md:text-xs lg:text-sm text-white leading-[1.2] tracking-tight 4xl:text-base 5xl:text-3xl">
               <span className="font-semibold">Viral Labs</span>
               {" "}studies how attention moves through markets, channels,
               and audiences, then turns those patterns into structured distribution
@@ -509,25 +509,25 @@ export default function ViralitySection({ globeContainerRef }) {
                   className="w-[10px] h-[10px] bg-[#FF6F21] shrink-0"
                   style={{ boxShadow: "0 0 6px #FF6F21, 0 0 12px #FF6F21" }}
                 />
-                <span className="font-host font-thin text-sm max-mob:text-sm text-white tracking-tight 4xl:text-base 5xl:text-3xl">Signal Amplification</span>
+                <span className="font-host font-thin text-sm md:text-xs lg:text-sm text-white tracking-tight 4xl:text-base 5xl:text-3xl">Signal Amplification</span>
               </div>
               <div className="v-bottom-tag flex items-center gap-3">
                 <div
                   className="w-[10px] h-[10px] bg-[#FF6F21] shrink-0"
                   style={{ boxShadow: "0 0 6px #FF6F21, 0 0 12px #FF6F21" }}
                 />
-                <span className="font-host font-thin text-sm max-mob:text-sm text-white tracking-tight 4xl:text-base 5xl:text-3xl">Behavioral Loops</span>
+                <span className="font-host font-thin text-sm md:text-xs lg:text-sm text-white tracking-tight 4xl:text-base 5xl:text-3xl">Behavioral Loops</span>
               </div>
               <div className="v-bottom-tag flex items-center gap-3">
                 <div
                   className="w-[10px] h-[10px] bg-[#FF6F21] shrink-0"
                   style={{ boxShadow: "0 0 6px #FF6F21, 0 0 12px #FF6F21" }}
                 />
-                <span className="font-host font-thin text-sm max-mob:text-sm text-white tracking-tight 4xl:text-base 5xl:text-3xl">Distribution Mechanics</span>
+                <span className="font-host font-thin text-sm md:text-xs lg:text-sm text-white tracking-tight 4xl:text-base 5xl:text-3xl">Distribution Mechanics</span>
               </div>
             </div>
 
-            <p className="v-bottom-most-text font-host font-thin text-sm max-mob:text-sm max-mob:max-w-none text-white tracking-tight leading-[1.2] max-w-xs 4xl:max-w-sm 5xl:max-w-lg 4xl:text-base 5xl:text-3xl">
+            <p className="v-bottom-most-text font-host font-thin text-sm md:text-xs lg:text-sm max-mob:max-w-none text-white tracking-tight leading-[1.2] md:max-w-[12.50rem] lg:max-w-xs 4xl:max-w-sm 5xl:max-w-lg 4xl:text-base 5xl:text-3xl">
               Most brands chase trends. We model attention. Virality follows patterns.
             </p>
           </div>
