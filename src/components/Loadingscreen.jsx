@@ -151,6 +151,7 @@ export default function LoadingScreen({ videoSrc = "/videos/loader.webm" }) {
     if (hasExited.current) return;
     hasExited.current = true;
 
+    loadingState.hasExited = true;
     if (loadingState.onReady) loadingState.onReady();
 
     const tl = gsap.timeline({
