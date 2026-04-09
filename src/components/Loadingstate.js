@@ -10,8 +10,13 @@
 export const loadingState = {
     progress: 0,
     isComplete: false,
-  
+
     // HeroSection registers its entrance.play() here.
     // LoadingScreen calls it after its exit animation finishes.
     onReady: null,
+
+    // True once the loading screen exit animation has fired.
+    // Handles the race where the loader finishes before HeroSection
+    // registers its onReady callback (e.g. fontReady still pending).
+    hasExited: false,
   };

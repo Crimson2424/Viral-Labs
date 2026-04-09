@@ -178,7 +178,7 @@ function DesktopLayout() {
           <div className="flex flex-col items-end gap-3 sm:w-full 4xl:gap-5 5xl:gap-8 mt-8 md:mt-12 lg:mt-8 xl:mt-10 2xl:mt-12 3xl:mt-16 4xl:mt-20 5xl:mt-30">
             <GlowLine svgRef={cnGlowRef} className="mt-0 w-32 sm:w-40 md:w-48 lg:w-39 xl:w-48 2xl:w-60 3xl:w-72 4xl:w-96 5xl:w-[37rem] h-auto -mr-2" />
 
-            <p ref={cnDesc1Ref} className="font-host font-thin w-full text-sm sm:text-base md:text-lg lg:max-w-[20rem] lg:text-xs xl:max-w-[25rem] xl:text-sm 2xl:max-w-[30rem] 2xl:text-lg 3xl:max-w-[37.5rem] 3xl:text-xl 4xl:max-w-[50rem] 4xl:text-3xl 5xl:max-w-[75rem] 5xl:text-[2.8rem] text-right leading-tight 5xl:leading-snug -mt-1">
+            <p ref={cnDesc1Ref} className="hidden lg:block font-host font-thin w-full text-sm sm:text-base md:text-lg lg:max-w-[20rem] lg:text-xs xl:max-w-[25rem] xl:text-sm 2xl:max-w-[30rem] 2xl:text-lg 3xl:max-w-[37.5rem] 3xl:text-xl 4xl:max-w-[50rem] 4xl:text-3xl 5xl:max-w-[75rem] 5xl:text-[2.8rem] text-right leading-tight 5xl:leading-snug -mt-1">
               We manage 300+ creators producing 8,000+ monthly videos. Powered by proprietary amplification, our network delivers 1B+ monthly views and high-impact performance across all major platforms.
             </p>
 
@@ -270,7 +270,7 @@ function MobileLayout() {
         <GlowLine svgRef={cnGlowRef} className="w-32 sm:w-40 md:w-48 h-auto mt-1 mob:mt-6 sm:mt-0" />
 
         {/* Description */}
-        <p ref={cnDescRef} className="font-host font-thin text-sm sm:text-base md:text-lg text-center leading-tight max-w-[520px]">
+        <p ref={cnDescRef} className="hidden lg:block font-host font-thin text-sm sm:text-base md:text-lg text-center leading-tight max-w-[520px]">
           We manage 300+ creators producing 8,000+ monthly videos. Powered by proprietary amplification, our network delivers 1B+ monthly views and high-impact performance across all major platforms.
         </p>
 

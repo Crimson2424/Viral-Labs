@@ -497,6 +497,8 @@ export default function HeroSection() {
       });
 
       loadingState.onReady = () => entrance.play();
+      // If the loader already exited before we registered, play now
+      if (loadingState.hasExited) entrance.play();
 
       }); // fontReady.then
       return () => { cancelled = true; };
@@ -558,8 +560,11 @@ export default function HeroSection() {
 
       @media (max-width: 767px) {
         .hero-heading {
-          font-size: clamp(2.4rem, 10vw, 4.5rem) !important;
+          font-size: clamp(2.4rem, 12vw, 4.5rem) !important;
           line-height: 0.9 !important;
+        }
+        .hero-subheading {
+          font-size: clamp(0.8rem, 3.6vw, 1rem) !important;
         }
         .mission-text {
           font-size: clamp(1.35rem, 5.5vw, 1.75rem) !important;
@@ -650,7 +655,7 @@ export default function HeroSection() {
 
               <h1
                 ref={headingRef}
-                className="hero-heading font-bricolage font-medium text-left md:text-center mb-4 5xl:mb-10 tracking-normal max-w-[70%] max-mob:max-w-[85%] md:max-w-none"
+                className="hero-heading font-bricolage font-medium text-left md:text-center mb-4 5xl:mb-10 tracking-normal max-w-[80%] max-mob:max-w-[90%] md:max-w-none"
                 style={{
                   fontSize: "clamp(90px, 6.5vw, 130px)",
                   lineHeight: 0.78,
@@ -680,7 +685,7 @@ export default function HeroSection() {
 
               <p
                 ref={subheadingRef}
-                className="hero-subheading font-host text-base max-mob:text-sm max-mob:max-w-[85%] max-mob:mb-4 4xl:text-lg 5xl:text-2xl text-[#a1a1aa] text-left md:text-center tracking-[-0.32px] leading-[1.15] max-w-[75%] md:max-w-[540px] 4xl:max-w-[700px] 5xl:max-w-[1000px] mb-5 5xl:mb-8"
+                className="hero-subheading font-host text-base max-mob:mb-4 md:text-xs lg:text-base 4xl:text-2xl 5xl:text-3xl text-[#a1a1aa] text-left md:text-center tracking-[-0.32px] leading-[1.15] max-w-[60%] max-mob:max-w-[60%] sm:max-w-[45%] md:max-w-[540px] 4xl:max-w-[700px] 5xl:max-w-[1000px] mb-5 5xl:mb-8"
               >
                 We build short-form content systems that turn attention into
                 installs consistently, at scale, without relying on luck.

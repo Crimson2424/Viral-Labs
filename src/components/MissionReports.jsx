@@ -744,7 +744,7 @@ export default function MissionReports() {
               style={isDesktopLayout ? { padding: "2rem clamp(1.25rem, 3vw, 3rem)" } : undefined}
             >
               <div className="col-span-12 lg:col-span-5 flex flex-col">
-                <div className="flex flex-wrap max-md:flex-col md:flex-row gap-x-8 gap-y-2 mb-auto justify-between">
+                <div className="hidden md:flex flex-wrap md:flex-row gap-x-8 gap-y-2 mb-auto justify-between">
                   {["Real distribution", "Real operations", "Measurable outcomes"].map((tag) => (
                     <span key={tag} className="mr-tag font-host text-sm 4xl:text-base 5xl:text-lg font-thin text-white tracking-tight">{tag}</span>
                   ))}
