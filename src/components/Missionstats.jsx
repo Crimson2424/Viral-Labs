@@ -418,7 +418,7 @@ export default forwardRef(function MissionStats(props, ref) {
                     width={logo.width}
                     height={logo.height}
                     loading="lazy"
-                    className="screen-card h-15 max-mob:h-10 4xl:h-20 5xl:h-24 w-auto object-contain opacity-0 grayscale brightness-75 transition-all duration-300 ease-out hover:brightness-150 hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]"
+                    className="screen-card h-15 max-mob:h-10 4xl:h-20 5xl:h-24 w-auto object-contain opacity-0 grayscale brightness-75 transition-all duration-300 ease-out hover:brightness-150 hover:ddiv-shadow-[0_0_10px_rgba(255,255,255,0.2)]"
                   />
                 ))}
               </div>

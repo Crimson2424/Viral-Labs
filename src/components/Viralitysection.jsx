@@ -436,7 +436,7 @@ export default function ViralitySection({ globeContainerRef }) {
           </div>
 
           {/* ── Creative Methodology (bottom-left) ── */}
-          <div className="v-card-bl relative md:absolute md:left-2 md:bottom-26 lg:left-8 lg:bottom-0 xl:left-20 xl:bottom-0 2xl:left-14 2xl:-bottom-2 3xl:left-20 3xl:bottom-15 4xl:left-32 4xl:bottom-50 5xl:left-24 5xl:bottom-100 z-30 pointer-events-auto overflow-visible">
+          <div className="v-card-bl relative md:absolute md:left-2 md:bottom-26 lg:left-8 lg:bottom-[4rem] xl:left-20 xl:bottom-0 2xl:left-14 2xl:bottom-[5rem] 3xl:left-20 3xl:bottom-15 4xl:left-32 4xl:bottom-50 5xl:left-24 5xl:bottom-100 z-30 pointer-events-auto overflow-visible">
             <div className="relative w-[85%] mr-auto md:w-56 lg:w-44 xl:w-56 2xl:w-56 3xl:w-60 4xl:w-68 5xl:w-104 flex flex-col overflow-visible">
               <div className="relative px-5 max-mob:px-3 lg:px-3 xl:px-5 5xl:px-8 py-2 max-mob:py-1.5 lg:py-1.5 xl:py-2 5xl:py-4 bg-[#1d1d1d]/90 md:bg-[#1d1d1d]/70">
                 <div className="font-bricolage text-xl max-mob:text-lg max-mob:leading-[1.15] lg:text-base xl:text-xl 4xl:text-2xl 5xl:text-4xl text-white tracking-tight leading-5 lg:leading-4 xl:leading-5 5xl:leading-8 text-left md:text-right">
@@ -457,7 +457,7 @@ export default function ViralitySection({ globeContainerRef }) {
           </div>
 
           {/* ── Performance Outcomes (bottom-right) ── */}
-          <div className="v-card-br relative md:absolute md:right-0 md:bottom-30 lg:right-4 lg:bottom-0 xl:right-6 xl:-bottom-3 2xl:right-4 2xl:-bottom-4 3xl:right-6 3xl:bottom-30 4xl:right-16 4xl:bottom-60 5xl:right-8 5xl:bottom-90 z-30 pointer-events-auto overflow-visible">
+          <div className="v-card-br relative md:absolute md:right-0 md:bottom-30 lg:right-4 lg:bottom-[5rem] xl:right-6 xl:-bottom-3 2xl:right-4 2xl:bottom-[3rem] 3xl:right-6 3xl:bottom-30 4xl:right-16 4xl:bottom-60 5xl:right-8 5xl:bottom-90 z-30 pointer-events-auto overflow-visible">
             <div className="relative w-[85%] ml-auto md:w-69 lg:w-52 xl:w-69 2xl:w-69 3xl:w-72 4xl:w-84 5xl:w-120 flex flex-col overflow-visible">
               <div className="relative px-5 max-mob:px-3 lg:px-3 xl:px-5 5xl:px-8 py-2 max-mob:py-1.5 lg:py-1.5 xl:py-2 5xl:py-4 bg-[#1d1d1d]/90 md:bg-[#1d1d1d]/70">
                 <div className="font-bricolage text-xl max-mob:text-lg max-mob:leading-[1.15] lg:text-base xl:text-xl 4xl:text-2xl 5xl:text-4xl text-white tracking-tight leading-5 lg:leading-4 xl:leading-5 5xl:leading-8 text-left">

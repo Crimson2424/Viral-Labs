@@ -178,11 +178,11 @@ function DesktopLayout() {
           <div className="flex flex-col items-end gap-3 sm:w-full 4xl:gap-5 5xl:gap-8 mt-8 md:mt-12 lg:mt-8 xl:mt-10 2xl:mt-12 3xl:mt-16 4xl:mt-20 5xl:mt-30">
             <GlowLine svgRef={cnGlowRef} className="mt-0 w-32 sm:w-40 md:w-48 lg:w-39 xl:w-48 2xl:w-60 3xl:w-72 4xl:w-96 5xl:w-[37rem] h-auto -mr-2" />
 
-            <p ref={cnDesc1Ref} className="hidden lg:block font-host font-thin w-full text-sm sm:text-base md:text-lg lg:max-w-[20rem] lg:text-xs xl:max-w-[25rem] xl:text-sm 2xl:max-w-[30rem] 2xl:text-lg 3xl:max-w-[37.5rem] 3xl:text-xl 4xl:max-w-[50rem] 4xl:text-3xl 5xl:max-w-[75rem] 5xl:text-[2.8rem] text-right leading-tight 5xl:leading-snug -mt-1">
+            <p ref={cnDesc1Ref} className="hidden lg:block font-host font-thin w-full text-sm sm:text-base md:text-lg lg:max-w-[20rem] lg:text-xs xl:max-w-[25rem] xl:text-sm 2xl:max-w-[30rem] 2xl:text-lg 2xl:mb-[2rem] 3xl:max-w-[37.5rem] 3xl:text-xl 4xl:max-w-[50rem] 4xl:text-3xl 5xl:max-w-[75rem] 5xl:text-[2.8rem] 5xl:mb-[3.5rem] text-right leading-tight 5xl:leading-snug -mt-1">
               We manage 300+ creators producing 8,000+ monthly videos. Powered by proprietary amplification, our network delivers 1B+ monthly views and high-impact performance across all major platforms.
             </p>
 
-            <div ref={cnStatsRef} className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 gap-3 md:gap-y-3 4xl:gap-y-5 5xl:gap-y-8 w-full max-w-[180px] sm:max-w-[200px] md:max-w-[260px] lg:max-w-[10rem] xl:max-w-[12.5rem] 2xl:max-w-[15rem] 3xl:max-w-[19rem] 4xl:max-w-[25rem] 5xl:max-w-[37.5rem] mt-2 4xl:mt-4 5xl:mt-6 self-end">
+            <div ref={cnStatsRef} className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 gap-3 md:gap-y-3 lg:gap-[1.5rem] 2xl:gap-[2rem] 3xl:gap-[2.5rem] 4xl:gap-[3rem] 5xl:gap-[4rem] w-full max-w-[180px] sm:max-w-[200px] md:max-w-[260px] lg:max-w-[10rem] xl:max-w-[12.5rem] 2xl:max-w-[15rem] 3xl:max-w-[19rem] 4xl:max-w-[25rem] 5xl:max-w-[37.5rem] mt-2 4xl:mt-4 5xl:mt-6 self-end">
               {CN_STATS.map((stat, i) => (
                 <div key={i} className="relative flex flex-col gap-0.5 4xl:gap-1 5xl:gap-2 px-3 py-2 sm:px-4 sm:py-3 4xl:px-8 4xl:py-5 5xl:px-12 5xl:py-8">
                   <svg className="absolute top-0 left-0 w-3.5 h-3.5 lg:w-2 lg:h-2 xl:w-2.5 xl:h-2.5 2xl:w-3 2xl:h-3 3xl:w-3.5 3xl:h-3.5 4xl:w-5 4xl:h-5 5xl:w-7 5xl:h-7" viewBox="0 0 10 10" fill="none"><path d="M9.36328 0.5H0.5V9.45225" stroke="#FF6F21" /></svg>

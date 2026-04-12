@@ -74,6 +74,7 @@ export default function GlobalGrid({ animated = false, navOffset = false, topCla
         `,
         backgroundSize: `${CELL_SIZE}px ${CELL_SIZE}px`,
         backgroundPosition: "center top",
+        willChange: "transform",
       }}
     />
   );

@@ -263,14 +263,14 @@ const BridgeTestimonial = () => {
       {/* ── centred wrapper ── */}
       <div className="relative z-10 mx-auto w-[calc(100%-clamp(2.5rem,10vw,13.125rem))] max-w-[106.875rem]">
         {/* ── testimonial card ── */}
-        <div className="relative mx-auto max-w-[52rem] md:max-w-[32rem] lg:max-w-[40rem] 4xl:max-w-[72rem] 5xl:max-w-[96rem] px-8 pt-14 pb-10 sm:px-10 sm:pt-10 sm:pb-10 md:px-10 md:py-10 lg:px-12 lg:py-12 4xl:px-24 4xl:py-20 5xl:px-32 5xl:py-24">
+        <div className="relative mx-auto max-w-[52rem] md:max-w-[32rem] lg:max-w-[40rem] xl:max-w-[50rem] 2xl:max-w-[56rem] 3xl:max-w-[64rem] 4xl:max-w-[80rem] 5xl:max-w-[110rem] px-8 pt-14 pb-10 sm:px-10 sm:pt-10 sm:pb-10 md:px-10 md:py-10 lg:px-12 lg:py-12 xl:px-14 xl:py-14 2xl:px-16 2xl:py-16 3xl:px-20 3xl:py-18 4xl:px-28 4xl:py-24 5xl:px-40 5xl:py-32">
           {/* ─── Four orange corner brackets ─── */}
           <CornerBrackets />
 
           {/* ─── Glowing vertical line – left side ─── */}
           <span
             ref={glowLineRef}
-            className="pointer-events-none absolute left-3 top-1/2 h-[52%] w-[2px] -translate-y-1/2 sm:left-5 md:left-8"
+            className="pointer-events-none absolute left-3 top-1/2 h-[52%] w-[2px] -translate-y-1/2 sm:left-5 md:left-8 3xl:left-10 3xl:w-[3px] 4xl:left-14 4xl:w-[3px] 5xl:left-20 5xl:w-[4px]"
             style={{
               background: "#F05A1F",
               boxShadow: "0 0 3px #F05A1F, 0 0 8px #F05A1Fcc, 0 0 18px #F05A1F99",
@@ -283,7 +283,7 @@ const BridgeTestimonial = () => {
           <img
             src={QuoteIcon}
             alt="quote"
-            className="mb-5 h-9 w-10 select-none opacity-80 sm:mb-6 sm:h-8 sm:w-10 md:mb-4 md:h-7 md:w-8 4xl:h-12 4xl:w-14 5xl:h-14 5xl:w-16"
+            className="mb-5 h-9 w-10 select-none opacity-80 sm:mb-6 sm:h-8 sm:w-10 md:mb-4 md:h-7 md:w-8 xl:h-8 xl:w-10 xl:mb-5 2xl:h-9 2xl:w-11 2xl:mb-6 3xl:h-10 3xl:w-12 3xl:mb-7 4xl:h-14 4xl:w-16 4xl:mb-8 5xl:h-18 5xl:w-20 5xl:mb-10"
             draggable={false}
             loading="lazy"
           />
@@ -292,7 +292,7 @@ const BridgeTestimonial = () => {
           <div ref={quoteWrapperRef} className="relative">
             <p
               ref={quoteRef}
-              className="font-bricolage text-base font-thin leading-snug tracking-wide text-white sm:text-lg sm:leading-[1.75] md:text-lg md:leading-snug 4xl:text-4xl 4xl:leading-snug 5xl:text-5xl 5xl:leading-snug"
+              className="font-bricolage text-base font-thin leading-snug tracking-wide text-white sm:text-lg sm:leading-[1.75] md:text-lg md:leading-snug xl:text-xl xl:leading-relaxed 2xl:text-2xl 2xl:leading-relaxed 3xl:text-3xl 3xl:leading-relaxed 4xl:text-[2.5rem] 4xl:leading-snug 5xl:text-6xl 5xl:leading-snug"
             >
               {testimonials[0].quote}
             </p>
@@ -307,26 +307,26 @@ const BridgeTestimonial = () => {
             alt=""
             width={763}
             height={31}
-            className="mt-0 h-auto w-full max-w-[48rem] 4xl:max-w-[66rem] 5xl:max-w-[90rem] select-none"
+            className="mt-0 h-auto w-full max-w-[48rem] 3xl:max-w-[58rem] 4xl:max-w-[74rem] 5xl:max-w-[100rem] select-none"
             style={{ opacity: 0 }}
             draggable={false}
           />
 
           {/* ─── Bottom row: founder info + company ─── */}
-          <div className="mt-5 flex items-center justify-between sm:mt-10 md:mt-6 4xl:mt-14 5xl:mt-16">
+          <div className="mt-5 flex items-center justify-between sm:mt-10 md:mt-6 xl:mt-8 2xl:mt-10 3xl:mt-12 4xl:mt-16 5xl:mt-20">
             {/* founder */}
             <div className="flex items-center gap-3">
-              <div className="h-9 w-9 shrink-0 rounded-full bg-[#2a2a2a] sm:h-10 sm:w-10 4xl:h-12 4xl:w-12 5xl:h-14 5xl:w-14" />
+              <div className="h-9 w-9 shrink-0 rounded-full bg-[#2a2a2a] sm:h-10 sm:w-10 xl:h-10 xl:w-10 2xl:h-11 2xl:w-11 3xl:h-12 3xl:w-12 4xl:h-14 4xl:w-14 5xl:h-18 5xl:w-18" />
               <div className="flex flex-col">
                 <span
                   ref={founderNameRef}
-                  className="font-host text-sm font-thin leading-tight text-white sm:text-sm 4xl:text-base 5xl:text-lg"
+                  className="font-host text-sm font-thin leading-tight text-white sm:text-sm xl:text-sm 2xl:text-base 3xl:text-lg 4xl:text-xl 5xl:text-2xl"
                 >
                   {testimonials[0].founderName}
                 </span>
                 <span
                   ref={founderTitleRef}
-                  className="font-host text-xs leading-tight text-white/70 sm:text-[13px] 4xl:text-sm 5xl:text-base"
+                  className="font-host text-xs leading-tight text-white/70 sm:text-[13px] 2xl:text-sm 3xl:text-base 4xl:text-lg 5xl:text-xl"
                 >
                   {testimonials[0].founderTitle}
                 </span>
@@ -336,7 +336,7 @@ const BridgeTestimonial = () => {
             {/* company name */}
             <span
               ref={companyRef}
-              className="font-host text-lg font-semibold tracking-tight text-white sm:text-2xl md:text-2xl 4xl:text-3xl 5xl:text-4xl"
+              className="font-host text-lg font-semibold tracking-tight text-white sm:text-2xl md:text-2xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl 4xl:text-5xl 5xl:text-6xl"
             >
               {testimonials[0].companyName}
             </span>
@@ -353,7 +353,7 @@ const BridgeTestimonial = () => {
               >
                 <span
                   ref={(el) => (cubeRefs.current[i] = el)}
-                  className="block h-2 w-2 sm:h-3 sm:w-3"
+                  className="block h-2 w-2 sm:h-3 sm:w-3 3xl:h-3.5 3xl:w-3.5 4xl:h-4 4xl:w-4 5xl:h-5 5xl:w-5"
                   style={{
                     backgroundColor: i === 0 ? "#FF6F21" : "rgba(255,255,255,0.3)",
                     boxShadow: i === 0 ? "0 0 6px #FF6F21, 0 0 14px rgba(255,111,33,0.5)" : "none",
@@ -377,7 +377,7 @@ export default BridgeTestimonial;
 const CORNER_THICKNESS = "2px";
 const CORNER_COLOR = "#FF6F21";
 
-const cornerBase = "pointer-events-none absolute h-5 w-5 md:h-4 md:w-4 lg:h-[28px] lg:w-[28px]";
+const cornerBase = "pointer-events-none absolute h-5 w-5 md:h-4 md:w-4 lg:h-4 lg:w-4 xl:h-4 xl:w-4 2xl:h-5 2xl:w-5 3xl:h-5 3xl:w-5 4xl:h-6 4xl:w-6 5xl:h-8 5xl:w-8";
 
 const CornerBrackets = () => (
   <>

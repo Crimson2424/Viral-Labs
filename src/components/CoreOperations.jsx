@@ -351,7 +351,7 @@ export default function CoreOperations() {
                 <div className="h-px bg-white/20" />
 
                 <div
-                  className="flex flex-1 flex-col gap-4 lg:gap-0 bg-[#1C1C1C]"
+                  className="flex flex-1 flex-col gap-4 lg:gap-0 bg-[#1C1C1C] transition-colors duration-300 hover:bg-[#242424]"
                   style={{
                     padding: "clamp(1rem, 2vw, 1.75rem)",
                     paddingInline: "clamp(0.75rem, 1.5vw, 1.25rem)",

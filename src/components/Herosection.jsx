@@ -85,15 +85,19 @@ export default function HeroSection() {
       const headingWidth = headingEl.offsetWidth;
       const headingRect = headingEl.getBoundingClientRect();
 
-      heroHeadingSplit.chars.forEach((char) => {
+      // Batch all reads first — avoids layout thrashing
+      const charPositions = heroHeadingSplit.chars.map((char) => {
         const charRect = char.getBoundingClientRect();
-        const charLeft = charRect.left - headingRect.left;
+        return charRect.left - headingRect.left;
+      });
 
+      // Then batch all writes
+      heroHeadingSplit.chars.forEach((char, i) => {
         Object.assign(char.style, {
           backgroundImage:
             "linear-gradient(92.7deg, rgb(255,255,255) 21.4%, rgb(151,151,151) 49.6%, rgb(255,255,255) 79.1%)",
           backgroundSize: `${headingWidth}px 100%`,
-          backgroundPosition: `-${charLeft}px 0`,
+          backgroundPosition: `-${charPositions[i]}px 0`,
           WebkitBackgroundClip: "text",
           WebkitTextFillColor: "transparent",
           backgroundClip: "text",
@@ -123,10 +127,11 @@ export default function HeroSection() {
       const subChars = heroSubSplit.chars;
       const originalTexts = subChars.map((c) => c.textContent);
 
-      subChars.forEach((char) => {
-        const w = char.offsetWidth;
+      // Batch reads, then batch writes — avoids layout thrashing
+      const subWidths = subChars.map((char) => char.offsetWidth);
+      subChars.forEach((char, i) => {
         char.style.display = "inline-block";
-        char.style.width = `${w}px`;
+        char.style.width = `${subWidths[i]}px`;
         char.style.textAlign = "center";
       });
 
@@ -148,10 +153,10 @@ export default function HeroSection() {
       });
       const ctaChars = ctaTextSplit.chars;
       const ctaOriginals = ctaChars.map((c) => c.textContent);
-      ctaChars.forEach((char) => {
-        const w = char.offsetWidth;
+      const ctaWidths = ctaChars.map((char) => char.offsetWidth);
+      ctaChars.forEach((char, i) => {
         char.style.display = "inline-block";
-        char.style.width = `${w}px`;
+        char.style.width = `${ctaWidths[i]}px`;
         char.style.textAlign = "center";
       });
       ctaChars.forEach((char) => {
@@ -584,7 +589,7 @@ export default function HeroSection() {
           max-width: 65% !important;
         }
         .hero-subheading {
-          max-width: 400px !important;
+          max-width: 300px !important;
         }
       }
 
@@ -598,7 +603,7 @@ export default function HeroSection() {
         .hero-subheading {
           font-size: 0.875rem !important;
           max-width: 420px !important;
-          margin-bottom: 1rem !important;
+          margin-bottom: 2rem !important;
         }
         .cta-inner a {
           width: 8.5rem !important;
@@ -655,7 +660,7 @@ export default function HeroSection() {
 
               <h1
                 ref={headingRef}
-                className="hero-heading font-bricolage font-medium text-left md:text-center mb-4 5xl:mb-10 tracking-normal max-w-[80%] max-mob:max-w-[90%] md:max-w-none"
+                className="hero-heading font-bricolage font-medium text-left md:text-center mb-4 max-mob:mb-[2rem] mob:mb-[1.5rem] md:mb-[1rem] lg:mb-[1.2rem] xl:mb-[1.4rem] 2xl:mb-[1.5rem] 3xl:mb-[2rem] 4xl:mb-[2.5rem] 5xl:mb-[3rem] tracking-normal max-w-[80%] max-mob:max-w-[90%] md:max-w-none"
                 style={{
                   fontSize: "clamp(90px, 6.5vw, 130px)",
                   lineHeight: 0.78,
@@ -685,25 +690,25 @@ export default function HeroSection() {
 
               <p
                 ref={subheadingRef}
-                className="hero-subheading font-host text-base max-mob:mb-4 md:text-xs lg:text-base 4xl:text-2xl 5xl:text-3xl text-[#a1a1aa] text-left md:text-center tracking-[-0.32px] leading-[1.15] max-w-[60%] max-mob:max-w-[60%] sm:max-w-[45%] md:max-w-[540px] 4xl:max-w-[700px] 5xl:max-w-[1000px] mb-5 5xl:mb-8"
+                className="hero-subheading font-host text-base max-mob:mb-[2rem] mob:mb-[2rem] md:mb-[1.2rem] md:text-xs lg:text-base 4xl:text-2xl 5xl:text-4xl text-[#a1a1aa] text-left md:text-center tracking-[-0.32px] leading-[1.15] max-w-[60%] max-mob:max-w-[60%] sm:max-w-[45%] md:max-w-[540px] 4xl:max-w-[700px] 5xl:max-w-[1000px] mb-5 2xl:mb-[2rem] 4xl:mb-[2.5rem] 5xl:mb-[3rem]"
               >
                 We build short-form content systems that turn attention into
                 installs consistently, at scale, without relying on luck.
               </p>
 
               <div ref={ctaRef} className="flex flex-col items-center gap-2 max-mob:gap-4 5xl:gap-4 max-mob:mt-2">
-              <div className="cta-inner overflow-visible">
+              <div className="cta-inner overflow-visible 4xl:mb-2">
                 <a
                   href="#results"
                   onMouseEnter={handleCtaHover}
                   onMouseLeave={handleCtaLeave}
-                  className="relative flex items-center justify-center gap-3 w-40 h-10 max-mob:w-36 max-mob:h-11 4xl:w-48 4xl:h-12 5xl:w-64 5xl:h-16 px-1.5 py-2 overflow-visible hover:bg-white/10 transition-colors duration-300"
+                  className="relative flex items-center justify-center gap-3 w-40 h-10 max-mob:w-36 max-mob:h-11 md:w-32 md:h-8 lg:w-40 lg:h-10 4xl:w-52 4xl:h-14 5xl:w-80 5xl:h-20 px-1.5 py-2 overflow-visible hover:bg-white/10 transition-colors duration-300"
                 >
                   {/* Orange corner brackets */}
-                  <span ref={ctaTLRef} className="pointer-events-none absolute" style={{ top: -10, left: -10, width: 8, height: 8, borderTop: "1.7px solid #FF6F21", borderLeft: "1.7px solid #FF6F21" }} aria-hidden="true" />
-                  <span ref={ctaTRRef} className="pointer-events-none absolute" style={{ top: -10, right: -10, width: 8, height: 8, borderTop: "1.7px solid #FF6F21", borderRight: "1.7px solid #FF6F21" }} aria-hidden="true" />
-                  <span ref={ctaBLRef} className="pointer-events-none absolute" style={{ bottom: -10, left: -10, width: 8, height: 8, borderBottom: "1.7px solid #FF6F21", borderLeft: "1.7px solid #FF6F21" }} aria-hidden="true" />
-                  <span ref={ctaBRRef} className="pointer-events-none absolute" style={{ bottom: -10, right: -10, width: 8, height: 8, borderBottom: "1.7px solid #FF6F21", borderRight: "1.7px solid #FF6F21" }} aria-hidden="true" />
+                  <span ref={ctaTLRef} className="pointer-events-none absolute md:scale-[0.85] lg:scale-100 4xl:scale-125 5xl:scale-[1.75]" style={{ top: -10, left: -10, width: 8, height: 8, borderTop: "1.7px solid #FF6F21", borderLeft: "1.7px solid #FF6F21" }} aria-hidden="true" />
+                  <span ref={ctaTRRef} className="pointer-events-none absolute md:scale-[0.85] lg:scale-100 4xl:scale-125 5xl:scale-[1.75]" style={{ top: -10, right: -10, width: 8, height: 8, borderTop: "1.7px solid #FF6F21", borderRight: "1.7px solid #FF6F21" }} aria-hidden="true" />
+                  <span ref={ctaBLRef} className="pointer-events-none absolute md:scale-[0.85] lg:scale-100 4xl:scale-125 5xl:scale-[1.75]" style={{ bottom: -10, left: -10, width: 8, height: 8, borderBottom: "1.7px solid #FF6F21", borderLeft: "1.7px solid #FF6F21" }} aria-hidden="true" />
+                  <span ref={ctaBRRef} className="pointer-events-none absolute md:scale-[0.85] lg:scale-100 4xl:scale-125 5xl:scale-[1.75]" style={{ bottom: -10, right: -10, width: 8, height: 8, borderBottom: "1.7px solid #FF6F21", borderRight: "1.7px solid #FF6F21" }} aria-hidden="true" />
                   <svg
                     className="cta-border absolute"
                     style={{ top: "-1px", left: "-1px", width: "calc(100% + 2px)", height: "calc(100% + 2px)" }}
@@ -718,10 +723,10 @@ export default function HeroSection() {
                       stroke="white" strokeWidth="1"
                     />
                   </svg>
-                  <span className="cta-text font-host font-medium text-base 4xl:text-lg 5xl:text-2xl text-white text-center tracking-[-0.32px] leading-normal whitespace-nowrap">
+                  <span className="cta-text font-host font-medium text-base md:text-sm lg:text-base 4xl:text-xl 5xl:text-3xl text-white text-center tracking-[-0.32px] leading-normal whitespace-nowrap">
                     Go Viral
                   </span>
-                  <span className="cta-arrow 5xl:scale-150" style={{ display: "inline-flex", alignItems: "center" }}>
+                  <span className="cta-arrow md:scale-[0.85] lg:scale-100 4xl:scale-125 5xl:scale-[1.75]" style={{ display: "inline-flex", alignItems: "center" }}>
                     <svg
                       className="cta-arrow-svg"
                       width="11"
@@ -744,10 +749,10 @@ export default function HeroSection() {
               </div>
               <div className="overflow-hidden">
                 <div className="cta-sub flex flex-col items-center">
-                  <span className="font-host text-xs 4xl:text-sm 5xl:text-lg text-[#a1a1aa] text-center tracking-[-0.24px] leading-normal -mb-1">
+                  <span className="font-host text-xs md:text-[0.625rem] lg:text-xs 4xl:text-[0.95rem] 5xl:text-[1.4rem] text-[#a1a1aa] text-center tracking-[-0.24px] leading-normal -mb-1 4xl:mb-0">
                     Real missions. Real outcomes.
                   </span>
-                  <CtaGlowLine className="cta-glow-svg pointer-events-none" />
+                  <CtaGlowLine className="cta-glow-svg pointer-events-none md:w-[8rem] lg:w-[9rem] xl:w-[11rem] 4xl:w-[14.5rem] 5xl:w-[21rem]" />
                 </div>
               </div>
             </div>
