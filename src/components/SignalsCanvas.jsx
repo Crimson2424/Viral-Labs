@@ -39,19 +39,21 @@ export default function SignalsCanvas() {
       if (!el) return;
 
       const sectionEl = signalsCanvasState.sectionEl;
-      if (!sectionEl || !sectionEl.offsetParent) {
+      if (!sectionEl) {
         if (lastOpacity !== "0") { el.style.opacity = "0"; lastOpacity = "0"; }
         return;
       }
 
+      // Batch all DOM reads FIRST — no writes between reads
       const rect = sectionEl.getBoundingClientRect();
       const vh = window.innerHeight;
+      const visible = rect.bottom >= 0 && rect.top <= vh;
 
-      if (rect.bottom < 0 || rect.top > vh) {
+      // Now do all writes
+      if (!visible) {
         if (lastOpacity !== "0") { el.style.opacity = "0"; lastOpacity = "0"; }
       } else {
         if (lastOpacity !== "1") { el.style.opacity = "1"; lastOpacity = "1"; }
-        // Round to nearest pixel to avoid sub-pixel layout work
         const t = `translateY(${Math.round(rect.top)}px)`;
         if (t !== lastTransform) { el.style.transform = t; lastTransform = t; }
       }

@@ -104,8 +104,10 @@ const FooterSection = () => {
   /* Lock button text width so scramble doesn't resize it */
   useEffect(() => {
     if (btnTextRef.current) {
+      // Read first, then write — avoids forced reflow
+      const w = btnTextRef.current.offsetWidth;
       btnTextRef.current.style.display = "inline-block";
-      btnTextRef.current.style.width = `${btnTextRef.current.offsetWidth}px`;
+      btnTextRef.current.style.width = `${w}px`;
     }
   }, []);
 
@@ -215,7 +217,7 @@ const FooterSection = () => {
           {/* Heading */}
           <h2
             ref={headingRef}
-            className="font-bricolage text-left md:text-center text-3xl max-mob:text-2xl max-mob:leading-[1.08] max-mob:max-w-44 font-normal leading-[1.05] tracking-tight text-white max-w-[14rem] sm:text-4xl sm:max-w-[18rem] md:max-w-none md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl 3xl:text-8xl 4xl:text-[9rem] 5xl:text-[13rem]"
+            className="font-bricolage text-left md:text-center text-3xl max-mob:text-2xl max-mob:leading-[1.08] max-mob:max-w-44 max-mob:mb-2 mob:mb-2.5 sm:mb-3 font-normal leading-[1.05] tracking-tight text-white max-w-[14rem] sm:text-4xl sm:max-w-[18rem] md:max-w-none md:text-4xl md:mb-0 lg:text-5xl xl:text-6xl 2xl:text-7xl 3xl:text-8xl 4xl:text-[9rem] 5xl:text-[13rem]"
           >
             Engineering<br />predictable growth<br />starts here
           </h2>
@@ -223,7 +225,7 @@ const FooterSection = () => {
           {/* Subtext */}
           <p
             ref={subtextRef}
-            className="mt-2 max-w-[14rem] max-mob:text-xs max-mob:max-w-48 sm:max-w-[18rem] md:max-w-[18rem] lg:max-w-[27rem] xl:max-w-[34rem] 2xl:max-w-[40rem] 3xl:max-w-[50rem] 4xl:max-w-[66rem] 5xl:max-w-[100rem] font-host text-sm font-thin leading-tight text-white/70 text-left md:text-center sm:text-base md:text-[0.57rem] lg:text-sm xl:text-base 2xl:text-lg 3xl:text-xl 4xl:text-3xl 5xl:text-4xl sm:mt-2 4xl:mt-4 5xl:mt-6"
+            className="mt-2 max-w-[14rem] max-mob:text-xs max-mob:max-w-48 max-mob:mb-1.5 mob:mb-2 sm:mb-2.5 md:mb-0 sm:max-w-[18rem] md:max-w-[18rem] lg:max-w-[27rem] xl:max-w-[34rem] 2xl:max-w-[40rem] 3xl:max-w-[50rem] 4xl:max-w-[66rem] 5xl:max-w-[100rem] font-host text-sm font-thin leading-tight text-white/70 text-left md:text-center sm:text-base md:text-[0.57rem] lg:text-sm xl:text-base 2xl:text-lg 3xl:text-xl 4xl:text-3xl 5xl:text-4xl sm:mt-2 4xl:mt-4 5xl:mt-6"
             style={{ opacity: 0 }}
           >
             If you're ready to move beyond guesswork and scale through structured
@@ -277,7 +279,7 @@ const FooterSection = () => {
               </div>
 
               {/* Nav links */}
-              <nav className="flex flex-col gap-0 leading-tight mt-8">
+              <nav className="flex flex-col gap-1.5 leading-tight mt-8">
                 {NAV_MOBILE.map((link) => (
                   <a
                     key={link}

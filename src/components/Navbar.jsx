@@ -28,7 +28,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import { gsap, SplitText, DrawSVGPlugin, useGSAP } from "./Gsapconfig";
-import { ViralLabsLogo, ArrowIcon, NavGlowLine } from "./Svgassets";
+import { ViralLabsLogo, ViralLabsWordmark, ArrowIcon, NavGlowLine } from "./Svgassets";
 import { entranceState } from "./Entrancestate";
 import fontReady from "./fontReady";
 
@@ -142,8 +142,15 @@ export default function Navbar({ entranceDelay = 0.3 }) {
     currentAmplitude: WAVE_MUTED_AMPLITUDE,
   });
 
-  /* Audio ref */
+  /* Audio ref — create eagerly so iOS Safari authorises playback on first tap */
   const audioRef = useRef(null);
+  if (audioRef.current == null) {
+    const a = new Audio("/audio/music.mp3");
+    a.loop = true;
+    a.volume = 0.5;
+    a.preload = "auto";
+    audioRef.current = a;
+  }
 
   /* ─── Sine wave path generator ─── */
   const generateSineWavePath = () => {
@@ -178,7 +185,7 @@ export default function Navbar({ entranceDelay = 0.3 }) {
 
       // ── Initial states ──
       gsap.set(navRef.current, { yPercent: -120 });
-      gsap.set(logoIconRef.current, { opacity: 0, scale: 0.8 });
+      if (logoIconRef.current) gsap.set(logoIconRef.current, { opacity: 0, scale: 0.8 });
 
       // ── Logo text — SplitText mask ──
       const logoSplit = SplitText.create(logoTextRef.current, {
@@ -254,11 +261,13 @@ export default function Navbar({ entranceDelay = 0.3 }) {
       });
 
       // Phase 2 — Text reveals
-      tl.to(
-        logoIconRef.current,
-        { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" },
-        "-=0.2"
-      );
+      if (logoIconRef.current) {
+        tl.to(
+          logoIconRef.current,
+          { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" },
+          "-=0.2"
+        );
+      }
 
       tl.to(
         logoSplit.lines,
@@ -321,16 +330,10 @@ export default function Navbar({ entranceDelay = 0.3 }) {
     const next = !isSoundPlaying;
     setIsSoundPlaying(next);
 
-    // ── Audio control — lazy-create on first play ──
+    // ── Audio control ──
     if (next) {
-      if (!audioRef.current) {
-        const a = new Audio("/audio/music.mp3.mpeg");
-        a.loop = true;
-        a.volume = 0.5;
-        audioRef.current = a;
-      }
       audioRef.current.play().catch(() => {});
-    } else if (audioRef.current) {
+    } else {
       audioRef.current.pause();
     }
 
@@ -550,18 +553,17 @@ export default function Navbar({ entranceDelay = 0.3 }) {
             className="flex items-center gap-0 shrink-0 cursor-pointer"
             aria-label="Viral Labs Home"
           >
-            <span
+            {/* <span
               ref={logoIconRef}
               className="inline-flex items-center justify-center"
             >
               <ViralLabsLogo className="w-[16px] h-[16px] 4xl:w-5 4xl:h-5 5xl:w-8 5xl:h-8 translate-y-[1px]" />
-            </span>
+            </span> */}
             <span
               ref={logoTextRef}
-              className="font-bricolage font-normal text-white text-md 4xl:text-lg 5xl:text-2xl leading-none pr-1"
-              style={{ letterSpacing: "-1.1px", ...fontStyle }}
+              className="inline-flex items-center pr-1"
             >
-              Viral Labs
+              <ViralLabsWordmark className="h-3 md:h-[0.85rem] 4xl:h-4 5xl:h-6 w-auto" />
             </span>
           </a>
 

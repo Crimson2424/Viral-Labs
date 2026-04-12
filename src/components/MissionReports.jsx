@@ -27,8 +27,8 @@ function TNFLogo({ className = "" }) {
   return (
     <svg className={className} viewBox="0 0 114 54" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#tnf-clip)">
-        <path d="M40.1854 15.96H36.8794V2.907H32.0914V0.057H44.9734V2.907H40.1854V15.96ZM49.4764 8.835V15.96H46.1704V0.057H49.4764V6.099H55.6894V0.057H58.9954V15.96H55.6894V8.835H49.4764ZM71.8204 2.85H63.4984V6.213H70.8514V9.006H63.4984V13.167H71.8204V15.96H60.4204V0.057H71.8204V2.85ZM9.86137 18.411H12.9394V34.257H9.63337L3.13537 22.971H3.07837V34.257H0.000366211V18.411H3.47737L9.80437 29.412H9.86137V18.411ZM22.0594 17.955C24.1684 17.955 29.6974 18.867 29.6974 26.277C29.6974 33.687 24.1684 34.599 22.0594 34.599C19.9504 34.599 14.4214 33.687 14.4214 26.277C14.4214 18.867 19.9504 17.955 22.0594 17.955ZM22.0594 31.863C23.8264 31.863 26.3344 30.78 26.3344 26.334C26.3344 21.888 23.8264 20.805 22.0594 20.805C20.2924 20.805 17.7274 21.888 17.7274 26.334C17.7274 30.78 20.2924 31.863 22.0594 31.863ZM53.0674 34.257H49.7614V21.204H44.9164V18.411H57.8554V21.204H53.0674V34.257ZM62.3584 27.132V34.257H59.0524V18.411H62.3584V24.396H68.5144V18.411H71.8204V34.257H68.5144V27.132H62.3584ZM31.0654 18.411H39.1024C43.3204 18.411 44.1184 21.546 44.1184 22.914C44.1184 24.681 43.2064 26.163 41.6674 26.676C42.9784 27.246 43.6624 27.759 43.6624 30.723C43.6624 33.06 43.6624 33.63 44.3464 33.858V34.257H40.6984C40.4704 33.516 40.3564 32.718 40.3564 31.065C40.3564 28.899 40.2424 28.044 37.7914 28.044H34.3714V34.257H31.1224L31.0654 18.411ZM38.1904 25.365C39.9004 25.365 40.7554 24.738 40.7554 23.199C40.7554 22.344 40.3564 21.147 38.4184 21.147H34.3144V25.365H38.1904ZM23.3704 53.067H20.0074V36.765H31.5784V39.672H23.3704V43.32H30.5524V46.227H23.3704V53.067ZM33.1174 53.067H29.5264L35.3404 36.765H39.2734L45.0304 53.067H41.3254L40.2994 49.704H34.2004L33.1174 53.067ZM35.1124 46.911H39.2734L37.2784 40.47H37.2214L35.1124 46.911ZM55.4044 42.18C55.1194 41.211 54.6064 39.387 51.8134 39.387C50.1604 39.387 47.7664 40.47 47.7664 45.087C47.7664 47.994 48.9064 50.616 51.8134 50.616C53.6944 50.616 55.0054 49.533 55.4044 47.538H58.8244C58.1404 51.072 55.8604 53.523 51.7564 53.523C47.4244 53.523 44.3464 50.616 44.3464 44.973C44.3464 39.273 47.6524 36.366 51.8134 36.366C56.6584 36.366 58.6534 39.729 58.8244 42.123H55.4044V42.18ZM71.8774 39.672H63.3274V43.092H70.9084V45.942H63.3274V50.16H71.8774V53.067H60.1924V36.765H71.8774V39.672ZM13.8514 44.802C16.2454 44.802 18.2404 46.683 18.2404 49.191C18.2404 51.699 16.2454 53.58 13.8514 53.58C11.4574 53.58 9.40537 51.699 9.40537 49.191C9.40537 46.683 11.4574 44.802 13.8514 44.802ZM13.8514 52.953C15.9034 52.953 17.4424 51.357 17.4424 49.191C17.4424 47.082 15.8464 45.486 13.8514 45.486C11.7994 45.486 10.2034 47.082 10.2034 49.191C10.2034 51.3 11.7994 52.953 13.8514 52.953ZM12.1414 46.626H14.1364C15.3334 46.626 15.9604 47.082 15.9604 48.108C15.9604 49.02 15.3904 49.419 14.5924 49.533L16.0744 51.813H15.2194L13.7944 49.59H12.9394V51.813H12.1414V46.626ZM12.9394 48.906H13.7944C14.4784 48.906 15.1624 48.849 15.1624 48.051C15.1624 47.367 14.5924 47.253 14.0224 47.253H12.9394V48.906ZM82.7074 52.041V43.662C82.7074 39.9 79.6294 36.822 75.8674 36.822H75.1264V53.124H82.7074V52.041ZM114 52.041V38.133C114 17.1 96.9004 0 75.8674 0H75.4684H75.5254H75.1264V15.96H76.2094C88.5784 16.131 98.6674 26.22 98.8384 38.589V53.01H114V52.041Z" fill="white"/>
-        <path d="M96.3878 52.6111V38.8171C96.3308 27.8161 87.5528 18.8671 76.6658 18.4111H75.4118H75.4688H75.0698V34.3141H75.8108C80.9408 34.3141 85.0448 38.4751 85.0448 43.5481V53.0101H96.3878V52.6111Z" fill="white"/>
+        <path d="M40.1854 15.96H36.8794V2.907H32.0914V0.057H44.9734V2.907H40.1854V15.96ZM49.4764 8.835V15.96H46.1704V0.057H49.4764V6.099H55.6894V0.057H58.9954V15.96H55.6894V8.835H49.4764ZM71.8204 2.85H63.4984V6.213H70.8514V9.006H63.4984V13.167H71.8204V15.96H60.4204V0.057H71.8204V2.85ZM9.86137 18.411H12.9394V34.257H9.63337L3.13537 22.971H3.07837V34.257H0.000366211V18.411H3.47737L9.80437 29.412H9.86137V18.411ZM22.0594 17.955C24.1684 17.955 29.6974 18.867 29.6974 26.277C29.6974 33.687 24.1684 34.599 22.0594 34.599C19.9504 34.599 14.4214 33.687 14.4214 26.277C14.4214 18.867 19.9504 17.955 22.0594 17.955ZM22.0594 31.863C23.8264 31.863 26.3344 30.78 26.3344 26.334C26.3344 21.888 23.8264 20.805 22.0594 20.805C20.2924 20.805 17.7274 21.888 17.7274 26.334C17.7274 30.78 20.2924 31.863 22.0594 31.863ZM53.0674 34.257H49.7614V21.204H44.9164V18.411H57.8554V21.204H53.0674V34.257ZM62.3584 27.132V34.257H59.0524V18.411H62.3584V24.396H68.5144V18.411H71.8204V34.257H68.5144V27.132H62.3584ZM31.0654 18.411H39.1024C43.3204 18.411 44.1184 21.546 44.1184 22.914C44.1184 24.681 43.2064 26.163 41.6674 26.676C42.9784 27.246 43.6624 27.759 43.6624 30.723C43.6624 33.06 43.6624 33.63 44.3464 33.858V34.257H40.6984C40.4704 33.516 40.3564 32.718 40.3564 31.065C40.3564 28.899 40.2424 28.044 37.7914 28.044H34.3714V34.257H31.1224L31.0654 18.411ZM38.1904 25.365C39.9004 25.365 40.7554 24.738 40.7554 23.199C40.7554 22.344 40.3564 21.147 38.4184 21.147H34.3144V25.365H38.1904ZM23.3704 53.067H20.0074V36.765H31.5784V39.672H23.3704V43.32H30.5524V46.227H23.3704V53.067ZM33.1174 53.067H29.5264L35.3404 36.765H39.2734L45.0304 53.067H41.3254L40.2994 49.704H34.2004L33.1174 53.067ZM35.1124 46.911H39.2734L37.2784 40.47H37.2214L35.1124 46.911ZM55.4044 42.18C55.1194 41.211 54.6064 39.387 51.8134 39.387C50.1604 39.387 47.7664 40.47 47.7664 45.087C47.7664 47.994 48.9064 50.616 51.8134 50.616C53.6944 50.616 55.0054 49.533 55.4044 47.538H58.8244C58.1404 51.072 55.8604 53.523 51.7564 53.523C47.4244 53.523 44.3464 50.616 44.3464 44.973C44.3464 39.273 47.6524 36.366 51.8134 36.366C56.6584 36.366 58.6534 39.729 58.8244 42.123H55.4044V42.18ZM71.8774 39.672H63.3274V43.092H70.9084V45.942H63.3274V50.16H71.8774V53.067H60.1924V36.765H71.8774V39.672ZM13.8514 44.802C16.2454 44.802 18.2404 46.683 18.2404 49.191C18.2404 51.699 16.2454 53.58 13.8514 53.58C11.4574 53.58 9.40537 51.699 9.40537 49.191C9.40537 46.683 11.4574 44.802 13.8514 44.802ZM13.8514 52.953C15.9034 52.953 17.4424 51.357 17.4424 49.191C17.4424 47.082 15.8464 45.486 13.8514 45.486C11.7994 45.486 10.2034 47.082 10.2034 49.191C10.2034 51.3 11.7994 52.953 13.8514 52.953ZM12.1414 46.626H14.1364C15.3334 46.626 15.9604 47.082 15.9604 48.108C15.9604 49.02 15.3904 49.419 14.5924 49.533L16.0744 51.813H15.2194L13.7944 49.59H12.9394V51.813H12.1414V46.626ZM12.9394 48.906H13.7944C14.4784 48.906 15.1624 48.849 15.1624 48.051C15.1624 47.367 14.5924 47.253 14.0224 47.253H12.9394V48.906ZM82.7074 52.041V43.662C82.7074 39.9 79.6294 36.822 75.8674 36.822H75.1264V53.124H82.7074V52.041ZM114 52.041V38.133C114 17.1 96.9004 0 75.8674 0H75.4684H75.5254H75.1264V15.96H76.2094C88.5784 16.131 98.6674 26.22 98.8384 38.589V53.01H114V52.041Z" fill="currentColor"/>
+        <path d="M96.3878 52.6111V38.8171C96.3308 27.8161 87.5528 18.8671 76.6658 18.4111H75.4118H75.4688H75.0698V34.3141H75.8108C80.9408 34.3141 85.0448 38.4751 85.0448 43.5481V53.0101H96.3878V52.6111Z" fill="currentColor"/>
       </g>
       <defs><clipPath id="tnf-clip"><rect width="114" height="53.58" fill="white"/></clipPath></defs>
     </svg>
@@ -47,7 +47,8 @@ function FloLogo({ className = "" }) {
 }
 
 /* ─── Reusable header row content ─── */
-function HeaderRowContent({ data, bgClass = "", textClass = "text-white" }) {
+function HeaderRowContent({ data, bgClass = "", textClass = "text-white", isActive = false }) {
+  const tnfColorClass = isActive ? "text-white" : "text-[#BBBBBB]";
   return (
     <div className={`mr-header-row w-full grid grid-cols-[auto_1fr_auto] sm:grid-cols-12 items-center gap-x-3 sm:gap-x-0 ${bgClass}`} style={{ padding: "1.75rem clamp(1rem, 4vw, 3rem)" }}>
       <span className={`sm:col-span-3 font-bricolage ${textClass}`} style={{ fontSize: "clamp(1.25rem, 2.8vw, 3.25rem)" }}>
@@ -57,7 +58,9 @@ function HeaderRowContent({ data, bgClass = "", textClass = "text-white" }) {
         {data.brand}
       </h3>
       <div className="sm:col-span-2 flex justify-end">
-        {data.logo === "tnf" ? <TNFLogo className="h-10 md:h-13 4xl:h-16 5xl:h-20 w-auto" /> : <FloLogo className="h-9 md:h-12 4xl:h-14 5xl:h-18 w-auto" />}
+        {data.logo === "tnf"
+          ? <TNFLogo className={`h-10 md:h-13 4xl:h-16 5xl:h-20 w-auto ${tnfColorClass} transition-colors duration-300`} />
+          : <FloLogo className="h-9 md:h-12 4xl:h-14 5xl:h-18 w-auto" />}
       </div>
     </div>
   );
@@ -384,7 +387,7 @@ function AccordionItem({
       </div>
 
       <div ref={headerRef} className="relative z-10">
-        <HeaderRowContent data={data} bgClass="border-t border-[#FF6F21]/70" textClass="text-white" />
+        <HeaderRowContent data={data} bgClass="border-t border-[#FF6F21]/70" textClass="text-white" isActive={isActive} />
 
         {/* Cursor-follow "Click me" label — desktop only via JS gating */}
         <div
@@ -474,6 +477,7 @@ export default function MissionReports() {
   const item2ContentWrapRef = useRef(null);
   const item2ContentInnerRef = useRef(null);
 
+  const tapHintRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(-1);
   // { reservedH, headerH, isDesktop } — null until measured
   const [dims, setDims] = useState(null);
@@ -561,17 +565,26 @@ export default function MissionReports() {
     animate(item1ContainerRef.current, prevItem1Y, newItem1Y);
     animate(item2ContainerRef.current, prevItem2Y, newItem2Y);
 
-    // Fade paragraph area out when accordion opens, in when it closes.
+    // Fade paragraph area + tap hint out when accordion opens, in when it closes.
     // Synced with the translate so they feel like one motion.
-    if (paragraphAreaRef.current) {
-      const wasActive = prev !== -1;
-      const isActive = activeIndex !== -1;
-      if (wasActive !== isActive) {
+    const wasActive = prev !== -1;
+    const isActive = activeIndex !== -1;
+    if (wasActive !== isActive) {
+      if (paragraphAreaRef.current) {
         gsap.to(paragraphAreaRef.current, {
           opacity: isActive ? 0 : 1,
           duration: isActive ? OPEN_DURATION : CLOSE_DURATION,
           delay: isActive ? OPEN_DELAY : CLOSE_DELAY,
           ease: "power4.inOut",
+          overwrite: "auto",
+        });
+      }
+      if (tapHintRef.current) {
+        gsap.to(tapHintRef.current, {
+          opacity: isActive ? 0 : 1,
+          duration: 0.3,
+          delay: 0,
+          ease: "power2.out",
           overwrite: "auto",
         });
       }
@@ -671,6 +684,11 @@ export default function MissionReports() {
   const item1AbsolutePos = isDesktopLayout ? { top: layoutH + GAP } : null;
   const item2AbsolutePos = isDesktopLayout ? { top: layoutH + GAP + dims.headerH } : null;
 
+  // Mobile tap hint sits just above the first accordion header
+  const hintStyle = isDesktopLayout
+    ? { position: "absolute", top: layoutH + GAP - 36, left: 0, right: 0 }
+    : undefined;
+
   const bottomBorderStyle = isDesktopLayout
     ? { position: "absolute", bottom: 0, left: 0, right: 0 }
     : undefined;
@@ -686,6 +704,11 @@ export default function MissionReports() {
         .mr-header-row h3 { font-size: 4.5rem !important; }
         .mr-header-content { padding-left: 4rem !important; padding-right: 4rem !important; }
       }
+      @keyframes mr-arrow-bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(8px); }
+      }
+      .mr-tap-hint { animation: mr-arrow-bounce 1.6s ease-in-out infinite; }
       @media (min-width: 240rem) {
         .mr-heading { font-size: 5.5rem !important; }
         .mr-para { font-size: 4rem !important; }
@@ -756,6 +779,13 @@ export default function MissionReports() {
                 </p>
               </div>
             </div>
+          </div>
+
+          {/* Tap hint — visible only on screens smaller than lg, sits just above the first accordion */}
+          <div ref={tapHintRef} className="lg:hidden flex justify-center pointer-events-none" style={hintStyle}>
+            <svg className="mr-tap-hint" width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M11 3 L11 18 M4 11 L11 18 L18 11" stroke="#FF6F21" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </div>
 
           {/* Accordion items */}
